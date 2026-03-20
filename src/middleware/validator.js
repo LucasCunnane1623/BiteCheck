@@ -1,4 +1,4 @@
-import { parseFloat, parseInt } from "dotenv";
+
 
 export const validateLocation = (req, res, next) => {
     const { lat, lng, dist } = req.query;

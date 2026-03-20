@@ -1,0 +1,35 @@
+{
+  "name": "bitecheck",
+  "version": "1.0.0",
+  "description": "BiteCheck is a public health–focused dining transparency platform designed to provide New Yorkers and visitors with reliable access to restaurant inspection data.",
+  "homepage": "https://github.com/LucasCunnane1623/BiteCheck#readme",
+  "bugs": {
+    "url": "https://github.com/LucasCunnane1623/BiteCheck/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasCunnane1623/BiteCheck.git"
+  },
+  "license": "ISC",
+  "author": "Group 5",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.3.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

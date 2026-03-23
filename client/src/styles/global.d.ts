@@ -1,0 +1,1 @@
+declare module "*.css"; //tells ts that anything ending in .css is a valid export 

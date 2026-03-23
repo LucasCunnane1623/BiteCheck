@@ -6,7 +6,6 @@ import { getdb } from '../database/db.js';
 export const registerUser = async (email, password, username) => {
     const db = await getdb();
     const collection = db.collection('users');
-
     const existingUser = await collection.findOne({
         email
     });
@@ -27,10 +26,11 @@ export const registerUser = async (email, password, username) => {
     return result.insertedId;
 };
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (email, password, age) => {
     const db = await getdb();
-    const user = await db.collection('users').findOne({ email});
+    const user = await db.collection('users').findOne({email});
 
+    if (age)
     if (!user){
         throw new Error("Invalid credentials");
     }

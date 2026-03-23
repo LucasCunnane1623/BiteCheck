@@ -14,3 +14,9 @@ export const getStatusColor = (inspections) => {
     if (criticalCount < 3) return 'YELLOW';
     return 'RED';   
 }
+
+
+
+
+
+

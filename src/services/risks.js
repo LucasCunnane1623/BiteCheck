@@ -10,6 +10,5 @@ const risk_map = {
 }
 
 export const get_illness_risk = (violationCode) => {
-    return risk_map[violationCode] || {illness:'general foodborne illness risk', cause: 'Standard sanitary violation', severity: 'Low'};
-    
+    return risk_map[violationCode] || {illness:'general foodborne illness risk', cause: 'Standard sanitary violation', severity: 'Low'};    
 }

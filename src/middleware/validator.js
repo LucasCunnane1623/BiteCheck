@@ -1,5 +1,3 @@
-
-
 export const validateLocation = (req, res, next) => {
     const { lat, lng, dist } = req.query;
     if (lat === undefined || lng == undefined){

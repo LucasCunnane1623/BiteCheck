@@ -31,3 +31,13 @@ export const close = async () => {
         client = null;
     }
 }
+
+
+export const  getdb = () => {
+    if (!db) {
+        throw new Error('Database not connected. Call connect() first.');
+    }
+    return db;
+};
+
+

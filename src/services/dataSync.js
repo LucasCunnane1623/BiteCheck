@@ -1,6 +1,6 @@
 import axios from 'axios';
 import settings from '../config/settings.js';
-import {getdb} from '../database/db.js';
+import { getdb } from '../database/db.js';
 
 import { get_illness_risk } from './risks.js';
 

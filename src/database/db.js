@@ -33,9 +33,9 @@ export const close = async () => {
 }
 
 
-export const  getdb = () => {
+export const  getdb = async() => {
     if (!db) {
-        throw new Error('Database not connected. Call connect() first.');
+        await connect();
     }
     return db;
 };

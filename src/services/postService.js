@@ -13,12 +13,10 @@ export const getPosts = async (page = 1, limit = 10) => {
         .toArray();
 };
 
-
-
 export const createPost = async (userId, content) => {
     const db = getdb()
     return await db.collection('posts').insertOne({
-        userId, 
+        userId: new ObjectId(userId), 
         content, 
         likes: [],   // this array will store the userid so no users can make multiple likes (broken system/feature)
         dislikes: [], // same as above
@@ -27,11 +25,18 @@ export const createPost = async (userId, content) => {
     });
 };
 
-export const addComment = async (postId, userId, text) => {
+export const addComment = async (postId, userId, username, text) => {
     const db = getdb()
+    const comment = {
+        commentId: new ObjectId(),
+        userId: new ObjectId(userId),
+        username,
+        text,
+        createdOn: new Date()
+    }
     return await db.collection('posts').updateOne(
-        { _id: ObjectId(postId) },
-        {$push: {comments: {userId, text, date: new Date()}}}
+        { _id: new ObjectId(postId) },
+        {$push: {comments: comment}}
     );
 };
 
@@ -68,3 +73,14 @@ export const likePost = async (postId, userId) => {
     }  
 };
 
+export const getMyPosts = async (userId, page = 1, limit = 10) => {
+    const db = getdb();
+    const skip = (page-1)*limit;
+
+    return await db.collection('posts')
+        .find({userId: new ObjectId(userId) })
+        .sort({ createdOn: -1})
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+}

@@ -6,6 +6,7 @@ import { getStatusColor } from '../services/hygiene.js';
 import { validateLocation } from '../middleware/validator.js';
 import { authenticate, checkReviewOwnership } from '../middleware/auth.js';
 import { addReview, getRestaurantReviews } from '../services/reviewService.js';
+import { searchRestaurants } from '../services/restaurantService.js';
 
 const router = express.Router();
 
@@ -128,17 +129,18 @@ router.delete('/reviews/:id', authenticate, checkReviewOwnership, async (req, re
 
 router.get('/search', async(req, res, next)=>{
     try{
-        const { query } = req.query;  // eg. query = pizza or burger or anything.. 
+        const query  = req.query.q;  // eg. query = pizza or burger or anything.. 
         
         if (!query || query.trim().length === 0){
             return res.status(400).json({ error: "Search query must be at least 2 characters long"})
         };
 
-        const db = getdb()
-        const results = await db.collection('restaurants').find({
-            $text: {$search: query}
-        }).limit(20).toArray();
-        res.json({count: results.length, data:results})
+        const results = await searchRestaurants(query);
+        res.status(200).json({
+            success: true,
+            count: results.length,
+            data: results
+        })
     } catch (e) {
         next(e)
     };

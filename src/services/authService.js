@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import settings from '../config/settings.js';
 import { getdb } from '../database/db.js';
 
-export const registerUser = async (email, password, username) => {
-    const db = await getdb();
+export const registerUser = async (email, password, username, age) => {
+    const db = getdb();
     const collection = db.collection('users');
     const existingUser = await collection.findOne({
         email
@@ -18,19 +18,20 @@ export const registerUser = async (email, password, username) => {
 
     const result = await collection.insertOne({
         email,
-        username, 
+        username,
+        age: parseInt(age),
         password: hashedPassword,
+        isAdmin: false,
         createdAt: new Date()
     });
 
     return result.insertedId;
 };
 
-export const loginUser = async (email, password, age) => {
-    const db = await getdb();
+export const loginUser = async (email, password) => {
+    const db = getdb();
     const user = await db.collection('users').findOne({email});
 
-    if (age)
     if (!user){
         throw new Error("Invalid credentials");
     }
@@ -42,10 +43,15 @@ export const loginUser = async (email, password, age) => {
     }
 
     const token = jwt.sign(
-        { userId: user._id, email: user.email},
+        { 
+            userId: user._id, 
+            email: user.email,
+            isAdmin: user.isAdmin
+        },
+        
         process.env.JWT_SECRET || settings.secret,
         { expiresIn: '7d' }
     )
 
-    return {token, username: user.username};
+    return {token, username: user.username, isAdmin: user.isAdmin};
 }

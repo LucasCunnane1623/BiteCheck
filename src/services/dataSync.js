@@ -5,7 +5,7 @@ import { getdb } from '../database/db.js';
 import { get_illness_risk } from './risks.js';
 
 
-export const syncRestaurants = async (limit = 3000000) => {
+export const syncRestaurants = async (limit = 300) => {
     const db = getdb();
     const collection = db.collection(settings.mongo.collections.restaurants);
 

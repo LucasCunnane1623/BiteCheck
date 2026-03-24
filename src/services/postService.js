@@ -1,5 +1,19 @@
 import { ObjectId } from "mongodb";
-import { getdb } from "../database/db"
+import { getdb } from "../database/db.js"
+
+export const getPosts = async (page = 1, limit = 10) => {
+    const db = getdb();
+    const skip = (page - 1)*limit;
+
+    return await db.collection('posts')
+        .find()
+        .sort({createdOn: -1})
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+};
+
+
 
 export const createPost = async (userId, content) => {
     const db = getdb()
@@ -24,12 +38,33 @@ export const addComment = async (postId, userId, text) => {
 
 export const likePost = async (postId, userId) => {
     const db = getdb();
-    return await db.collection('posts').updateOne(
-        {_id: ObjectId(postId)},
-        {
+
+    if (!ObjectId.isValid(postId)){
+        throw new Error("thats not a valid ID!")
+    };
+
+    const postObjectId = new ObjectId(postId)
+
+    const post = await db.collection('posts').findOne({_id: postObjectId});
+
+    if (!post){
+        throw new Error("post not found")
+    };
+
+    const hasliked = post.likes.includes(userId);
+    if (hasliked){
+        return await db.collection('posts').updateOne(
+            {_id: postObjectId},
+            {$pull: {likes: userId}}
+        )
+    } else {
+        return await db.collection('posts').updateOne(
+            {_id: postObjectId},
+            {
             $addToSet: {likes: userId}, // adds only if the userid is not present
             $pull: { dislikes: userId} // removes from the dislikes if present
-        }
-    );
+            }
+        );
+    }  
 };
 

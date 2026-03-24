@@ -7,13 +7,14 @@ import { errorHandler } from './middleware/errorhandler.js';
 // Import routes
 import restaurantRoutes from './routes/restaurantRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import postRoutes from './routes/postRoutes.js';
 
 const app = express();
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/restaurants', restaurantRoutes);
-
+app.use('/api/posts', postRoutes)
 const init = async () => {
     try {
         await connect();

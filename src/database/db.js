@@ -11,7 +11,7 @@ export const connect = async () => {
     try {
         client = await MongoClient.connect(settings.mongo.url);
         db = client.db(settings.mongo.dbname);
-        await db.dropDatabase();
+        db.dropDatabase();
         await db.collection('restaurants').createIndex({location: '2dsphere'});
         await db.collection('restaurants').createIndex({name: 'text', cuisine: 'text'});
         console.log(`Connected to MongoDB': ${settings.mongo.dbname}`);
@@ -32,10 +32,9 @@ export const close = async () => {
     }
 }
 
-
-export const  getdb = async() => {
+export const  getdb = () => {
     if (!db) {
-        await connect();
+        throw new Error("Database not initialized, call connect() first.")
     }
     return db;
 };

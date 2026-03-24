@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createPost } from "../services/postService.js";
-import { authenticate } from "../middleware/auth";
-const router = Router
+import { authenticate } from "../middleware/auth.js";
+const router = Router();
 
 router.post('/', authenticate, async(req, res, next) =>{
     try{
@@ -19,12 +19,12 @@ router.post('/', authenticate, async(req, res, next) =>{
             throw error
         }
 
-        const postId = await createPost(req.user.userId, content);
-        res.status(201).json({success: true, postId})
+        const result = await createPost(req.user.userId, content);
+        res.status(201).json({success: true, postId: result.insertedId, message: "Post created successfully"})
     } catch (e) {
         next(e)
     }
 });
 
-
+export default router;
 

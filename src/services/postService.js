@@ -84,3 +84,39 @@ export const getMyPosts = async (userId, page = 1, limit = 10) => {
         .limit(limit)
         .toArray();
 }
+
+
+export const getAllPostsAdmin = async (lastId = null, limit= 20) => {
+    const db = getdb();
+    // empty filter
+    let query = {};
+
+    if (lastId && ObjectId.isValid(lastId)){
+        query._id = {$lt: new ObjectId(lastId)}
+    }
+
+    return await db.collection('posts')
+        .find(query)
+        .sort({_id: -1})
+        .limit(limit)
+        .toArray(); 
+
+}
+
+export const reportPost = async (postId, userId, reason) => {
+    const db = getdb();
+
+    if (!ObjectId.isValid(postId)){
+        throw new Error("thats not a valid ID!")
+    };
+
+    return await db.collection('posts').updateOne(
+        {_id: new ObjectId(postId)},
+        {   // prevents duplicate reports from the same user and also adds the report reason and timestamp
+            $addToSet:{
+                reports: {userId: new ObjectId(userId), reason, reportedOn: new Date()}
+            },
+            $set: {isFlagged: true} // Mark for easy admin filtering
+        }
+    )   
+};   

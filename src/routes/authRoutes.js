@@ -3,6 +3,17 @@ import { registerUser, loginUser } from '../services/authService.js';
 
 const router = express.Router();
 
+
+/**
+ * @route POST /api/auth/register   
+ * @desc Register a new user
+ * @access Public
+ * @body {string} email - User's email address (required)
+ * @body {string} username - Desired username (required)
+ * @body {string} password - User's password (required)
+ * @body {number} age - User's age (optional, must be 13 or older to register)
+ * @returns {Object} Confirmation message with the ID of the newly registered user.
+ */
 router.post('/register', async (req, res, next) => {
     try {
         const { email, username, password, age } = req.body;
@@ -24,6 +35,15 @@ router.post('/register', async (req, res, next) => {
     }
 });
 
+
+/**
+ * @route POST /api/auth/login
+ * @desc Authenticate a user and return a JWT token
+ * @access Public
+ * @body {string} email - Users email address (required)
+ * @body {string} password - Users password (required)
+ * @returns {Object} Confirmation message with the JWT token and user information.
+ */
 router.post('/login', async (req, res, next) => {
     try {
         const { email, password} = req.body;

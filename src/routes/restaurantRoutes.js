@@ -53,6 +53,55 @@ router.get('/near', validateLocation, async (req, res, next) => {
 });
 
 /**
+ * @route GET /api/restaurants/suggest
+ * @desc provides real-time search as you type suggestions for the search bar
+ * @access Public
+ * @query {string} q - the search query
+ * @returns {object} json object containing a success boolean and a data
+ * array of suggestion objects with computed safetystatus
+ * @example:- 
+ * GET /api/restaurants/suggest?q=chi
+ * response : {"success": true, "data": [{text: "chinese", type: category}, {text: "chipotle", type: restaurant}.....]}
+ * 
+ */
+
+router.get('/suggest', async (req, res, next) => {
+    try{
+        const {q} = req.query;
+        // prevents single character queries from hitting the db 
+        // can be changed hit the db as well
+        if (!q || q.length < 2 || q.trim().length === 0){
+            return res.json({success: true, data: []})
+        }
+        // call the function
+        const rawResults = await getUniversalSuggestions(q)
+        // extract the suggestions from the aggregate facet
+        const suggestions = rawResults[0]?.suggestions || [];
+        // compute the bitecheck health color for each restaurant
+        const detailedSuggestions = suggestions.map(item => {
+            if (item.type === 'restaurant'){
+                return {
+                    ...item,
+                    safetyStatus: getStatusColor(item.inspections||[])
+                };
+            }
+            // categories(cuisines) return as it is without a health check
+            return item;
+        });
+
+        // send the finalized list back to the client
+        res.status(200).json({
+            success: true, 
+            data: detailedSuggestions
+        });
+    } catch (e){
+        // centralized middleware which handles errors
+        next(e);
+    }
+});
+
+
+/**
  * @route GET /api/restaurants/:id/risk-profile
  * @desc Provides a risk profile for a specific restaurant based on recent critical violations.
  * @access Public
@@ -216,7 +265,7 @@ router.get('/search', async(req, res, next)=>{
 });
 
 /**
- * @router GET /api/restaurants.:camis
+ * @router GET /api/restaurants/view/:camis
  * @desc  Get detailed information about a specific restaurant, including recent inspections and community reviews.
  * @access Public
  * @param {string} camis - Unique identifier for the restaurant (required)
@@ -225,7 +274,7 @@ router.get('/search', async(req, res, next)=>{
  * GET /api/restaurants/12345678
  */
 
-router.get('/:camis', async (req, res, next) => {
+router.get('/view/:camis', async (req, res, next) => {
     try{
         // we use getRestaurantDetails service to get the restaurant details, which includes the restaurant info, recent inspections, and communityBuzz.
 
@@ -244,52 +293,6 @@ router.get('/:camis', async (req, res, next) => {
 });
 
 
-/**
- * @route GET /api/restaurants/suggest
- * @desc provides real-time search as you type suggestions for the search bar
- * @access Public
- * @query {string} q - the search query
- * @returns {object} json object containing a success boolean and a data
- * array of suggestion objects with computed safetystatus
- * @example:- 
- * GET /api/restaurants/suggest?q=chi
- * response : {"success": true, "data": [{text: "chinese", type: category}, {text: "chipotle", type: restaurant}.....]}
- * 
- */
 
-router.get('/suggest', async (req, res, next) => {
-    try{
-        const {q} = req.query;
-        // prevents single character queries from hitting the db 
-        // can be changed hit the db as well
-        if (!q || q.length < 2 || q.trim().length === 0){
-            return res.json({success: true, data: []})
-        }
-        // call the function
-        const rawResults = await getUniversalSuggestions(q)
-        // extract the suggestions from the aggregate facet
-        const suggestions = rawResults[0]?.suggestions || [];
-        // compute the bitecheck health color for each restaurant
-        const detailedSuggestions = suggestions.map(item => {
-            if (item.type === 'restaurant'){
-                return {
-                    ...item,
-                    safetyStatus: getStatusColor(item.inspections||[])
-                };
-            }
-            // categories(cuisines) return as it is without a health check
-            return item;
-        });
-
-        // send the finalized list back to the client
-        res.status(200).json({
-            success: true, 
-            data: detailedSuggestions
-        });
-    } catch (e){
-        // centralized middleware which handles errors
-        next(e);
-    }
-});
 
 export default router;

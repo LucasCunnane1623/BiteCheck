@@ -11,7 +11,7 @@ export const connect = async () => {
     try {
         client = await MongoClient.connect(settings.mongo.url);
         db = client.db(settings.mongo.dbname);
-        db.dropDatabase();
+        //db.dropDatabase();
         await db.collection('restaurants').createIndex({location: '2dsphere'});
         //await db.collection('restaurants').createIndex({name: 'text', cuisine: 'text'});
         await db.collection('restaurants').createIndex({name: 1})

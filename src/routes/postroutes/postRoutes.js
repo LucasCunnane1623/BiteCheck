@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { createPost, likePost, getPosts, getMyPosts, addComment } from "../services/postService.js";
-import { authenticate } from "../middleware/auth.js";
-import { reportPost } from "../services/reportService.js";
+import { createPost, likePost, getPosts, getMyPosts, addComment } from "../../services/postService.js";
+import { authenticate } from "../../middleware/auth.js";
+import { reportPost } from "../../services/postService.js";
 const router = Router();
 
 

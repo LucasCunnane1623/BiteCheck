@@ -17,6 +17,7 @@ app.use('/api/restaurants', restaurantRoutes);
 const init = async () => {
     try {
         await connect();
+        //appends fetched 
         await syncRestaurants(); 
         
         setInterval(async () => {

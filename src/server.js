@@ -8,13 +8,8 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 
-
-// Import routes
-import restaurantRoutes from './routes/restaurantRoutes.js';
-import authRoutes from './routes/authRoutes.js';
-import postRoutes from './routes/postRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
+// Master Router -- handles all the logic wihout collisions
+import apirouter from './routes/index.js'
 
 // Initialize Express app
 const app = express();
@@ -37,13 +32,7 @@ app.use(cors());            // allow cross-origin requests
 app.use(express.json()); // Parse JSON request bodies
 
 // api routes   
-app.use('/api/auth', authRoutes);
-app.use('/api/restaurants', restaurantRoutes);
-app.use('/api/posts', postRoutes)
-app.use('/api/users', userRoutes)
-app.use('/api/admin', adminRoutes)
-
-
+app.use('/api', apirouter);
 
 
 // background Sync function.

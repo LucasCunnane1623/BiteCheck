@@ -66,6 +66,7 @@ router.post('/restaurants', authenticate, authorizeAdmin, async (req, res, next)
  * @example
  * DELETE /api/admin/restaurants/12345678
  */
+
 router.delete('/restaurants/:camis', authenticate, authorizeAdmin, async (req, res, next) => {
     try{
         const db = getdb();

@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { raw } from 'express';
 import { ObjectId } from 'mongodb';
 import { getdb } from '../database/db.js';
 import settings from '../config/settings.js';
@@ -8,7 +8,7 @@ import { getStatusColor } from '../services/hygiene.js';
 import { validateLocation } from '../middleware/validator.js';
 import { authenticate, checkReviewOwnership } from '../middleware/auth.js';
 import { addReview, getRestaurantReviews } from '../services/reviewService.js';
-import { getRestaurantDetails, searchRestaurants } from '../services/restaurantService.js';
+import { getRestaurantDetails, getUniversalSuggestions, searchRestaurants } from '../services/restaurantService.js';
 
 const router = express.Router();
 
@@ -240,6 +240,55 @@ router.get('/:camis', async (req, res, next) => {
         })
     } catch (e) {
         next(e)
+    }
+});
+
+
+/**
+ * @route GET /api/restaurants/suggest
+ * @desc provides real-time search as you type suggestions for the search bar
+ * @access Public
+ * @query {string} q - the search query
+ * @returns {object} json object containing a success boolean and a data
+ * array of suggestion objects with computed safetystatus
+ * @example:- 
+ * GET /api/restaurants/suggest?q=chi
+ * response : {"success": true, "data": [{text: "chinese", type: category}, {text: "chipotle", type: restaurant}.....]}
+ * 
+ */
+
+router.get('/suggest', async (req, res, next) => {
+    try{
+        const {q} = req.query;
+        // prevents single character queries from hitting the db 
+        // can be changed hit the db as well
+        if (!q || q.length < 2 || q.trim().length === 0){
+            return res.json({success: true, data: []})
+        }
+        // call the function
+        const rawResults = await getUniversalSuggestions(q)
+        // extract the suggestions from the aggregate facet
+        const suggestions = rawResults[0]?.suggestions || [];
+        // compute the bitecheck health color for each restaurant
+        const detailedSuggestions = suggestions.map(item => {
+            if (item.type === 'restaurant'){
+                return {
+                    ...item,
+                    safetyStatus: getStatusColor(item.inspections||[])
+                };
+            }
+            // categories(cuisines) return as it is without a health check
+            return item;
+        });
+
+        // send the finalized list back to the client
+        res.status(200).json({
+            success: true, 
+            data: detailedSuggestions
+        });
+    } catch (e){
+        // centralized middleware which handles errors
+        next(e);
     }
 });
 

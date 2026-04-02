@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createPost, likePost, getPosts, getMyPosts, addComment } from "../services/postService.js";
 import { authenticate } from "../middleware/auth.js";
-import { reportPost } from "../services/reportService.js";
+import { reportPost } from "../services/postService.js";
 const router = Router();
 
 
@@ -116,7 +116,6 @@ router.get('/', async (req, res, next)=>{
  * 
  */
 router.get('/me', authenticate, async (req, res, next)=>{
-
     try{
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit);

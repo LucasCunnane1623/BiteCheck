@@ -7,6 +7,10 @@ import morgan from 'morgan';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import exphbs from 'express-handlebars';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 
 
 // Import routes
@@ -15,7 +19,11 @@ import authRoutes from './routes/authRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import configRoutes from './routes/index.js'
 
+//path variable setups
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // Initialize Express app
 const app = express();
 
@@ -30,8 +38,10 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+//Static Routes
+app.use(express.static(path.join(__dirname, 'public')));
 
-// GLobal middleware
+// Global middleware
 app.use(morgan('dev')); // logging middleware
 app.use(cors());            // allow cross-origin requests
 app.use(express.json()); // Parse JSON request bodies
@@ -57,6 +67,46 @@ const startDataSync = async () => {
     }
 }
 
+//--------------- This method allows for performing POST and PUT operations without using POSTMAN --------------------
+const rewriteUnsupportedBrowserMethods = (req, res, next) => {
+  // If the user posts to the server with a property called _method, rewrite the request's method
+  // To be that method; so if they post _method=PUT you can now allow browsers to POST to a route that gets
+  // rewritten in this middleware to a PUT route
+  if (req.body && req.body._method) {
+    req.method = req.body._method;
+    delete req.body._method;
+  }
+  // let the next middleware run:
+  next();
+};
+//------------------------------------------------------------------------------
+
+
+//--------------- Added express handlebars support --------------------
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(rewriteUnsupportedBrowserMethods);
+
+
+
+
+const handlebarsInstance = exphbs.create({
+  defaultLayout: 'main',
+//   partialsDir: [path.join(__dirname, 'views/partials')],
+  helpers: {
+    asJSON: (obj, spacing) => {
+      if (typeof spacing === 'number')
+        return new Handlebars.SafeString(JSON.stringify(obj, null, spacing));
+      return new Handlebars.SafeString(JSON.stringify(obj));
+    }
+  }
+});
+app.engine('handlebars',handlebarsInstance.engine);
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, './views'));
+configRoutes(app);
+//------------------------------------------------------------------------------
+
 const init = async () => {
     try {
         // connect to the database
@@ -80,7 +130,6 @@ const init = async () => {
         process.exit(1);
     }
 };
-
 init();
 
 // for any errors that might occur in the routes,

@@ -30,6 +30,7 @@ router.post('/register', async (req, res, next) => {
         
         const userId = await registerUser(email, password, username);
         res.status(201).json({ message: "User registered successfully", userId });
+        //return res.status(201).render();
     } catch (err) {
         next(err);
     }
@@ -51,15 +52,15 @@ router.post('/login', async (req, res, next) => {
         if (!email || !password){
             return res.status(400).json({error: "Email and password required"})
         };
-
         const result = await loginUser(email, password);
         const {token, username, isAdmin} = result
-        res.status(200).json({
+        res.status(200)
+            .json({
             message: "Login Successful",
             token,
             username,
             isAdmin
-        });
+        }); 
         
     } catch (err) {
         next(err);

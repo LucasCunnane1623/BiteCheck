@@ -20,21 +20,20 @@ main {
 header {
   border-bottom: 1px solid #afafaf;
 }
-  /* straight off of the docs https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/div#:~:text=1,Accessibility */
+  
 
 /*
 This is the class used by most divs right now 
 */
 .header_box {
   background: #50A350;
-  border: 2px solid #1E691E; 
+  border: 2px solid #1B1B1B; 
   border-radius: 15pt;
-  box-shadow: 8px 8px 10px #444444; 
+  box-shadow: 8px 8px 10px #474747;  
   margin-top: 0.3in;
   padding: 8px 12px;
   font-family: 'Red Hat Display',Georgia, Cambria, 'Times New Roman', Times, serif;
 
-    
   display: flex; 
 
   align-items: center;      /* vertical positioning  */
@@ -43,9 +42,9 @@ This is the class used by most divs right now
 }
 .info_box {
   background: #91e291;
-  border: 2px solid #1E691E; 
+  border: 2px solid #1B1B1B; 
   border-radius: 15pt;
-  box-shadow: 8px 8px 10px #444444; 
+  box-shadow: 8px 8px 10px #474747; 
   margin-top: 1in;
   margin-left: 2rem;
   padding: 8px 12px;
@@ -60,11 +59,26 @@ This is the class used by most divs right now
   font-family: 'Red Hat Display',Georgia, Cambria, 'Times New Roman', Times, serif;
 }
 
-h1,h2 {
+.side_box {
+  border: 2px solid #1B1B1B; 
+  box-shadow: 8px 8px 10px #474747; 
+  margin-top: 0.9rem;
+  margin-left: 2rem;
+  /* padding: 8px 12px; */
+  text-align:center;
+  height: 20rem;
+  width: 150px;
+  
+
+  font-family: 'Red Hat Display',Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+
+h1,h2,p {
   margin: 0;
 }
 h1,h2,h3,h4,h5,h6 {
-  color: #222;
+  /* color: #222; */
+  color: #222222;
   margin-bottom: 5px;
 }
 
@@ -73,23 +87,23 @@ h1 {
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 
 h3 {
-  font-size: 1.5rem;
-}
-
-h4 {
   font-size: 1.25rem;
 }
 
-h5 {
+h4 {
   font-size: 1.15rem;
 }
 
-h6 {
+h5 {
   font-size: 1.05rem;
+}
+
+h6 {
+  font-size: 1rem;
 }
 
 p {
@@ -106,13 +120,33 @@ p {
   max-width: 300px;
 }
 
+.description_par{
+  background: #c2e7c2;
+  /* border: 2px solid #1E691E;  */
+  border-radius: 15pt;
+  /* box-shadow: 8px 8px 10px #444444;   */
+  margin-top: 0.9rem;
+  margin-right: 2rem;
+  padding: 10% 2%;
+
+  height: 20rem;
+  width: 100%;
+  
+  display: flex; 
+
+  align-items: center;      /* vertical positioning  */
+  justify-content: center; /* horizontal positioning  */
+  font-family: 'Red Hat Display',Georgia, Cambria, 'Times New Roman', Times, serif;
+}
 .new-post-form .full-width-input {
   display: block;
   min-height: 3em;
   margin: 10px 0;
   width: 100%;
 }
-
+header {
+  text-align:center;
+}
 label {
   font-weight: bold;
 }
@@ -138,4 +172,27 @@ label {
 
 .author-link:active {
   color: #ff0000;
+}
+
+.small_pic{
+  height: 30%;
+  width: 30%;
+}
+.med_pic{
+  height: 40%;
+  width: 40%;
+}
+.large_pic{
+  height: 90%;
+  width: 90%;
+}
+
+highlight{
+  color: #ff0000;
+}
+
+.content_row {
+  display: flex;       /* horizontal layout */
+  gap: 2rem;           /* space between side_box and description_par */
+  align-items: flex-start;  /* align boxes at the top */
 }

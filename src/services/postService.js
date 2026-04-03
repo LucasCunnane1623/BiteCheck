@@ -1,6 +1,10 @@
 import { ObjectId } from "mongodb";
 import { getdb } from "../database/db.js"
 
+
+/**
+ * 
+ */
 export const getPosts = async (page = 1, limit = 10) => {
     const db = getdb();
     const skip = (page - 1)*limit;

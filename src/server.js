@@ -14,12 +14,14 @@ import { fileURLToPath } from 'url';
 
 
 // Import routes
-import restaurantRoutes from './routes/restaurantRoutes.js';
-import authRoutes from './routes/authRoutes.js';
-import postRoutes from './routes/postRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
+//import restaurantRoutes from './routes/restaurantRoutes.js';
+import authRoutes from './routes/authroutes/authRoutes.js';
+import postRoutes from './routes/postroutes/postRoutes.js';
+import userRoutes from './routes/userroutes/userRoutes.js';
+import adminRoutes from './routes/adminroutes/adminRoutes.js';
 import configRoutes from './routes/index.js'
+// Master Router -- handles all the logic wihout collisions
+import apirouter from './routes/index.js'
 
 //path variable setups
 const __filename = fileURLToPath(import.meta.url);
@@ -47,13 +49,7 @@ app.use(cors());            // allow cross-origin requests
 app.use(express.json()); // Parse JSON request bodies
 
 // api routes   
-app.use('/api/auth', authRoutes);
-app.use('/api/restaurants', restaurantRoutes);
-app.use('/api/posts', postRoutes)
-app.use('/api/users', userRoutes)
-app.use('/api/admin', adminRoutes)
-
-
+app.use('/api', apirouter);
 
 
 // background Sync function.
@@ -104,7 +100,7 @@ const handlebarsInstance = exphbs.create({
 app.engine('handlebars',handlebarsInstance.engine);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, './views'));
-configRoutes(app);
+app.use('/', configRoutes);
 //------------------------------------------------------------------------------
 
 const init = async () => {

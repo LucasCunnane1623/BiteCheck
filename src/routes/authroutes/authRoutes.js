@@ -1,6 +1,7 @@
 import express from 'express';
 import { registerUser, loginUser } from '../../services/authService.js';
 import xss from 'xss';
+import validation from "../../helpers.js";
 const router = express.Router();
 
 
@@ -35,37 +36,32 @@ router.route('/register')
 
     //Input Sanitization 
     try {
-        const { email, username, password, age } = req.body;
+        let { email,firstName,lastName, username, password, dateOfBirth } = req.body;
         //trim all inputs and check for any hidden scripts in input 
         email = email?.trim();
         username = username?.trim();
         password = password?.trim();
-        if(!email || !password || !username ){
+        console.log(`email:${email}`);
+        console.log(`password:${password}`);
+        console.log(`email:${email}`);
+        if(!email || !password || !username){
             return res.status(400).json({error: "All fields are required"});
         }
 
-        if (age !== undefined) {
-            age = parseInt(age);
-        }
-        if(!age){
-            return res.status(400).json({error: "The age provided is not a number"});
-        }
-
-
-
-
-        if (age && age < 13){
-            return res.status(403).json({
-                error: "Underage: You must be 13 or older to use BiteCheck."
-            })
-        }
+        /*CHECK HERE 
+        1. age is above 13
+        2. 
+        CHECK IN DATE FUNCTION
+        1. user with provided email/username does not already exist in the db (if either exists, throw a 404)
+        2. 
+        */
         
         //data method call (in authService)
         try {
             const userId = await registerUser(email, password, username);
         } catch (error) {
             return res.status(500).json({
-                error: "Server Error. Unable to register user."
+                error: `Server Error. Unable to register user. ${error}`
             });
         }
 
@@ -75,14 +71,18 @@ router.route('/register')
         //############# END TODO ######### 
 
         //redirect to login if the fields look good  
-        return res.status(201).redirect('/login');
+        return res.status(201).redirect('/api/auth/login');
     } catch (err) {
         next(err);
     }
 });
 
-
-
+/**
+ * @route GET /api/auth/login   
+ * @desc Display the Sign in Page
+ * @access All Non Authenticated Users
+ * @renders login 
+ */
 router.route('/login')
 .get(async (req, res, next) =>{
     //if the user is already logged in, they should never be allowed to see the signin or register page 

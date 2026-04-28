@@ -63,7 +63,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(morgan('dev')); // logging middleware
 app.use(cors());            // allow cross-origin requests
 app.use(express.json()); // Parse JSON request bodies
-
+app.use(express.urlencoded({ extended: true }));
 //we can also use this server debugger method to track exactly what routes cause issues 
 app.use(serverdebug);
 //public routes '/'  '/home'   

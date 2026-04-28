@@ -1,14 +1,5 @@
-// In this file, you must perform all client-side validation for every single form input (also the colorScheme & membershipLevel dropdown) on your pages.
-// The constraints for those fields are the same as they are for the data functions and routes.
-// Using client-side JS, you will intercept the form's submit event when the form is submitted and if there is an error in the member's input or they are missing fields, you will not allow the form to submit to the server and will display an error on the page to the member informing them of what was incorrect or missing.
-// You must do this for ALL fields for the signup form as well as the signin form.
-// If the form being submitted has all valid data, then you will allow it to submit to the server for processing.
-// Don't forget to check that password and confirm password match on the registration form!
 
-
-
-
-//helpers from helper js 
+//################ HELPER FUNCTION DECLARATIONS ####################
 
 function checkString(strVal, varName= "none") {
     if (!strVal) throw `Error: You must supply a ${varName}!`;
@@ -111,15 +102,14 @@ function CheckStringWithLength(str,minLength=0,maxLength=1){// make sure that fi
 }
 
 
-
-
+//################ FIND ELEMENTS IN THE DOM HERE  ####################
 let signupForm = document.getElementById('signup-form');
 let signinForm = document.getElementById('signin-form');
 let errorListSI = document.getElementById('ErrorListSignIn');
 let errorListSU = document.getElementById('ErrorListSignUp');
 
-
-
+//################ SIGNUP FORM CHECKING ####################
+console.log("SIGNUP FORM CLIENT SIDE CHECKING ACTIVE");
 //input validation for sign up form 
 if(signupForm){
     //#1. Gather all input values from the form 
@@ -134,9 +124,9 @@ if(signupForm){
         let firstName = document.getElementById('firstName').value.trim();
         let lastName = document.getElementById('lastName').value.trim();
         let username = document.getElementById('username').value.trim();
-        let password = document.getElementById('password').value;
-        let confirmPassword = document.getElementById('confirmPassword').value;
-
+        let password = document.getElementById('password').value.trim();
+        let confirmPassword = document.getElementById('confirmPassword').value.trim();
+        let dateOfBirth = document.getElementById('DOB').value;
 
 
         //input checking 
@@ -179,10 +169,40 @@ if(signupForm){
             errors.push("passwords do not match!");
         }
 
-        //ADD CHECKS FOR EMAIL 
-        
 
+        try{
+            checkString(email.trim());
+        }catch(error){
+            errors.push(`email not a string: ${error}`);
+        }
+        /*the expression says this:
+        1. the email must start with 1 or more (+) of these chars [A-Za-z0-9!#$&'*\/=?^`{}~]
+        2.after that, it follows the format of .validText.ValidText2. for 0 or more of them (*), if there is a dot, it must be followed by valid text([A-Za-z0-9!#$&'*\/=?^`{}~]+)
+        3. Must have 1 @ followed by or or more chars in this [A-Za-z0-9]
+        4. dots . must be escaped (learned the hard way via debugging) \.
+        5. email must end in one of the four big TLD's 
+        */
+        const emailRegex = /^[A-Za-z0-9!#$&'*\/=?^`{}~]+(\.[A-Za-z0-9!#$&'*\/=?^`{}~]+)*@[A-Za-z0-9-]+\.(com|org|gov|edu)$/;
+        if(!emailRegex.test(email)){
+            errors.push("email formatted incorrectly");
+        }
+        
+        const MIN_USER_AGE =13
+        let today = new Date();
+        const dobDate = new Date(dateOfBirth);
+
+        if (isNaN(dobDate.getTime())) {
+            errors.push("Invalid date of birth format");
+        }
+
+        //might have to consider leap years in the approach 
+        const minDate = new Date(today.getFullYear() - MIN_USER_AGE,today.getMonth(),today.getDate());
+        if (dobDate>minDate){ //user DOB is after the minimum age cutoff (ie. they are younger than the min age)
+            errors.push("Must be 13 years or older to use Bitecheck!");
+        }
+        
         //if no input errors (form is valid)
+        
         if(errors.length >0){
             errorListSU.hidden = false;
             for (let err of errors) {
@@ -197,6 +217,9 @@ if(signupForm){
         }
     });
 }
+
+
+//################ SIGN-IN FORM CHECKING ####################
 
 //input validation for sign in form 
 if(signinForm){

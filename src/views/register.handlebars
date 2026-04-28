@@ -1,0 +1,42 @@
+<h1 id="h1_big"> Sign Up </h1>
+
+<form method="POST" name="signup-form" action="/api/auth/register" id="signup-form">
+
+<label for="firstName">Enter First Name </label>
+<input type="text" name="firstName" id="firstName" /> <br>
+
+<label for="lastName">Enter Last Name </label>
+<input type="text" name="lastName" id="lastName" /> <br>
+
+<label for="email">Enter Email </label>
+<input type="text" name="email" id="email" /> <br>
+
+<label for="username"> Enter a Username </label>
+<input type="text" name="username" id="username" /> <br>
+
+<label for="DOB"> Select Your Date of Birth </label>
+<input type="date" name="DOB" id="DOB" /> <br>
+
+
+<label for="password"> Enter a Password </label>
+<input type="password" name="password" id="password" /> <br>
+
+<label for="confirmPassword"> Confirm Password </label>
+<input type="password" name="confirmPassword" id="confirmPassword" /> <br>
+
+<br>
+<button name="submitButton" id="submitButton">Create</button> <br>
+</form>
+
+<ul id="ErrorListSignUp" hidden></ul>
+
+{{!-- Server Errors Show up here --}}
+{{#if error}}
+<p class="errorP">{{error}}</p>
+{{/if}}
+
+<div class="mid-link">
+  <a href="/api/auth/login">Already have an account? Click here to log in</a> 
+</div>
+<br>
+

@@ -3,7 +3,6 @@ import authRoutes from './authroutes/authRoutes.js';
 import adminRoutes from './adminroutes/adminRoutes.js';
 import userRoutes from './userroutes/userRoutes.js';
 import postRoutes from './postroutes/postRoutes.js';
-import landingRoutes from "./landingRoutes.js";
 
 // sub-routes for restaurant domain
 import discoveryRoutes from './restaurant/discovery.routes.js';
@@ -16,7 +15,6 @@ router.use('/auth', authRoutes);
 router.use('/admin', adminRoutes);
 router.use('/users', userRoutes);
 router.use('/posts', postRoutes);
-router.use('/', landingRoutes);
 
 
 //restaurant Routes (order-critical)

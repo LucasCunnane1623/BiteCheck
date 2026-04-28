@@ -1,9 +1,26 @@
 import express from 'express';
 import { registerUser, loginUser } from '../../services/authService.js';
-
+import xss from 'xss';
 const router = express.Router();
 
 
+router.route('/register')
+/**
+ * @route GET /api/auth/register   
+ * @desc Register Page 
+ * @access Non Authenticated (signed in) users
+ */
+.get(async (req, res, next) => {
+    //if the user is already logged in, they should never be allowed to see the signin or register page 
+    if(req.session.member){
+        return res.status(302).redirect('/home');
+    }
+    return res.status(200).render('register',
+        {
+            title: "BiteCheck: Register"
+        }
+    );
+})
 /**
  * @route POST /api/auth/register   
  * @desc Register a new user
@@ -14,13 +31,28 @@ const router = express.Router();
  * @body {number} age - User's age (optional, must be 13 or older to register)
  * @returns {Object} Confirmation message with the ID of the newly registered user.
  */
-router.post('/register', async (req, res, next) => {
+.post( async (req, res, next) => {
+
+    //Input Sanitization 
     try {
         const { email, username, password, age } = req.body;
-        
-        if(!email || !password || !username){
+        //trim all inputs and check for any hidden scripts in input 
+        email = email?.trim();
+        username = username?.trim();
+        password = password?.trim();
+        if(!email || !password || !username ){
             return res.status(400).json({error: "All fields are required"});
         }
+
+        if (age !== undefined) {
+            age = parseInt(age);
+        }
+        if(!age){
+            return res.status(400).json({error: "The age provided is not a number"});
+        }
+
+
+
 
         if (age && age < 13){
             return res.status(403).json({
@@ -28,14 +60,41 @@ router.post('/register', async (req, res, next) => {
             })
         }
         
-        const userId = await registerUser(email, password, username);
-        res.status(201).json({ message: "User registered successfully", userId });
-        //return res.status(201).render();
+        //data method call (in authService)
+        try {
+            const userId = await registerUser(email, password, username);
+        } catch (error) {
+            return res.status(500).json({
+                error: "Server Error. Unable to register user."
+            });
+        }
+
+        //######### TODO: CREATE SESSION MEMBER COOKIE HERE #####
+        
+        
+        //############# END TODO ######### 
+
+        //redirect to login if the fields look good  
+        return res.status(201).redirect('/login');
     } catch (err) {
         next(err);
     }
 });
 
+
+
+router.route('/login')
+.get(async (req, res, next) =>{
+    //if the user is already logged in, they should never be allowed to see the signin or register page 
+    if(req.session.member){
+        return res.redirect('/home');
+    }
+    return res.render('login',
+        {
+            title: "BiteCheck: Login"
+        } 
+    );
+})
 
 /**
  * @route POST /api/auth/login
@@ -45,15 +104,24 @@ router.post('/register', async (req, res, next) => {
  * @body {string} password - Users password (required)
  * @returns {Object} Confirmation message with the JWT token and user information.
  */
-router.post('/login', async (req, res, next) => {
+.post( async (req, res, next) => {
     try {
         const { email, password} = req.body;
-        
+        email = xss(email.trim());
+        password = xss(password.trim());
+
         if (!email || !password){
             return res.status(400).json({error: "Email and password required"})
         };
-        const result = await loginUser(email, password);
-        const {token, username, isAdmin} = result
+
+        try {
+            const result = await loginUser(email, password);
+            const {token, username, isAdmin} = result
+        } catch (error) {
+            return res.status(500).json({
+                error: "Server Error. Unable to login User"
+            });
+        }
         res.status(200)
             .json({
             message: "Login Successful",

@@ -1,0 +1,31 @@
+
+<h1 id="appTitle"> Log In </h1>
+
+<form method="POST" action="/api/auth/login" id="signin-form">
+<label for="handle"> Enter an Email </label>
+<input type="text" name="handle" id="handle" />
+<br>
+<label for="password"> Enter a Password </label>
+<input type="password" name="password" id="password" />
+<br>
+<button name="submit_button" id="submit_button">Submit</button>
+</form>
+
+<ul id="ErrorListSignIn" hidden>
+
+</ul>
+
+<div class="mid-link">
+  <a href="/api/auth/register">Dont have an account? Click here to signup!</a>
+</div>
+
+<div class="mid-link">
+  <a href="/">Back to Home</a>
+</div>
+
+
+
+{{!-- Server Errors Show up here --}}
+{{#if error}}
+<p class="errorP">{{error}}</p>
+{{/if}}

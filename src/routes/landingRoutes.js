@@ -1,17 +1,20 @@
 import { Router } from "express";
+import {redirectToLanding, authenticate} from "../middleware/auth.js"
 const router = Router();
-//this router is purely for displaying html 
 
 /**
- * @route GET /home
+ * @route GET /
  * @desc Displays the landing page HTML 
  * @access Public (all users)
  * @body none 
  * @returns none
  * @example
- * GET /home
+ * GET /
  */
-router.get('/', async (req, res)=>{
+
+
+router.route('/')
+.get(async (req, res)=>{
     return res.render('landing',{
         title: "BiteCheck: Welcome",
         header: "Welcome To Bitecheck!",
@@ -19,4 +22,23 @@ router.get('/', async (req, res)=>{
     });
 });
 
+
+/**
+ * @route GET /home
+ * @desc Displays the home page HTML 
+ * @access Public (all users)
+ * @body none 
+ * @returns none
+ * @example
+ * GET /home
+ */
+router.route('/home',authenticate)
+.get(
+async (req, res)=>{
+    return res.render('home',{
+        title: "BiteCheck: Home",
+        header: "HomePage ",
+        body: "This is the body for the homepage"
+    });
+});
 export default router;

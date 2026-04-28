@@ -2,8 +2,59 @@ import { ObjectId } from 'mongodb';
 import { getdb } from '../database/db.js';
 import jwt from 'jsonwebtoken';
 
+
+
+export const redirectToLanding = (req, res, next) => {
+     if (!req.session.member){//if the user does not have a cookie yet and tries to access /home , redirect to landing 
+        return res.redirect('/');
+     }   
+     next();
+}
+
+//When in doubt, use this method as middleware to send a user to login
+export const redirectToLogin = (req, res, next) => {
+        if (!req.session.member){//if the user tries to access any routes that they must be signed in to use, use this as middleware
+            return res.redirect('/login');
+        }
+     next();
+}
+
+
+
+// // #3.) GET /register middleware 
+// app.use('/register', (req, res, next) => {
+//      if(req.method !== "GET"){ //must be a GET method for this check to run
+//           next();
+//           return;
+//      }
+//      if (req.session.member){
+//           if(req.session.member.membershipLevel === "manager"){
+//                 return res.redirect('/manager');
+//           }else if(req.session.member.membershipLevel === "member"){
+//                return res.redirect('/member');
+//           }
+//      }   
+//      next();
+// });
+//This method just outputs all actions to track users pages (could send to PostHog in the future?)
+export const serverdebug = (req,res,next)=>{
+    const dateString = new Date().toUTCString();
+    const reqMethodString = req.method;
+    const reqPathString = req.path;
+    let authString = req.session.member ?  "(Logged In)":"(Not Logged In)" ;
+    let outputString = `[${dateString}]: ${reqMethodString} ${reqPathString} ${authString}`;
+    console.log(outputString);
+    next();
+}
+
+
 export const authenticate = (req, res, next) => {
     const authHeader = req.headers.authorization;
+
+    if (!req.session.member){//if the user tries to access any routes that they must be signed in to use, use this as middleware 
+        return res.redirect('/signin');
+    }   
+    
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ error: "Access Denied, no token provided"})

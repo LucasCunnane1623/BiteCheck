@@ -24,7 +24,8 @@ export const createPost = async (userId, content) => {
         content, 
         likes: [],   // this array will store the userid so no users can make multiple likes (broken system/feature)
         dislikes: [], // same as above
-        comments: [], // $push , for when we new comments need to be pushed.
+        // comments will be in the form {userId:"fwef0w8gw82j3", comment:"cool post!"}
+        comments: [], // $push , for when we new comments need to be pushed. 
         createdOn: new Date()
     });
 };

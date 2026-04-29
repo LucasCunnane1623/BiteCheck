@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="icon" href="/favicon2.ico" type="image/x-icon">  {{!-- Fav Icon for the tab --}}
     <link href="https://fonts.cdnfonts.com/css/red-hat-display" rel="stylesheet"> {{!-- This is the font we use on the slides (REd Hat Display), so I figured we'd use it --}}
+    {{#if isMapPage}}
+        <link rel="stylesheet" href="/css/map.css">
+        <script src="https://cdn.jsdelivr.net/npm/handlebars/dist/handlebars.min.js"></script>
+    {{/if}}
 </head>
 
 <body>
@@ -19,5 +23,13 @@
         {{{body}}}
     </main>
     <script type="module" src="/js/form_validate.js"></script>
+
+    {{#if isMapPage}}
+        <script src="https://maps.googleapis.com/maps/api/js?key={{googleMapsApiKey}}&callback=initMap" async defer></script> {{!-- Google Maps API key needed in env --}}
+        <script src="/js/map.js"></script>
+        <script src="/js/modals.js"></script>
+        <script src="/js/search.js"></script>
+        <script src="/js/filters.js"></script>
+    {{/if}}
 </body>
 </html>

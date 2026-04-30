@@ -139,3 +139,23 @@
     cursor: pointer;
     line-height: 1;
 }
+
+/* Score badge */
+.score-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 15pt;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+.score-green { 
+    background: #22c55e; 
+}
+.score-yellow { 
+    background: #eab308; color: #1B1B1B; 
+}
+.score-red { background: #ef4444; 
+}

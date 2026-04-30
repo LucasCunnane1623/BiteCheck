@@ -76,9 +76,13 @@
     transition: background 0.2s;
 }
 
-.filter-btn.active,
+.filter-btn.active { 
+    background: #50A350;
+    color: #fff; 
+}
 .filter-btn:hover { 
-    background: #50A350; color: #fff; 
+    background: #50A350;
+    color: #fff; 
 }
 
 /* Map container */
@@ -155,9 +159,11 @@
     background: #22c55e; 
 }
 .score-yellow { 
-    background: #eab308; color: #1B1B1B; 
+    background: #eab308; 
+    color: #1B1B1B; 
 }
-.score-red { background: #ef4444; 
+.score-red { 
+    background: #ef4444; 
 }
 
 /* Modal sections */
@@ -176,7 +182,9 @@
     margin-bottom: 0.4rem; 
 }
 
-.modal-comments { margin-top: 1rem; }
+.modal-comments { 
+    margin-top: 1rem; 
+}
 
 .comment {
     background: #c2e7c2;
@@ -190,5 +198,65 @@
     font-weight: bold; 
 }
 .comment-date { 
-    font-size: 0.85rem; color: #555; 
+    font-size: 0.85rem;
+    color: #555; 
+}
+
+/* Logs layout */
+.logs-layout {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    height: 400px;
+}
+
+.logs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 220px;
+    overflow-y: auto;
+    border-right: 1px solid #afafaf;
+    flex-shrink: 0;
+}
+
+.log-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.9rem;
+}
+
+.log-item:hover { 
+    background: #c2e7c2;
+    border-radius: 8pt; 
+}
+.log-item.active { 
+    background: #c2e7c2;
+    border-radius: 8pt; 
+}
+
+.log-report {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 0.5rem;
+}
+
+.log-placeholder { 
+    color: #777; font-style: italic; 
+}
+
+.violation {
+    background: #fff;
+    border: 1px solid #1B1B1B;
+    border-radius: 8pt;
+    padding: 8px 12px;
+    margin-bottom: 0.5rem;
+}
+
+.violation-type { 
+    font-weight: bold; color: #ef4444; 
 }

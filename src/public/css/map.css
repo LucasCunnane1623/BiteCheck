@@ -77,7 +77,7 @@
 }
 
 .filter-btn.active,
-.filter-btn:hover  { 
+.filter-btn:hover { 
     background: #50A350; color: #fff; 
 }
 
@@ -158,4 +158,37 @@
     background: #eab308; color: #1B1B1B; 
 }
 .score-red { background: #ef4444; 
+}
+
+/* Modal sections */
+.modal-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #afafaf;
+    padding-bottom: 0.5rem;
+}
+
+.modal-body p { 
+    margin-bottom: 0.4rem; 
+}
+.modal-comments p { 
+    margin-bottom: 0.4rem; 
+}
+
+.modal-comments { margin-top: 1rem; }
+
+.comment {
+    background: #c2e7c2;
+    border-radius: 10pt;
+    padding: 8px 12px;
+    margin-bottom: 0.5rem;
+    border: 1px solid #1B1B1B;
+}
+
+.comment-author { 
+    font-weight: bold; 
+}
+.comment-date { 
+    font-size: 0.85rem; color: #555; 
 }

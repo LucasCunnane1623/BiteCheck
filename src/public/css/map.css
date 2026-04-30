@@ -40,7 +40,9 @@
     overflow-y: auto;
 }
 
-#search-results.hidden { display: none; }
+#search-results.hidden { 
+    display: none; 
+}
 
 .search-result-item {
     padding: 10px 14px;
@@ -52,4 +54,29 @@
     font-family: 'Red Hat Display', Georgia, serif;
 }
 
-.search-result-item:hover { background: #c2e7c2; }
+.search-result-item:hover { 
+    background: #c2e7c2; 
+}
+
+/* Traffic light filter */
+#traffic-filter {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 2px solid #1B1B1B;
+    border-radius: 15pt;
+    font-family: 'Red Hat Display', Georgia, serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: #ECECEC;
+    box-shadow: 4px 4px 6px #474747;
+    transition: background 0.2s;
+}
+
+.filter-btn.active,
+.filter-btn:hover  { 
+    background: #50A350; color: #fff; 
+}

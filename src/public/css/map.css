@@ -80,3 +80,13 @@
 .filter-btn:hover  { 
     background: #50A350; color: #fff; 
 }
+
+/* Map container */
+#map-container {
+    width: 100%;
+    height: 550px;
+    border: 2px solid #1B1B1B;
+    border-radius: 15pt;
+    box-shadow: 8px 8px 10px #474747;
+    overflow: hidden;
+}

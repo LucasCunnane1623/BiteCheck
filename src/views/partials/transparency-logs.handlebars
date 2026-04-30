@@ -1,0 +1,20 @@
+<div class="modal modal-wide" id="logs-modal">
+    <button class="modal-close" id="close-logs">✕</button>
+    <h2>Transparency Logs — {{name}}</h2>
+
+    <div class="logs-layout">
+        <ul class="logs-list">
+            {{#each inspections}}
+                <li class="log-item" data-index="{{@index}}">
+                    <span class="log-date">{{this.date}}</span>
+                    <span class="log-inspector">{{this.inspectorName}}</span>
+                    <span class="log-count">{{this.violations.length}} violation(s)</span>
+                </li>
+            {{/each}}
+        </ul>
+
+        <div class="log-report" id="log-report">
+            <p class="log-placeholder">Select an inspection to view the full report.</p>
+        </div>
+    </div>
+</div>

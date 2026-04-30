@@ -246,7 +246,8 @@
 }
 
 .log-placeholder { 
-    color: #777; font-style: italic; 
+    color: #777; 
+    font-style: italic; 
 }
 
 .violation {
@@ -258,5 +259,27 @@
 }
 
 .violation-type { 
-    font-weight: bold; color: #ef4444; 
+    font-weight: bold; 
+    color: #ef4444; 
+}
+
+/* Logs button */
+.btn-logs {
+    margin-top: 1.5rem;
+    display: block;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    background: #50A350;
+    color: #fff;
+    border: 2px solid #1B1B1B;
+    border-radius: 15pt;
+    padding: 10px;
+    font-family: 'Red Hat Display', Georgia, serif;
+    font-size: 1rem;
+    box-shadow: 4px 4px 6px #474747;
+}
+
+.btn-logs:hover { 
+    background: #3d7d3d; 
 }

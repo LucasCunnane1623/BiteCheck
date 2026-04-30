@@ -105,3 +105,37 @@
 .modal-overlay.hidden { 
     display: none; 
 }
+
+/* Modal box */
+.modal {
+    background: #ECECEC;
+    border: 2px solid #1B1B1B;
+    border-radius: 15pt;
+    box-shadow: 8px 8px 10px #474747;
+    padding: 2rem;
+    width: 480px;
+    max-width: 95vw;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    font-family: 'Red Hat Display', Georgia, serif;
+}
+
+.modal-wide { 
+    width: 780px; 
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    cursor: pointer;
+    line-height: 1;
+}

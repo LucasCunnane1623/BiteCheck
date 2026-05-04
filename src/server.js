@@ -58,6 +58,7 @@ app.use(limiter);
 
 //Static Routes
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/partials', express.static(path.join(__dirname, 'views/partials')));
 
 // Global middleware
 app.use(morgan('dev')); // logging middleware

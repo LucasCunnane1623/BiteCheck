@@ -1,0 +1,24 @@
+<div class="header_box" style="margin-bottom: 1rem;">
+    <h1>BiteCheck Map</h1>
+</div>
+
+<div id="map-page">
+
+    <div id="map-controls">
+        <input type="text" id="search-input" placeholder="Search restaurants..." autocomplete="off" />
+        <div id="search-results" class="hidden"></div>
+
+        <div id="traffic-filter">
+            <button class="filter-btn active" data-color="all">All</button>
+            <button class="filter-btn green" data-color="green">Green</button>
+            <button class="filter-btn yellow" data-color="yellow">Yellow</button>
+            <button class="filter-btn red" data-color="red">Red</button>
+        </div>
+    </div>
+
+    <div id="map-container"></div>
+
+    <div id="details-modal-container" class="modal-overlay hidden"></div>
+    <div id="logs-modal-container" class="modal-overlay hidden"></div>
+
+</div>

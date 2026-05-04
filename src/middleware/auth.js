@@ -3,7 +3,11 @@ import { getdb } from '../database/db.js';
 import jwt from 'jsonwebtoken';
 
 
-
+export const setupMessaging = (req,res,next) => {
+    res.locals.message = req.session.message; //this makes session.message available to all handlebars without having to pass it into a render call
+    req.session.message = null; // clear after reading 
+    next();
+}
 export const redirectToLanding = (req, res, next) => {
      if (!req.session.member){//if the user does not have a cookie yet and tries to access /home , redirect to landing 
         return res.redirect('/');
@@ -19,23 +23,6 @@ export const redirectToLogin = (req, res, next) => {
      next();
 }
 
-
-
-// // #3.) GET /register middleware 
-// app.use('/register', (req, res, next) => {
-//      if(req.method !== "GET"){ //must be a GET method for this check to run
-//           next();
-//           return;
-//      }
-//      if (req.session.member){
-//           if(req.session.member.membershipLevel === "manager"){
-//                 return res.redirect('/manager');
-//           }else if(req.session.member.membershipLevel === "member"){
-//                return res.redirect('/member');
-//           }
-//      }   
-//      next();
-// });
 //This method just outputs all actions to track users pages (could send to PostHog in the future?)
 export const serverdebug = (req,res,next)=>{
     const dateString = new Date().toUTCString();
@@ -54,8 +41,6 @@ export const authenticate = (req, res, next) => {
     if (!req.session.member){//if the user tries to access any routes that they must be signed in to use, use this as middleware 
         return res.redirect('/signin');
     }   
-    
-
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ error: "Access Denied, no token provided"})
     }

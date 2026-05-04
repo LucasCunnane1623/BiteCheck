@@ -7,7 +7,7 @@ export const registerUser = async (email, password, username, age) => {
     const db = getdb();
     const collection = db.collection('users');
     const existingUser = await collection.findOne({
-        email
+        email : {$regex : new RegExp(`^${email}$`,"i")}//case insensitive email 
     });
     
     if (existingUser) {

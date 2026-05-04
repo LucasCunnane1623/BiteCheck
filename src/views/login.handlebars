@@ -2,8 +2,8 @@
 <h1 id="appTitle"> Log In </h1>
 
 <form method="POST" action="/api/auth/login" id="signin-form">
-<label for="handle"> Enter an Email </label>
-<input type="text" name="handle" id="handle" />
+<label for="email"> Enter an Email </label>
+<input type="text" name="email" id="email" />
 <br>
 <label for="password"> Enter a Password </label>
 <input type="password" name="password" id="password" />
@@ -29,3 +29,6 @@
 {{#if error}}
 <p class="errorP">{{error}}</p>
 {{/if}}
+
+
+

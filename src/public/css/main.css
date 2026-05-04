@@ -111,6 +111,20 @@ p {
   line-height: 2;
 }
 
+.response-message{
+  color: #94ea37;
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  animation: fadeOut 4s forwards;
+}
+
+/* this is the manual keyframe setup i use for flashing a message */
+@keyframes fadeOut {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
 .post {
   width: 75%;
   border-bottom: 1px dashed #333;
@@ -195,4 +209,7 @@ highlight{
   display: flex;       /* horizontal layout */
   gap: 2rem;           /* space between side_box and description_par */
   align-items: flex-start;  /* align boxes at the top */
+}
+ul {
+  list-style-type: none;
 }

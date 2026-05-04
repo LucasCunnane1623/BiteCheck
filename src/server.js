@@ -13,7 +13,7 @@ import { connect } from './database/db.js';
 import { syncRestaurants } from './services/dataSync.js';
 import { errorHandler } from './middleware/errorhandler.js';
 import { fileURLToPath } from 'url';
-import { serverdebug } from './middleware/auth.js';
+import { serverdebug,setupMessaging} from './middleware/auth.js';
 import landingRoutes from "./routes/landingRoutes.js";
 
 
@@ -66,6 +66,8 @@ app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true }));
 //we can also use this server debugger method to track exactly what routes cause issues 
 app.use(serverdebug);
+//we can use this messaging middleware to set a global message that we can flash upon hitting a route correctly
+app.use(setupMessaging)
 //public routes '/'  '/home'   
 app.use("/",landingRoutes);
 // api routes   
@@ -125,7 +127,6 @@ const init = async () => {
         // connect to the database
         await connect();
         console.log("Connected to database successfully.");
-        
         // start the server
         app.listen(settings.server.port, () => {
             console.log(`BiteCheck running: http://localhost:${settings.server.port}`);

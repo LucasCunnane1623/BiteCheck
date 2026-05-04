@@ -19,5 +19,11 @@
         {{{body}}}
     </main>
     <script type="module" src="/js/form_validate.js"></script>
+
+    {{!-- show any response messages here --}}
+    {{#if message}}
+    <p class="response-message">{{message}}</p>
+    {{/if}}
+
 </body>
 </html>

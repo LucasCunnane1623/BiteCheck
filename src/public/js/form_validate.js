@@ -119,6 +119,7 @@ if(signupForm){
         errorListSU.innerHTML = '' //clear the old errors from last failed submission
         let errors = [];
 
+
         // Get our inputs
         let email = document.getElementById('email').value.trim();
         let firstName = document.getElementById('firstName').value.trim();
@@ -126,7 +127,7 @@ if(signupForm){
         let username = document.getElementById('username').value.trim();
         let password = document.getElementById('password').value.trim();
         let confirmPassword = document.getElementById('confirmPassword').value.trim();
-        let dateOfBirth = document.getElementById('DOB').value;
+        let dateOfBirth = document.getElementById('dateOfBirth').value;
 
 
         //input checking 
@@ -232,27 +233,25 @@ if(signinForm){
 
         // Get our inputs
 
-        let handle = document.getElementById('handle').value.trim();
+        let email = document.getElementById('email').value.trim();
         let password = document.getElementById('password').value;
 
         //input checking 
         //if element is bad append child to the error list 
 
-
-        try{
-            handle = CheckHandle(handle.trim().toLowerCase());
-        }catch(error){
-           errors.push(`Handle or Password is invalid`);
+        const emailRegex = /^[A-Za-z0-9!#$&'*\/=?^`{}~]+(\.[A-Za-z0-9!#$&'*\/=?^`{}~]+)*@[A-Za-z0-9-]+\.(com|org|gov|edu)$/;
+        if(!emailRegex.test(email)){
+            errors.push("email formatted incorrectly");
         }
 
         let isValidPassword = false;
         try{
             isValidPassword =CheckPassword(password.trim());
         }catch(error){
-            errors.push(`Handle or Password is invalid`);
+            errors.push(`Email or Password is invalid`);
         }
         if(!isValidPassword){
-            errors.push(`Handle or Password is invalid`);
+            errors.push(`Email or Password is invalid`);
         }
 
 

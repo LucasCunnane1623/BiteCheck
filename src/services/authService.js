@@ -53,5 +53,5 @@ export const loginUser = async (email, password) => {
         { expiresIn: '7d' }
     )
 
-    return {token, username: user.username, isAdmin: user.isAdmin};
+    return {token, username: user.username, isAdmin: user.isAdmin,userId: user._id};
 }

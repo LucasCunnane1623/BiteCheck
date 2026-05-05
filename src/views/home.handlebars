@@ -11,17 +11,24 @@
     </div>
 </div>
 
-<a href="/api/auth/logout"> 
-    <div class="info_box">
-        <h2>Sign Out</h2>
-    </div>
-</a>
+<div class="button-grid">
+    <a href="/api/users/profile" class="info_box"  data-token="{{member.token}}" id="profileLink" > 
+        <h2>View Profile</h2> 
+    </a>
+    
 
-<div class="info_box">
-    <h2>Homepage</h2>
+    <a href="/map" class="info_box"> {{! will definitely have to change this route call eventually }}
+        <h2>Live Safety Map </h2>
+    </a>
+    
+
+    <a href="/friends" class="info_box"> 
+        <h2>Friends</h2>
+    </a>
+
+    <a href="/communitypulse" class="info_box"> 
+        <h2>Community Pulse</h2>
+    </a>
+
 </div>
-
-
-
-
 

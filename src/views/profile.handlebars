@@ -1,0 +1,31 @@
+<h1 id="h1_big"> {{username}}'s Profile </h1>
+<div class="profile_info">
+    <p><b>Email:</b> {{email}}</p>
+    <p><b>Age:</b> {{age}}</p>
+    <h2>Recent Posts</h2>
+    <ul>
+        {{#each recentPosts}}
+            <li>{{this}}</li>
+        {{/each}}
+    </ul>
+    <h2>Recent Reviews</h2>
+    <ul>
+        {{#each recentReviews}}
+            <li>{{this}}</li>
+        {{/each}}
+    </ul>
+</div>
+
+
+<div class="button-grid">
+<a href="/home" class="info_box"> 
+    <h2>Return To Home</h2>
+</a>
+<a href="/api/users/" class="info_box"> 
+    <h2>Edit Profile</h2>
+</a> 
+<a href="/api/auth/logout" class="info_box"> 
+    <h2>Sign Out</h2>
+</a> 
+
+</div>

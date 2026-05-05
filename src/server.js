@@ -41,7 +41,7 @@ app.use(
     secret: "This is a secret.. shhh don't tell anyone",
     saveUninitialized: false,
     resave: false,
-    cookie: {maxAge: 60000}
+    cookie: {maxAge: 1000 * 60 * 60}
   })
 );
 
@@ -68,9 +68,9 @@ app.use(express.urlencoded({ extended: true }));
 //we can also use this server debugger method to track exactly what routes cause issues 
 app.use(serverdebug);
 //we can use this messaging middleware to set a global message that we can flash upon hitting a route correctly
-app.use(setupMessaging)
+app.use(setupMessaging);
 //public routes '/'  '/home'   
-app.use("/",landingRoutes);
+app.use("/",landingRoutes);      
 // api routes   
 app.use('/api', apirouter);
 

@@ -40,24 +40,7 @@ This is the class used by most divs right now
   justify-content: center; /* horizontal positioning  */
   font-family: 'Red Hat Display',Georgia, Cambria, 'Times New Roman', Times, serif;
 }
-.info_box {
-  background: #91e291;
-  border: 2px solid #1B1B1B; 
-  border-radius: 15pt;
-  box-shadow: 8px 8px 10px #474747; 
-  margin-top: 1in;
-  margin-left: 2rem;
-  padding: 8px 12px;
 
-  height: 60px;
-  width: 300px;
-  
-  display: flex; 
-
-  align-items: center;      /* vertical positioning  */
-  justify-content: center; /* horizontal positioning  */
-  font-family: 'Red Hat Display',Georgia, Cambria, 'Times New Roman', Times, serif;
-}
 
 .side_box {
   border: 2px solid #1B1B1B; 
@@ -134,23 +117,26 @@ p {
   max-width: 300px;
 }
 
-.description_par{
+.description_par {
   background: #c2e7c2;
-  /* border: 2px solid #1E691E;  */
   border-radius: 15pt;
-  /* box-shadow: 8px 8px 10px #444444;   */
   margin-top: 0.9rem;
   margin-right: 2rem;
-  padding: 10% 2%;
 
   height: 20rem;
   width: 100%;
-  
-  display: flex; 
 
-  align-items: center;      /* vertical positioning  */
-  justify-content: center; /* horizontal positioning  */
-  font-family: 'Red Hat Display',Georgia, Cambria, 'Times New Roman', Times, serif;
+  padding: 1rem;
+
+  font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+  font-family: 'Red Hat Display', Georgia, Cambria, 'Times New Roman', Times, serif;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  display: block;
+
+  text-align: left;
 }
 .new-post-form .full-width-input {
   display: block;
@@ -212,4 +198,42 @@ highlight{
 }
 ul {
   list-style-type: none;
+}
+
+
+
+/* ------------ For clickable buttons with text ------------------ */
+
+.info_box {
+  background: #91e291;
+  border: 2px solid #1B1B1B; 
+  border-radius: 15pt;
+  box-shadow: 8px 8px 10px #474747; 
+  margin: 0;
+  padding: 8px 12px;
+
+  min-height: 60px;
+  
+  display: flex; 
+
+  align-items: center;      /* vertical positioning  */
+  justify-content: center; /* horizontal positioning  */
+  font-family: 'Red Hat Display',Georgia, Cambria, 'Times New Roman', Times, serif;
+  
+  flex: 1 1 calc(33.33% - 2rem); /* 3 per row */
+  max-width: 300px;              /* keeps your size constraint */
+  text-decoration: none;
+  color: inherit;
+}
+/* transition: background 0.2s ease, transform 0.1s ease; */
+.info_box:hover {
+  background: #a8f0a8; /* slightly lighter green */
+  cursor: pointer;
+}
+
+.button-grid {
+  display: flex; 
+  flex-wrap: wrap;      /* allows wrapping for buttons */
+  gap: 2rem;
+  margin-top: 2rem;
 }

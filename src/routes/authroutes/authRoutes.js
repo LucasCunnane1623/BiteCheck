@@ -100,10 +100,10 @@ router.route('/register')
             });
         }
 
-
+        const age = today.getFullYear() - DOB.getFullYear();
         //data method call (in authService)
         try {
-            const userId = await registerUser(email, password, username);
+            const userId = await registerUser(email, password, username,age);
         } catch (error) {
             return res.status(409).render("error",{
                 statusCode :409,
@@ -111,9 +111,6 @@ router.route('/register')
                 lastPageRoute: "/api/auth/register"
             });
         }
-
-
-
         //redirect to login if the fields look good  
         req.session.message = "User Registered Successfully!";
         return res.status(201).redirect('/api/auth/login');

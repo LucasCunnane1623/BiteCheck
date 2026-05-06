@@ -1,7 +1,33 @@
 <h1 id="h1_big"> {{username}}'s Profile </h1>
 <div class="profile_info">
+    <p><b>Profile Photo:</b> {{profilePhoto}}</p>
+
+    {{#if profilePhoto}}
+    <img src="{{profilePhoto}}" alt="{{username}}'s profile photo" class="profile-photo">
+    {{else}}
+    <p>No profile photo uploaded.</p>
+    {{/if}}
+
+    <p><b>First Name:</b> {{firstName}}</p>
+    
+    <p><b>Last Name:</b> {{lastName}}</p>
+
+    <p><b>Status:</b> {{status}}</p>
+
+    <p><b>App Search Radius:</b> {{appSearchRadiusMeters}} meters</p>
+
+    <p><b>Favorite Restaurants:</b> 
+    {{#if favRestaurants}}
+        {{#each favRestaurants}}
+            <li>{{this}}</li>  
+        {{/each}}
+    {{else}}No favorite restaurants yet.
+    {{/if}}</p>
+{{!-- these are the NON editable fields of the users profile (ie. they can't be changed from a form submission) --}}
+    <p><b>Age Upon Registration:</b> {{age}}</p>
+
     <p><b>Email:</b> {{email}}</p>
-    <p><b>Age:</b> {{age}}</p>
+    
     <h2>Recent Posts</h2>
     <ul>
         {{#each recentPosts}}
@@ -21,7 +47,7 @@
 <a href="/home" class="info_box"> 
     <h2>Return To Home</h2>
 </a>
-<a href="/api/users/" class="info_box"> 
+<a href="/api/users/profile/edit" class="info_box"> 
     <h2>Edit Profile</h2>
 </a> 
 <a href="/api/auth/logout" class="info_box"> 

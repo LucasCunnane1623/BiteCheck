@@ -174,18 +174,7 @@ label {
   color: #ff0000;
 }
 
-.small_pic{
-  height: 30%;
-  width: 30%;
-}
-.med_pic{
-  height: 40%;
-  width: 40%;
-}
-.large_pic{
-  height: 90%;
-  width: 90%;
-}
+
 
 highlight{
   color: #ff0000;
@@ -202,7 +191,7 @@ ul {
 
 
 
-/* ------------ For clickable buttons with text ------------------ */
+/* ------------------ For clickable buttons with text ------------------ */
 
 .info_box {
   background: #91e291;
@@ -236,4 +225,24 @@ ul {
   flex-wrap: wrap;      /* allows wrapping for buttons */
   gap: 2rem;
   margin-top: 2rem;
+}
+/* ------------------ Photos and images ------------------ */
+.profile-photo {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.small_pic{
+  height: 30%;
+  width: 30%;
+}
+.med_pic{
+  height: 40%;
+  width: 40%;
+}
+.large_pic{
+  height: 90%;
+  width: 90%;
 }

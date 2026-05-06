@@ -1,45 +1,62 @@
+<section class="landing-page">
+    <section class="landing-hero">
+        <div class="landing-hero-text">
+            <p class="eyebrow">Public health dining transparency</p>
+            <h1>{{header}}</h1>
+            <p>
+                Search restaurant inspection information and make safer dining choices
+                before deciding where to eat.
+            </p>
 
+            <div class="landing-buttons">
+                <a href="/api/auth/register" class="primary-btn landing-btn">Get Started</a>
+                <a href="/api/auth/login" class="secondary-btn landing-btn">Sign In</a>
+            </div>
+        </div>
 
-<div class="header_box">
-    <h1>{{header}}</h1>
-</div>
+        <div class="landing-hero-logo">
+            <img src="/images/logo.png" alt="BiteCheck official logo">
+        </div>
+    </section>
 
+    <section class="landing-about">
+        <div class="about-side">
+            <div class="about-badge">
+                <span>What is</span>
+                <strong>BiteCheck?</strong>
+            </div>
+        </div>
 
-<div class = "content_row" style=" margin-top:0.3in;">
-    <div class="side_box" style="background:#444444; border-radius: 30pt;border:16px solid #1B1B1B; ">
-        <br>
-        <h2 style="color: #dd1f19;">What</h2><br>
-        <h2 style="color: rgb(235, 213, 23);">is</h2><br>
-        <h1 style="color: #55eb55;">BC?</h1>
-    </div>
-    <div class="description_par">
-        {{{body}}}
-    </div>
-</div>
+        <div class="about-text">
+            <div class="about-text-content">
+                {{{body}}}
+            </div>
 
-<div class="button-grid">
-    <a href="/api/auth/register" class="info_box"> 
-    <h2>Get Started</h2>
-    </a>
+            <img class="about-text-image" src="/images/person_food.png" alt="Person made of healthy foods">
+        </div>
+    </section>
 
-    <a href="/api/auth/login" class="info_box"> 
-    <h2>Sign In</h2>
-    </a>
-</div>
+    <section class="landing-feature-grid">
+        <article class="landing-feature-card">
+            <h2>Official Data</h2>
+            <p>
+                BiteCheck is built around restaurant inspection information instead of only
+                crowdsourced reviews.
+            </p>
+        </article>
 
+        <article class="landing-feature-card">
+            <h2>Health Focused</h2>
+            <p>
+                The app highlights safety and hygiene information that can impact dining decisions.
+            </p>
+        </article>
 
-
-<div class = "content_row" style=" margin-top:0.1in;">
-    <img src="/images/person_food.png" alt="Person Made of healthy foods" class="med_pic" style="  position:absolute; right:1rem ; bottom: -25rem">
-
-    <div class="description_par">
-    <p>
-        Click <b>Get Started</b> to sign up or sign into the system.
-    </p>
-    </div>
-</div>
-
-{{!-- <img src="/images/person_food.png" alt="Person Made of healthy foods" class="small_pic"> --}}
-
-
-
+        <article class="landing-feature-card">
+            <h2>Easy to Use</h2>
+            <p>
+                Users can quickly sign up, log in, and search for restaurant safety information.
+            </p>
+        </article>
+    </section>
+</section>

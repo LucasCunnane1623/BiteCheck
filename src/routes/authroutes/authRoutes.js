@@ -100,10 +100,10 @@ router.route('/register')
             });
         }
 
-
+        const age = today.getFullYear() - DOB.getFullYear();
         //data method call (in authService)
         try {
-            const userId = await registerUser(email, password, username);
+            const userId = await registerUser(email, password, username,age);
         } catch (error) {
             return res.status(409).render("error",{
                 statusCode :409,
@@ -111,9 +111,6 @@ router.route('/register')
                 lastPageRoute: "/api/auth/register"
             });
         }
-
-
-
         //redirect to login if the fields look good  
         req.session.message = "User Registered Successfully!";
         return res.status(201).redirect('/api/auth/login');
@@ -164,12 +161,13 @@ router.route('/login')
         };
         try {
             const result = await loginUser(email, password);
-            const {token, username, isAdmin} = result
+            const {token, username, isAdmin,userId} = result
             //we can store more things in the cookie if need be (like 'close' friends via friend lookup in the future)
             req.session.member = {
                 token :token || "ERR_NO_TOKEN_RETURNED",
                 username : username || "ERR_NO_USRNM_RETURNED",
-                isAdmin : isAdmin || false
+                isAdmin : isAdmin || false,
+                userId : result.userId || null
             }
         } catch (error) {
             return res.status(500).render("error",{

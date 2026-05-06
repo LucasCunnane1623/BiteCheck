@@ -32,3 +32,27 @@ export const getUserProfile = async (userId) => {
         }
     };
 };
+
+
+export const updateUserInfo = async (userId, userData) => {
+    const db = getdb();
+
+    if (!userId || !ObjectId.isValid(userId)){
+        const error = new Error("Invalid User Id format")
+        throw error;
+    }
+    const userObjectId = new ObjectId(userId);
+    let usersCollection = db.collection('users');
+
+    let result = await usersCollection.updateOne(
+        { _id: userObjectId },
+        { $set: userData }
+    );
+
+    if (result.matchedCount === 0) {
+        throw new Error("User not found");
+    }
+
+
+    return true; //update successful
+}

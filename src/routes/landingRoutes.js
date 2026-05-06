@@ -15,6 +15,9 @@ const router = Router();
 
 router.route('/')
 .get(async (req, res)=>{
+    if(req.session.member){
+        return res.redirect('/home');
+    }
     return res.render('landing',{
         title: "BiteCheck: Welcome",
         header: "Welcome To Bitecheck!",

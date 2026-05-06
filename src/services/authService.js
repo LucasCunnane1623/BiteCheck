@@ -16,7 +16,16 @@ export const registerUser = async (email, password, username, age) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    if (isNaN(age) || age < 13 || age > 120){
+        throw new Error('Invalid age. Age must be a number between 13 and 120.');
+    }
     const result = await collection.insertOne({
+        profilePhoto : "/uploads/profilePhotos/defaultProfile.jpg",
+        firstName : "",
+        lastName : "",
+        status : "Public", //default status is private, but user can change it to public if they want to share their profile with other users.
+        appSearchRadiusMeters: 500, //default search radius is 500 meters 
+        favRestaurants : [], //array of restaurant ids that the user has favorited
         email,
         username,
         age: parseInt(age),
@@ -53,5 +62,5 @@ export const loginUser = async (email, password) => {
         { expiresIn: '7d' }
     )
 
-    return {token, username: user.username, isAdmin: user.isAdmin};
+    return {token, username: user.username, isAdmin: user.isAdmin,userId: user._id};
 }

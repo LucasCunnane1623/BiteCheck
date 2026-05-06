@@ -1,27 +1,41 @@
+<section class="home-page">
+    <section class="home-hero">
+        <p class="eyebrow">BiteCheck Dashboard</p>
+        <h1>{{header}}</h1>
+        <p>
+            Welcome back. Use BiteCheck to search restaurant information, review safety details,
+            and make cleaner dining decisions.
+        </p>
+    </section>
 
+    <section class="home-actions">
+        <a class="home-card" href="/api/restaurants/search?q=pizza">
+            <h2>Search Restaurants</h2>
+            <p>Look up restaurants using a sample search.</p>
+        </a>
 
-<div class="header_box">
-    <h1>{{header}}</h1>
-</div>
+        <a class="home-card" href="/api/restaurants/suggest?q=chicken">
+            <h2>Restaurant Suggestions</h2>
+            <p>View suggested restaurant results using a sample keyword.</p>
+        </a>
 
+        <a class="home-card" href="/">
+            <h2>Landing Page</h2>
+            <p>Return to the BiteCheck welcome page.</p>
+        </a>
+    </section>
 
-<div class = "content_row" style=" margin-top:0.3in;">
-    <div class="description_par">
-        {{{body}}}
+    <section class="home-info-panel">
+        <h2>About This Page</h2>
+        <p>
+            {{{body}}}
+        </p>
+        <p>
+            This dashboard is the signed-in landing area for BiteCheck users.
+        </p>
+    </section>
+
+    <div class="home-bottom-actions">
+        <a href="/api/auth/logout" class="secondary-btn">Sign Out</a>
     </div>
-</div>
-
-<a href="/api/auth/logout"> 
-    <div class="info_box">
-        <h2>Sign Out</h2>
-    </div>
-</a>
-
-<div class="info_box">
-    <h2>Homepage</h2>
-</div>
-
-
-
-
-
+</section>

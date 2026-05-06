@@ -222,6 +222,32 @@ highlight {
 
 /* Landing Page Redesign */
 
+.profile-quick-link {
+  background: var(--green-main);
+  color: var(--white);
+
+  padding: 0.2rem 0.4rem;
+  border-radius: 999px;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+
+  box-shadow: 0 6px 14px rgba(27, 27, 27, 0.2);
+  z-index: 1000;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 95%;
+  padding: 0.75rem 2rem;
+}
+.profile-quick-link:hover {
+  background: var(--green-dark);
+}
+
 .landing-page {
   padding: 2rem 0 4rem;
 }
@@ -257,6 +283,14 @@ highlight {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+.eyebrow-large {
+  color: var(--green-main);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 4 rem;
   margin-bottom: 0.5rem;
 }
 

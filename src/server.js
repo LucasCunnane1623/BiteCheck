@@ -7,7 +7,7 @@ import exphbs from 'express-handlebars';
 import session from 'express-session';
 import path from 'path';
 
-
+import { seedTestReviews } from './seed.js';
 import settings from './config/settings.js';
 import { connect } from './database/db.js';
 import { syncRestaurants } from './services/dataSync.js';
@@ -80,6 +80,7 @@ app.use('/api', apirouter);
 const startDataSync = async () => {
     try{
         console.log("Background Sync Started....")
+        await seedTestReviews();
         await syncRestaurants();
         console.log("Background Sync Completed.")
     } catch (err){
@@ -121,6 +122,19 @@ const handlebarsInstance = exphbs.create({
 app.engine('handlebars',handlebarsInstance.engine);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, './views'));
+
+
+app.use((req, res, next) => {
+    // Use 'member' because your login route sets req.session.member
+    res.locals.user = req.session.member || null; 
+    
+    // Map your message correctly
+    res.locals.message = req.session.message || null;
+    delete req.session.message;
+    
+    next();
+});
+
 //------------------------------------------------------------------------------
 
 const init = async () => {

@@ -668,3 +668,34 @@ highlight {
     display: none;
   }
 }
+
+/* God View Specific Enhancements */
+
+.admin-queue {
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Custom scrollbar for the queue to match the green theme */
+.admin-queue::-webkit-scrollbar {
+  width: 6px;
+}
+.admin-queue::-webkit-scrollbar-thumb {
+  background: var(--green-soft);
+  border-radius: 10px;
+}
+
+.action-success-btn {
+  background: var(--green-main);
+  /* Reuse your primary-btn styles */
+}
+
+/* Ensure tables in God View look professional */
+.about-text table code {
+  background: var(--white);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--green-soft);
+  font-family: monospace;
+}

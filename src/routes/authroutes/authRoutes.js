@@ -129,6 +129,9 @@ router.route('/login')
 .get(async (req, res, next) =>{
     //if the user is already logged in, they should never be allowed to see the signin or register page 
     if(req.session.member){
+        if (req.session.member.isAdmin){
+            return res.redirect('/api/admin/dashboard')
+        }
         return res.redirect('/home');
     }
     return res.render('login',
@@ -161,7 +164,7 @@ router.route('/login')
         };
         try {
             const result = await loginUser(email, password);
-            const {token, username, isAdmin,userId} = result
+            const {token, username, isAdmin, userId} = result
             //we can store more things in the cookie if need be (like 'close' friends via friend lookup in the future)
             req.session.member = {
                 token :token || "ERR_NO_TOKEN_RETURNED",
@@ -169,9 +172,15 @@ router.route('/login')
                 isAdmin : isAdmin || false,
                 userId : result.userId || null
             }
+            if (req.session.member.isAdmin){
+                req.session.message = `Welcome back, Admin ${username}!`;
+                return res.status(200).redirect('/api/admin/dashboard');
+            }
+            
+
         } catch (error) {
-            return res.status(500).render("error",{
-                statusCode :500,
+            return res.status(401).render("error",{
+                statusCode :401,
                 error: `${error}.Unable to login User.`,
                 lastPageRoute: "/api/auth/login"
             });

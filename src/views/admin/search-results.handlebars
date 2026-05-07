@@ -1,0 +1,59 @@
+<div class="home-page">
+  {{!-- 1. Search Hero Section --}}
+  <div class="home-hero">
+    <div class="eyebrow">Search Results</div>
+    <h1>Managing {{searchType}}</h1>
+    <p>Showing results for: <strong>"{{query}}"</strong></p>
+    <a href="/api/admin/dashboard" class="secondary-btn" style="margin-top: 1rem; display: inline-block;"> Back to Dashboard </a>
+  </div>
+
+  {{!-- 2. Results Table --}}
+  <section class="home-info-panel" style="margin-top: 2rem;">
+    {{#if results.length}}
+      <table style="width: 100%; text-align: left; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--green-main);">
+            {{#if isRestaurantSearch}}
+              <th style="padding: 12px;">Name</th>
+              <th style="padding: 12px;">CAMIS</th>
+              <th style="padding: 12px;">Borough</th>
+            {{else}}
+              <th style="padding: 12px;">Review Content</th>
+              <th style="padding: 12px;">User ID</th>
+            {{/if}}
+            <th style="padding: 12px;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each results}}
+          <tr style="border-bottom: 1px solid #d8e8d8;">
+            {{#if ../isRestaurantSearch}}
+              <td style="padding: 12px;">{{this.name}}</td>
+              <td style="padding: 12px;"><code>{{this.camis}}</code></td>
+              <td style="padding: 12px;">{{this.boro}}</td>
+              <td style="padding: 12px;">
+                <form action="/api/admin/restaurants/{{this.camis}}?_method=DELETE" method="POST">
+                  <button type="submit" class="primary-btn" style="background: #e74c3c; font-size: 0.8rem; padding: 0.5rem 1rem;">Delete</button>
+                </form>
+              </td>
+            {{else}}
+              <td style="padding: 12px; font-style: italic;">"{{this.comment}}"</td>
+              <td style="padding: 12px;"><code>{{this.userId}}</code></td>
+              <td style="padding: 12px;">
+                <form action="/api/admin/reviews/{{this._id}}?_method=DELETE" method="POST">
+                  <button type="submit" class="primary-btn" style="background: #e74c3c; font-size: 0.8rem; padding: 0.5rem 1rem;">Remove</button>
+                </form>
+              </td>
+            {{/if}}
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    {{else}}
+      <div class="home-card" style="text-align: center; padding: 3rem; width: 100%;">
+        <h3>No {{searchType}} found matching "{{query}}"</h3>
+        <p>Try a different keyword or check the spelling.</p>
+      </div>
+    {{/if}}
+  </section>
+</div>

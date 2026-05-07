@@ -1,12 +1,9 @@
 <h1>Error</h1>
+{{statusCode}} <br>
 
-    {{#if is404}}
-        <p class='meal-not-found'>{{error}}</p>
-    {{else if is400}}
-        <p class='error'>{{error}}</p>
-    {{else if is500}}
-        <p class='system-error'>{{error}}</p>
-    {{/if}}
-
-
-<a href="/" class="returnLink">Search for Another Meal</a><br>
+{{error}}
+{{#if lastPageRoute}}
+    <div>
+    <a href={{lastPageRoute}}>Return</a>
+    </div>
+{{/if}}

@@ -1,0 +1,33 @@
+<div class="modal" id="details-modal">
+    <button class="modal-close" id="close-details">X</button>
+
+    <div class="modal-header">
+        <h2>{{name}}</h2>
+        <span class="score-badge score-{{color}}">{{score}}</span>
+    </div>
+
+    <div class="modal-body">
+        <p><strong>Cuisine:</strong> {{cuisine}}</p>
+        <p><strong>Price:</strong> {{priceRange}}</p>
+        <p><strong>Address:</strong> {{address}}</p>
+        <p><strong>Wait Time:</strong> {{waitTime}} min</p>
+    </div>
+
+    <div class="modal-comments">
+        <h3>Recent Comments</h3>
+        {{#if comments.length}}
+            {{#each comments}}
+                <div class="comment">
+                    <p class="comment-author">{{this.author}}</p>
+                    <p class="comment-text">{{this.text}}</p>
+                    <p class="comment-date">{{this.date}}</p>
+                </div>
+            {{/each}}
+        {{else}}
+            <p>No comments yet.</p>
+        {{/if}}
+    </div>
+
+    <button class="info_box btn-logs" id="open-logs" data-id="{{_id}}">See Transparency Logs</button>
+
+</div>

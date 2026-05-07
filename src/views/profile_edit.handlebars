@@ -1,0 +1,47 @@
+
+{{!-- this form is for editing the users profile information and photo  --}}
+<form action="/api/users/profile/edit" method="POST" enctype="multipart/form-data" id="editProfileForm" >
+
+
+  
+  
+  <label for="profilePhoto">Choose Profile Photo:</label>
+  <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*"><br>
+
+
+  <label for="firstName">First Name:</label>
+  <input type="text" id="firstName" name="firstName" value="{{firstName}}"><br>
+
+  <label for="lastName">Last Name:</label>
+  {{!-- these values are the last saved values from the db --}}
+  <input type="text" id="lastName" name="lastName" value="{{lastName}}"><br> 
+
+  {{!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/radio --}}
+    <fieldset>
+    <label for="status">Currently your profile is {{status}}</label>
+    <legend>Select Status Type </legend>
+
+    <div>
+        <input type="radio" id="statusPublic" name="status" value="Public">
+        <label for="statusPublic">Public</label>
+    </div>
+
+    <div>
+        <input type="radio" id="statusPrivate" name="status" value="Private">
+        <label for="statusPrivate">Private</label>
+    </div>
+
+</fieldset>
+    <label for="appSearchRadiusMeters">App Search Radius (meters):</label>
+    <input type="range" min="50" max="35000" value="{{appSearchRadiusMeters}}" class="slider" id="appSearchRadiusMeters" name="appSearchRadiusMeters">
+
+  <button type="submit" class="info_box">Update Profile</button> <br>
+
+
+</form>
+
+<a href="/api/users/profile" class="info_box"> 
+    <h2>Return To Profile (disregard changes)</h2>
+</a>
+
+

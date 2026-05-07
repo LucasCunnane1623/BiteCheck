@@ -1,0 +1,61 @@
+<section class="auth-page">
+  <div class="auth-card auth-card-wide">
+    <h1 id="h1_big">Sign Up</h1>
+    <p class="auth-subtitle">Create your BiteCheck account.</p>
+
+    {{!-- Server Errors Show up here --}}
+    {{#if error}}
+      <p class="errorP">{{error}}</p>
+    {{/if}}
+
+    <form method="POST" name="signup-form" action="/api/auth/register" id="signup-form">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" name="firstName" id="firstName" />
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" name="lastName" id="lastName" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" />
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" />
+      </div>
+
+      <div class="form-group">
+        <label for="dateOfBirth">Date of Birth</label>
+        <input type="date" name="dateOfBirth" id="dateOfBirth" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" />
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" name="confirmPassword" id="confirmPassword" />
+        </div>
+      </div>
+
+      <button name="submitButton" id="submitButton" class="primary-btn">Create Account</button>
+    </form>
+
+    <ul id="ErrorListSignUp" class="error-list" hidden></ul>
+
+    <div class="mid-link">
+      <a href="/api/auth/login">Already have an account? Click here to log in</a>
+    </div>
+  </div>
+</section>

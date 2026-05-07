@@ -1,33 +1,49 @@
 import express from 'express';
-import settings from './config/settings.js';
-import { connect } from './database/db.js';
-import { syncRestaurants } from './services/dataSync.js';
-import { errorHandler } from './middleware/errorhandler.js';
 import morgan from 'morgan';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import exphbs from 'express-handlebars';
+import session from 'express-session';
 import path from 'path';
+
+
+import settings from './config/settings.js';
+import { connect } from './database/db.js';
+import { syncRestaurants } from './services/dataSync.js';
+import { errorHandler } from './middleware/errorhandler.js';
 import { fileURLToPath } from 'url';
+import { serverdebug,setupMessaging} from './middleware/auth.js';
+import landingRoutes from "./routes/landingRoutes.js";
 
 
+// Import routes//import restaurantRoutes from './routes/restaurantRoutes.js';
+// import authRoutes from './routes/authroutes/authRoutes.js';
+// import postRoutes from './routes/postroutes/postRoutes.js';
+// import userRoutes from './routes/userroutes/userRoutes.js';
+// import adminRoutes from './routes/adminroutes/adminRoutes.js';
 
-// Import routes
-//import restaurantRoutes from './routes/restaurantRoutes.js';
-import authRoutes from './routes/authroutes/authRoutes.js';
-import postRoutes from './routes/postroutes/postRoutes.js';
-import userRoutes from './routes/userroutes/userRoutes.js';
-import adminRoutes from './routes/adminroutes/adminRoutes.js';
-import configRoutes from './routes/index.js'
+
 // Master Router -- handles all the logic wihout collisions
 import apirouter from './routes/index.js'
+
 
 //path variable setups
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // Initialize Express app
 const app = express();
+
+//Setting up the cookie to check if the user is signed in or not 
+app.use(
+  session({
+    name: 'ClubAuthState',
+    secret: "This is a secret.. shhh don't tell anyone",
+    saveUninitialized: false,
+    resave: false,
+    cookie: {maxAge: 1000 * 60 * 60}
+  })
+);
 
 // protect against common vulnerabilities with Helmet
 app.use(helmet());
@@ -42,14 +58,22 @@ app.use(limiter);
 
 //Static Routes
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/partials', express.static(path.join(__dirname, 'views/partials')));
 
 // Global middleware
 app.use(morgan('dev')); // logging middleware
 app.use(cors());            // allow cross-origin requests
 app.use(express.json()); // Parse JSON request bodies
-
+app.use(express.urlencoded({ extended: true }));
+//we can also use this server debugger method to track exactly what routes cause issues 
+app.use(serverdebug);
+//we can use this messaging middleware to set a global message that we can flash upon hitting a route correctly
+app.use(setupMessaging);
+//public routes '/'  '/home'   
+app.use("/",landingRoutes);      
 // api routes   
 app.use('/api', apirouter);
+
 
 
 // background Sync function.
@@ -83,9 +107,6 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(rewriteUnsupportedBrowserMethods);
 
-
-
-
 const handlebarsInstance = exphbs.create({
   defaultLayout: 'main',
 //   partialsDir: [path.join(__dirname, 'views/partials')],
@@ -100,7 +121,6 @@ const handlebarsInstance = exphbs.create({
 app.engine('handlebars',handlebarsInstance.engine);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, './views'));
-app.use('/', configRoutes);
 //------------------------------------------------------------------------------
 
 const init = async () => {
@@ -108,7 +128,6 @@ const init = async () => {
         // connect to the database
         await connect();
         console.log("Connected to database successfully.");
-        
         // start the server
         app.listen(settings.server.port, () => {
             console.log(`BiteCheck running: http://localhost:${settings.server.port}`);
@@ -134,3 +153,4 @@ init();
 //  server doesn't crash and provides meaningful 
 // error responses to the client.
 app.use(errorHandler);
+

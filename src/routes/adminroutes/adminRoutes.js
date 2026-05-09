@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorizeAdmin } from '../../middleware/admin.js';
 import { getdb } from '../../database/db.js';
-import { getAdminDashboardData, createAuditLog, searchRestaurantsAdmin, searchReviewsAdmin } from '../../services/adminService.js';
+import { getAdminDashboardData, createAuditLog, searchRestaurantsAdmin, searchReviewsAdmin, getAllPostsAdmin } from '../../services/adminService.js';
+import { ObjectId } from 'mongodb';
 
 const router = Router();
 
@@ -125,7 +126,53 @@ router.delete('/restaurants/:camis', authenticate, authorizeAdmin, async (req, r
     }
 });
 
+/**
+ * @route DELETE /api/admin/reviews/id
+ * @desc Remove a review from the database (Admin only).
+ * @access Private (Authenticated users with admin role)
+ * @param {string} Id - Unique ObjectId for reviews to be deleted (required)
+ * @returns {Object} Confirmation message of successful deletion or error if review not found.
+ * @example
+ * DELETE /api/admin/reviews/12345678
+ */
+router.delete('/reviews/:id', authenticate, authorizeAdmin, async (req, res, next) => {
+    try {
+        const db = getdb();
+        const reviewId = req.params.id;
+        const { returnUrl } = req.body;
+        // 1. Validation: Ensure the ID is a valid hex string for MongoDB
+        if (!ObjectId.isValid(reviewId)) {
+            return res.status(400).redirect('/api/admin/dashboard?error=invalid_id');
+        }
 
+        // 2. Perform the deletion
+        const result = await db.collection('reviews').deleteOne({ 
+            _id: new ObjectId(reviewId) 
+        });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).redirect('/api/admin/dashboard?error=review_not_found');
+        }
+
+        // 3. Accountability Log
+        await createAuditLog(
+            req.session.member.userId, 
+            'DELETE_REVIEW', 
+            reviewId, 
+            "Admin force-removed reported content."
+        );
+        
+        if (returnUrl) {
+            return res.redirect(returnUrl);
+        }
+
+        //res.redirect('/api/admin/dashboard?success=review_deleted');
+        return res.redirect('/api/admin/dashboard?success=review_deleted'); 
+
+    } catch (e) {
+        next(e);
+    }
+});
 
 /**
  * @route GET /api/admin/posts

@@ -15,7 +15,8 @@ import { errorHandler } from './middleware/errorhandler.js';
 import { fileURLToPath } from 'url';
 import { serverdebug,setupMessaging} from './middleware/auth.js';
 import landingRoutes from "./routes/landingRoutes.js";
-
+import methodOverride from 'method-override';
+import adminroutes from './routes/adminroutes/adminRoutes.js';
 
 // Import routes//import restaurantRoutes from './routes/restaurantRoutes.js';
 // import authRoutes from './routes/authroutes/authRoutes.js';
@@ -74,7 +75,8 @@ app.use("/",landingRoutes);
 // api routes   
 app.use('/api', apirouter);
 
-
+app.use(methodOverride('_method'));
+app.use('/api/admin', adminroutes);
 
 // background Sync function.
 const startDataSync = async () => {

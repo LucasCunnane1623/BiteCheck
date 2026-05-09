@@ -82,3 +82,27 @@ export const searchReviewsAdmin = async (query) => {
         comment: { $regex: query, $options: 'i' }
     }).sort({ createdAt: -1 }).limit(50).toArray();
 };
+
+
+/**
+ * Retrieves a paginated list of all reviews for the admin panel.
+ * Uses cursor-based pagination for high performance.
+ * * @param {string} lastId - The ID of the last item from the previous batch.
+ * @param {number} limit - Number of records to fetch.
+ */
+export const getAllPostsAdmin = async (lastId, limit = 20) => {
+    const db = getdb();
+    let query = {};
+
+    // If lastId is provided, only fetch items created BEFORE this ID
+    // (Assuming we want newest items first)
+    if (lastId && ObjectId.isValid(lastId)) {
+        query = { _id: { $lt: new ObjectId(lastId) } };
+    }
+
+    return await db.collection('reviews')
+        .find(query)
+        .sort({ _id: -1 }) // Sort by newest first
+        .limit(limit)
+        .toArray();
+};

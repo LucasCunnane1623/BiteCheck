@@ -1,3 +1,7 @@
+/*
+    1. Global Reset + Theme Variables
+*/
+
 * {
   box-sizing: border-box;
 }
@@ -10,7 +14,27 @@
   --gray-light: #ECECEC;
   --black: #1B1B1B;
   --white: #FFFFFF;
+
+  --page-bg: #F7FAF7;
+  --text-dark: #222222;
+  --text-muted: #4a4a4a;
+
+  --card-border: #d8e8d8;
+  --soft-border: #cfe8cf;
+
+  --error-bg: #ffe7e7;
+  --error-text: #8a1f1f;
+  --error-border: #e4aaaa;
+
+  --shadow-soft: 0 10px 24px rgba(27, 27, 27, 0.08);
+  --shadow-medium: 0 12px 28px rgba(27, 27, 27, 0.1);
+  --shadow-strong: 0 14px 30px rgba(27, 27, 27, 0.1);
 }
+
+
+/*
+    2. Base Layout + Typography
+*/
 
 html,
 body {
@@ -18,7 +42,7 @@ body {
 }
 
 body {
-  background: #F7FAF7;
+  background: var(--page-bg);
   color: var(--black);
   font-family: 'Red Hat Display', Georgia, Cambria, 'Times New Roman', Times, serif;
   margin: 0;
@@ -35,46 +59,6 @@ header {
   padding: 0.35rem 0;
 }
 
-/*
-This is the class used by most divs right now 
-*/
-.header_box {
-  background: var(--green-main);
-  border: 1px solid var(--green-dark);
-  border-radius: 22px;
-  box-shadow: 0 8px 20px rgba(27, 27, 27, 0.18);
-  margin-top: 0.3in;
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;      /* vertical positioning  */
-  justify-content: center; /* horizontal positioning  */
-}
-
-.info_box {
-  background: #91e291;
-  border: 2px solid var(--black); 
-  border-radius: 15pt;
-  box-shadow: 8px 8px 10px #474747; 
-  margin-top: 1in;
-  margin-left: 2rem;
-  padding: 8px 12px;
-  height: 60px;
-  width: 300px;
-  display: flex;
-  align-items: center;      /* vertical positioning  */
-  justify-content: center; /* horizontal positioning  */
-}
-
-.side_box {
-  border: 2px solid var(--black); 
-  box-shadow: 8px 8px 10px #474747; 
-  margin-top: 0.9rem;
-  margin-left: 2rem;
-  text-align: center;
-  height: 20rem;
-  width: 150px;
-}
-
 h1,
 h2,
 p {
@@ -87,7 +71,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: #222222;
+  color: var(--text-dark);
   margin-bottom: 5px;
 }
 
@@ -128,52 +112,91 @@ ul {
   list-style-type: none;
 }
 
-.response-message {
-  color: #94ea37;
-  position: fixed;
-  bottom: 10px;
-  left: 10px;
-  animation: fadeOut 4s forwards;
-}
 
-/* this is the manual keyframe setup i use for flashing a message */
-@keyframes fadeOut {
-  0%   { opacity: 1; }
-  70%  { opacity: 1; }
-  100% { opacity: 0; visibility: hidden; }
-}
+/*
+    3. Shared Components (Buttons, links, errors, helpers, and animations)
+*/
 
-.post {
-  width: 75%;
-  border-bottom: 1px dashed #333;
-}
-
-.new-post-form {
-  max-width: 300px;
-}
-
-.new-post-form .full-width-input {
-  display: block;
-  min-height: 3em;
-  margin: 10px 0;
+.primary-btn {
   width: 100%;
+  margin-top: 0.5rem;
+  background: var(--green-main);
+  color: var(--white);
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
 }
 
-.description_par {
-  background: #c2e7c2;
-  border-radius: 15pt;
-  margin-top: 0.9rem;
-  margin-right: 2rem;
-  padding: 10% 2%;
-  height: 20rem;
-  width: 100%;
-  display: flex;
-  align-items: center;      /* vertical positioning  */
-  justify-content: center; /* horizontal positioning  */
+.primary-btn:hover {
+  background: var(--green-dark);
+}
+
+.secondary-btn {
+  background: var(--white);
+  color: var(--green-dark);
+  border: 2px solid var(--green-main);
+  border-radius: 999px;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.secondary-btn:hover {
+  background: var(--green-light);
+}
+
+.eyebrow {
+  color: var(--green-main);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.eyebrow-large {
+  color: var(--green-main);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+}
+
+.errorP,
+.error-list {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
+  border-radius: 12px;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.error-list {
+  list-style-position: inside;
 }
 
 .error-list li {
   color: #ff0000;
+}
+
+.mid-link {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.mid-link a {
+  color: var(--green-dark);
+  font-weight: 800;
 }
 
 .author-link,
@@ -210,32 +233,161 @@ ul {
   width: 90%;
 }
 
+.response-message {
+  color: #94ea37;
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  animation: fadeOut 4s forwards;
+}
+
+/* this is the manual keyframe setup i use for flashing a message */
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+
+/*
+    4. Header / Navigation
+*/
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 95%;
+  padding: 0.75rem 2rem;
+}
+
+.profile-quick-link {
+  background: var(--green-main);
+  color: var(--white);
+  padding: 0.2rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 14px rgba(27, 27, 27, 0.2);
+  z-index: 1000;
+}
+
+.profile-quick-link:hover {
+  background: var(--green-dark);
+}
+
+
+/*
+    5. Existing Project Classes (These are older classes still used by some pages.)
+*/
+
+.header_box {
+  background: var(--green-main);
+  border: 1px solid var(--green-dark);
+  border-radius: 22px;
+  box-shadow: 0 8px 20px rgba(27, 27, 27, 0.18);
+  margin-top: 0.3in;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;      /* vertical positioning  */
+  justify-content: center;  /* horizontal positioning  */
+}
+
+.info_box {
+  background: #91e291;
+  border: 2px solid var(--black);
+  border-radius: 15pt;
+  box-shadow: 8px 8px 10px #474747;
+  margin-top: 1in;
+  margin-left: 2rem;
+  padding: 8px 12px;
+  height: 60px;
+  width: 300px;
+  display: flex;
+  align-items: center;      /* vertical positioning  */
+  justify-content: center;  /* horizontal positioning  */
+}
+
+.side_box {
+  border: 2px solid var(--black);
+  box-shadow: 8px 8px 10px #474747;
+  margin-top: 0.9rem;
+  margin-left: 2rem;
+  text-align: center;
+  height: 20rem;
+  width: 150px;
+}
+
+.description_par {
+  background: #c2e7c2;
+  border-radius: 15pt;
+  margin-top: 0.9rem;
+  margin-right: 2rem;
+  padding: 10% 2%;
+  height: 20rem;
+  width: 100%;
+  display: flex;
+  align-items: center;      /* vertical positioning  */
+  justify-content: center;  /* horizontal positioning  */
+}
+
+.content_row {
+  display: flex;             /* horizontal layout */
+  gap: 2rem;                 /* space between side_box and description_par */
+  align-items: flex-start;   /* align boxes at the top */
+}
+
+.post {
+  width: 75%;
+  border-bottom: 1px dashed #333333;
+}
+
+.new-post-form {
+  max-width: 300px;
+}
+
+.new-post-form .full-width-input {
+  display: block;
+  min-height: 3em;
+  margin: 10px 0;
+  width: 100%;
+}
+
+/* Existing custom tag selector */
 highlight {
   color: #ff0000;
 }
 
-.content_row {
-  display: flex;       /* horizontal layout */
-  gap: 2rem;           /* space between side_box and description_par */
-  align-items: flex-start;  /* align boxes at the top */
-}
 
-/* Landing Page Redesign */
+/*
+    6. Landing Page
+*/
 
 .landing-page {
   padding: 2rem 0 4rem;
 }
 
+/* Top welcome section */
 .landing-hero {
   display: grid;
   grid-template-columns: 1.4fr 0.8fr;
   align-items: center;
   gap: 2rem;
-  background: linear-gradient(135deg, var(--green-light), #ffffff);
-  border: 1px solid #cfe8cf;
+  background: linear-gradient(135deg, var(--green-light), var(--white));
+  border: 1px solid var(--soft-border);
   border-radius: 30px;
   padding: 3rem;
-  box-shadow: 0 14px 30px rgba(27, 27, 27, 0.1);
+  box-shadow: var(--shadow-strong);
   margin-top: 2rem;
 }
 
@@ -249,15 +401,6 @@ highlight {
 .landing-hero p {
   max-width: 720px;
   color: var(--black);
-}
-
-.eyebrow {
-  color: var(--green-main);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
 }
 
 .landing-hero-logo {
@@ -290,42 +433,7 @@ highlight {
   text-decoration: none;
 }
 
-.primary-btn {
-  width: 100%;
-  margin-top: 0.5rem;
-  background: var(--green-main);
-  color: var(--white);
-  border: none;
-  border-radius: 999px;
-  padding: 0.85rem 1rem;
-  font-size: 1rem;
-  font-weight: 800;
-  font-family: inherit;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.primary-btn:hover {
-  background: var(--green-dark);
-}
-
-.secondary-btn {
-  background: #ffffff;
-  color: var(--green-dark);
-  border: 2px solid var(--green-main);
-  border-radius: 999px;
-  padding: 0.85rem 1rem;
-  font-size: 1rem;
-  font-weight: 800;
-  font-family: inherit;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.secondary-btn:hover {
-  background: var(--green-light);
-}
-
+/* About BiteCheck section */
 .landing-about {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -367,10 +475,10 @@ highlight {
 
 .about-text {
   background: var(--green-light);
-  border: 1px solid #cfe8cf;
+  border: 1px solid var(--soft-border);
   border-radius: 26px;
   padding: 2rem;
-  box-shadow: 0 10px 24px rgba(27, 27, 27, 0.08);
+  box-shadow: var(--shadow-soft);
   display: grid;
   grid-template-columns: 1fr 160px;
   gap: 1.5rem;
@@ -388,6 +496,7 @@ highlight {
   justify-self: center;
 }
 
+/* Three feature cards on landing page */
 .landing-feature-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -397,10 +506,10 @@ highlight {
 
 .landing-feature-card {
   background: var(--white);
-  border: 1px solid #d8e8d8;
+  border: 1px solid var(--card-border);
   border-radius: 22px;
   padding: 1.5rem;
-  box-shadow: 0 10px 24px rgba(27, 27, 27, 0.08);
+  box-shadow: var(--shadow-soft);
 }
 
 .landing-feature-card h2 {
@@ -413,18 +522,21 @@ highlight {
   line-height: 1.7;
 }
 
-/* Home Page Redesign */
+
+/*
+    7. Home Page
+*/
 
 .home-page {
   padding: 2rem 0 4rem;
 }
 
 .home-hero {
-  background: linear-gradient(135deg, var(--green-light), #ffffff);
-  border: 1px solid #cfe8cf;
+  background: linear-gradient(135deg, var(--green-light), var(--white));
+  border: 1px solid var(--soft-border);
   border-radius: 28px;
   padding: 3rem;
-  box-shadow: 0 12px 28px rgba(27, 27, 27, 0.1);
+  box-shadow: var(--shadow-medium);
   margin-top: 2rem;
 }
 
@@ -450,10 +562,10 @@ highlight {
   text-decoration: none;
   color: var(--black);
   background: var(--white);
-  border: 1px solid #d8e8d8;
+  border: 1px solid var(--card-border);
   border-radius: 22px;
   padding: 1.5rem;
-  box-shadow: 0 10px 24px rgba(27, 27, 27, 0.08);
+  box-shadow: var(--shadow-soft);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -470,10 +582,10 @@ highlight {
 
 .home-info-panel {
   background: var(--green-light);
+  border: 1px solid var(--soft-border);
   border-radius: 24px;
   padding: 2rem;
   margin-top: 2rem;
-  border: 1px solid #cfe8cf;
 }
 
 .home-info-panel h2 {
@@ -484,7 +596,10 @@ highlight {
   margin-top: 2rem;
 }
 
-/* Auth Pages Redesign */
+
+/*
+    8. Auth Pages
+*/
 
 .auth-page {
   min-height: 75vh;
@@ -498,7 +613,7 @@ highlight {
   width: 100%;
   max-width: 460px;
   background: var(--white);
-  border: 1px solid #d8e8d8;
+  border: 1px solid var(--card-border);
   border-radius: 24px;
   padding: 2.25rem;
   box-shadow: 0 12px 30px rgba(27, 27, 27, 0.12);
@@ -515,7 +630,7 @@ highlight {
 
 .auth-subtitle {
   margin-bottom: 1.5rem;
-  color: #4a4a4a;
+  color: var(--text-muted);
 }
 
 .form-group {
@@ -552,31 +667,45 @@ highlight {
   border-color: var(--green-main);
 }
 
-.mid-link {
-  text-align: center;
-  margin-top: 1rem;
+
+/*
+    9. Admin / God View
+*/
+
+.admin-queue {
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 10px;
 }
 
-.mid-link a {
-  color: var(--green-dark);
-  font-weight: 800;
+/* Custom scrollbar for the queue to match the green theme */
+.admin-queue::-webkit-scrollbar {
+  width: 6px;
 }
 
-.errorP,
-.error-list {
-  background: #ffe7e7;
-  color: #8a1f1f;
-  border: 1px solid #e4aaaa;
-  border-radius: 12px;
-  padding: 0.8rem;
-  margin-bottom: 1rem;
+.admin-queue::-webkit-scrollbar-thumb {
+  background: var(--green-soft);
+  border-radius: 10px;
 }
 
-.error-list {
-  list-style-position: inside;
+.action-success-btn {
+  background: var(--green-main);
+  /* Reuse your primary-btn styles */
 }
 
-/* Responsive Styling */
+/* Ensure tables in God View look professional */
+.about-text table code {
+  background: var(--white);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--green-soft);
+  font-family: monospace;
+}
+
+
+/*
+    10. Responsive Styling
+*/
 
 @media (max-width: 900px) {
   main {
@@ -605,7 +734,7 @@ highlight {
   .about-text {
     grid-template-columns: 1fr;
   }
-  
+
   .about-text-image {
     max-width: 120px;
   }

@@ -127,7 +127,7 @@ app.set('views', path.join(__dirname, './views'));
 
 
 app.use((req, res, next) => {
-    // Use 'member' because your login route sets req.session.member
+    
     res.locals.user = req.session.member || null; 
     
     // Map your message correctly

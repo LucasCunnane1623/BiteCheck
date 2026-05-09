@@ -126,16 +126,26 @@ router.route('/register')
  * @renders login 
  */
 router.route('/login')
-.get(async (req, res, next) =>{
-    //if the user is already logged in, they should never be allowed to see the signin or register page 
-    if(req.session.member){
+.get(async (req, res, next) => {
+    // 1. Existing Session Check
+    if (req.session.member) {
+        if (req.session.member.isAdmin) {
+            return res.redirect('/api/admin/dashboard');
+        }
         return res.redirect('/home');
     }
-    return res.render('login',
-        {
-            title: "BiteCheck: Login"
-        } 
-    );
+
+    // 2. Handle the Logout Message
+    let flashMessage = null;
+    if (req.query.status === 'loggedout') {
+        flashMessage = "You have been securely signed out.";
+    }
+
+    // 3. Render the page
+    return res.render('login', {
+        title: "BiteCheck: Login",
+        message: flashMessage // This maps to your {{message}} in main.handlebars
+    });
 })
 
 /**
@@ -161,7 +171,7 @@ router.route('/login')
         };
         try {
             const result = await loginUser(email, password);
-            const {token, username, isAdmin,userId} = result
+            const {token, username, isAdmin, userId} = result
             //we can store more things in the cookie if need be (like 'close' friends via friend lookup in the future)
             req.session.member = {
                 token :token || "ERR_NO_TOKEN_RETURNED",
@@ -169,9 +179,15 @@ router.route('/login')
                 isAdmin : isAdmin || false,
                 userId : result.userId || null
             }
+            if (req.session.member.isAdmin){
+                req.session.message = `Welcome back, Admin ${username}!`;
+                return res.status(200).redirect('/api/admin/dashboard');
+            }
+            
+
         } catch (error) {
-            return res.status(500).render("error",{
-                statusCode :500,
+            return res.status(401).render("error",{
+                statusCode :401,
                 error: `${error}.Unable to login User.`,
                 lastPageRoute: "/api/auth/login"
             });
@@ -187,11 +203,19 @@ router.route('/login')
 
 router.route('/logout')
 .get(async (req, res) => {
-//   req.session.destroy();
-req.session.message = "User successfully signed out!";
-req.session.member = null; 
-  return res.redirect('/api/auth/login');
-  //render("login",{title:"BiteCheck : Login",msg: ""});
+    // 1. Destroy the session to clear all 'God Mode' privileges
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Logout error:", err);
+            return res.redirect('/home');
+        }
+
+        // 2. Clear the cookie in the browser
+        res.clearCookie('BiteCheckSession'); // Use your actual session cookie name
+
+        // 3. Absolute redirect to the login page with a success flag
+        return res.redirect('/api/auth/login?status=loggedout');
+    });
 });
 
 export default router;

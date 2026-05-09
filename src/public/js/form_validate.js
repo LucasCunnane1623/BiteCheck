@@ -183,7 +183,7 @@ if(signupForm){
         4. dots . must be escaped (learned the hard way via debugging) \.
         5. email must end in one of the four big TLD's 
         */
-        const emailRegex = /^[A-Za-z0-9!#$&'*\/=?^`{}~]+(\.[A-Za-z0-9!#$&'*\/=?^`{}~]+)*@[A-Za-z0-9-]+\.(com|org|gov|edu)$/;
+        const emailRegex = /^[A-Za-z0-9!#$&'*\/=?^`{}~]+(\.[A-Za-z0-9!#$&'*\/=?^`{}~]+)*@[A-Za-z0-9-]+\.(com|org|gov|edu|ai)$/;
         if(!emailRegex.test(email)){
             errors.push("email formatted incorrectly");
         }
@@ -239,7 +239,7 @@ if(signinForm){
         //input checking 
         //if element is bad append child to the error list 
 
-        const emailRegex = /^[A-Za-z0-9!#$&'*\/=?^`{}~]+(\.[A-Za-z0-9!#$&'*\/=?^`{}~]+)*@[A-Za-z0-9-]+\.(com|org|gov|edu)$/;
+        const emailRegex = /^[A-Za-z0-9!#$&'*\/=?^`{}~]+(\.[A-Za-z0-9!#$&'*\/=?^`{}~]+)*@[A-Za-z0-9-]+\.(com|org|gov|edu|ai)$/;
         if(!emailRegex.test(email)){
             errors.push("email formatted incorrectly");
         }

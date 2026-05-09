@@ -1,6 +1,9 @@
 import { ObjectId } from "mongodb";
 import { getdb } from "../database/db.js"
+import validation from "../helpers.js";
 
+
+//use the validation.checkId method in try catch blocks to replace the object ID is valid calls 
 export const getUserProfile = async (userId) => {
     const db = getdb();
     
@@ -56,3 +59,25 @@ export const updateUserInfo = async (userId, userData) => {
 
     return true; //update successful
 }
+
+export const getUserByUsername = async (username) => {
+    const db = getdb();
+    if (!username || typeof username !== "string"){
+        const error = new Error("Invalid Username format")
+        throw error;
+    }
+
+    const usersCollection = db.collection('users');
+    const matchingUsers = await usersCollection.find({
+        username : {$regex : new RegExp(username,"i")} //case insensitive search for usernames that match the query
+    }).toArray();
+
+    return matchingUsers.map(user => ({ //return only these feils for the matching user, since this is all we need to display
+        _id: user._id,
+        username: user.username,
+        profilePhoto: user.profilePhoto,
+        profileLink: `/api/users/profile/${user._id.toString()}`,
+        addLink: `/api/users/add/${user._id.toString()}`
+    }));
+}
+

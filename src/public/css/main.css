@@ -242,7 +242,7 @@ highlight {
   align-items: center;
   justify-content: space-between;
   width: 95%;
-  padding: 0.75rem 2rem;
+  padding: 0.75rem 4rem;
 }
 .profile-quick-link:hover {
   background: var(--green-dark);
@@ -338,6 +338,36 @@ highlight {
   cursor: pointer;
   text-decoration: none;
 }
+
+.remove-friend-link {
+  width: 30%;
+  margin-top: 0.5rem;
+  background: #ff8585;
+  color: var(--black);;
+  border-radius: 999px;
+  border-color: #eb2020;
+  padding: 0.3rem 1rem;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+.add-friend-link {
+  width: 30%;
+  margin-top: 0.5rem;
+  background: rgb(0, 143, 0);
+  color: var(--black);;
+  border-radius: 999px;
+  border-color: #1B1B1B;
+  padding: 0.3rem 1rem;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
 
 .primary-btn:hover {
   background: var(--green-dark);
@@ -436,7 +466,22 @@ highlight {
   padding: 1.5rem;
   box-shadow: 0 10px 24px rgba(27, 27, 27, 0.08);
 }
-
+.friend-card{
+  background: var(--green-light);
+  border: 1px solid #d8e8d8;
+  border-radius: 22px;
+  padding: 1rem;
+  box-shadow: 0 10px 24px rgba(27, 27, 27, 0.08);
+  display: flex;
+  gap : 6rem;
+}
+.friend-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--black);
+}
 .landing-feature-card h2 {
   color: var(--green-dark);
   font-size: 1.35rem;
@@ -480,6 +525,7 @@ highlight {
 }
 
 .home-card {
+  margin-top: 2rem;
   display: block;
   text-decoration: none;
   color: var(--black);
@@ -581,6 +627,24 @@ highlight {
   background: #fbfffb;
 }
 
+.profile-photo{
+  width: 120px;
+  height: 120px;
+  max-width: 120px;
+  
+  border-radius: 50%;
+  border: 1.6px solid var(--green-main);
+  object-fit: cover;
+}
+.friend-profile-photo{
+  width: 40px;
+  height: 40px;
+  max-width: 40;
+  
+  border-radius: 50%;
+  border: 1.6px solid var(--green-main);
+  object-fit: cover;
+}
 .form-group input:focus {
   outline: 3px solid var(--green-light);
   border-color: var(--green-main);
@@ -644,6 +708,7 @@ highlight {
     max-width: 120px;
   }
 }
+
 
 @media (max-width: 700px) {
   main {

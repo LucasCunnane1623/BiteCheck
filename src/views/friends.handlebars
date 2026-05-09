@@ -1,8 +1,69 @@
 
-<p>
-    this is friends page, its currently under construction.
-</p>
+<div class="home-card">
+    <h2>Friends List</h2>
+    <p>Here you will be able to see your friends list, add new friends, and remove friends.</p>
+    {{#if friends}}
+        {{#each friends}}
+            <div class="friend-card">
+                <a href="{{this.profileLink}}" class="friend-link">
+                    <img src="{{this.profilePhoto}}" alt="{{this.username}}'s profile photo" class="friend-profile-photo">
+                    <p>{{this.username}}</p>
+                </a>
+                <a href="{{this.blockLink}}" class="remove-friend-link">
+                    Block User
+                </a>
+                <a href="{{this.removeLink}}" class="remove-friend-link">
+                    Remove Friend
+                </a>
+            </div>
+        {{/each}}
+    {{else}}
+        <p>You have no friends yet. Start adding some!</p>
+    {{/if}}
 
-<a href="/home" class="info_box"> 
-    <h2>Return To Home</h2>
-</a>
+</div>
+<br>
+<div class="home-card" >
+    <h2>Find Friends</h2>
+    
+    <form method="GET" action="/api/users/friends/search" class="search-form">
+    <div class="form-group">
+        <label for="username">Enter username to search</label>
+        <input type="text" name="username" placeholder="e.g. JohnDoe" class="search-input">
+        <button type="submit" class="primary-btn">Search</button>
+    </div>
+
+    <div id="friend-search-results">
+        {{#if searchResults}}
+            {{#each searchResults}}
+                <div class="friend-card">
+                <a href="{{this.profileLink}}" class="friend-link">
+                    <img src="{{this.profilePhoto}}" alt="{{this.username}}'s profile photo" class="friend-profile-photo">
+                    <p>{{this.username}}</p>
+                </a>
+                    {{#if this.isFriend}}
+                        <p>Already a friend</p>
+                    {{else}}
+                        <a href="{{this.addLink}}" class="add-friend-link">
+                            Add Friend
+                        </a>
+                    {{/if}}
+                    <a href="{{this.blockLink}}" class="remove-friend-link">
+                        Block User
+                    </a>
+                </div>
+            {{/each}}
+        {{else}}
+            {{#if fromSearch}}
+            <p>No users found with that username.</p>
+            {{/if}}
+            
+        {{/if}}
+    </div>
+
+</div>
+<div class="home-bottom-actions">
+    <a href="/home" class="secondary-btn"> 
+        Return To Home
+    </a>
+</div>

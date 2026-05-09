@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 //this file generates 30 users with random usernames, bios,and profile pictures to populate the users database for testing purposes.
 
@@ -509,3 +510,17 @@ const userData = [
 };
 
 main();
+=======
+// A temporary "Seeder" function to test your God View
+import { getdb } from "./database/db.js";
+
+export const seedTestReviews = async () => {
+    const db = getdb();
+    const mockReviews = [
+        { comment: "The food here was amazing!", reports: 0, userId: "user_1", createdAt: new Date() },
+        { comment: "Terrible service, avoid this place.", reports: 3, userId: "user_2", createdAt: new Date() },
+        { comment: "SPAM CLICK THIS LINK FOR FREE PIZZA", reports: 12, userId: "hacker_99", createdAt: new Date() }
+    ];
+    await db.collection('reviews').insertMany(mockReviews);
+};
+>>>>>>> ea67eb6e6aa533f2a63858dc8581bee481766e89

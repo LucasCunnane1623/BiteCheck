@@ -7,7 +7,7 @@ import exphbs from 'express-handlebars';
 import session from 'express-session';
 import path from 'path';
 
-
+import { seedTestReviews } from './seed.js';
 import settings from './config/settings.js';
 import { connect } from './database/db.js';
 import { syncRestaurants } from './services/dataSync.js';
@@ -15,7 +15,8 @@ import { errorHandler } from './middleware/errorhandler.js';
 import { fileURLToPath } from 'url';
 import { serverdebug,setupMessaging} from './middleware/auth.js';
 import landingRoutes from "./routes/landingRoutes.js";
-
+import methodOverride from 'method-override';
+import adminroutes from './routes/adminroutes/adminRoutes.js';
 
 // Import routes//import restaurantRoutes from './routes/restaurantRoutes.js';
 // import authRoutes from './routes/authroutes/authRoutes.js';
@@ -74,12 +75,14 @@ app.use("/",landingRoutes);
 // api routes   
 app.use('/api', apirouter);
 
-
+app.use(methodOverride('_method'));
+app.use('/api/admin', adminroutes);
 
 // background Sync function.
 const startDataSync = async () => {
     try{
         console.log("Background Sync Started....")
+        await seedTestReviews();
         await syncRestaurants();
         console.log("Background Sync Completed.")
     } catch (err){
@@ -121,6 +124,19 @@ const handlebarsInstance = exphbs.create({
 app.engine('handlebars',handlebarsInstance.engine);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, './views'));
+
+
+app.use((req, res, next) => {
+    
+    res.locals.user = req.session.member || null; 
+    
+    // Map your message correctly
+    res.locals.message = req.session.message || null;
+    delete req.session.message;
+    
+    next();
+});
+
 //------------------------------------------------------------------------------
 
 const init = async () => {

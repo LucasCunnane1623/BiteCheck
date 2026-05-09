@@ -1,5 +1,6 @@
 <div class="header-inner">
   <p class="eyebrow-large">BiteCheck</p>
+<<<<<<< HEAD
   {{#if showProfileButton}}
     <a class="profile-quick-link" href="/api/users/profile">
       Visit Profile
@@ -11,4 +12,27 @@
         Friends
     </a>
   {{/if}}
+=======
+  
+  <div class="header-actions">
+    {{#if user}}
+      {{!-- ONLY show this if the isAdmin flag is true --}}
+      {{#if user.isAdmin}}
+        <a class="admin-quick-link" href="/api/admin/dashboard">
+          God View 
+        </a>
+      {{/if}}
+
+      {{#if showProfileButton}}
+        <a class="profile-quick-link" href="/api/users/profile">
+          Visit Profile
+        </a>
+      {{/if}}
+
+      <a class="logout-link" href="/api/auth/logout">Logout</a>
+    {{else}}
+      <a class="login-link" href="/api/auth/login">Login</a>
+    {{/if}}
+  </div>
+>>>>>>> ea67eb6e6aa533f2a63858dc8581bee481766e89
 </div>

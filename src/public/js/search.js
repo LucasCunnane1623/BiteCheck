@@ -13,7 +13,8 @@ searchInput.addEventListener('input', () => {
 
   debounceTimer = setTimeout(async () => {
     const res  = await fetch(`/api/restaurants/search?q=${encodeURIComponent(q)}`);
-    const data = await res.json();
+    const json = await res.json();
+    const data = json.data;
 
     if (data.length === 0) {
       searchResults.innerHTML = '<p class="no-results">No restaurants found.</p>';

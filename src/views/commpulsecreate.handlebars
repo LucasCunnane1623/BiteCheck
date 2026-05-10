@@ -1,0 +1,26 @@
+
+{{!-- this is the community pulse create page. It is where users can create a new community pulse post. --}}
+
+<section class="community-pulse-create-page">
+    <h1>Create a Community Pulse Post</h1>
+    <p>Share your dining experiences with the community! Create a new post to let others know about your restaurant visits.</p>
+
+    <form method="POST" name="create-post-form" action="/api/posts/" id="create-post-form">
+        <div class="form-group">
+            <label for="title">Post Title</label>
+            <input type="text" name="title" id="title" placeholder="e.g. First Time at Joes Pizza" required />
+        </div>
+        <div class="form-group">
+            <label for="businessName">Business Name</label>
+            <input type="text" name="businessName" id="busiName" placeholder="e.g. Joes Pizzeria" required />
+            <label for="content">Post Content</label>
+            <textarea maxlength="300" class="text-area" name="content" id="content" rows="5" placeholder="My experience was...(max 300 chars)" required></textarea>
+        </div>
+        <button name="submitButton" id="submitButton" class="primary-btn">Create Post</button>
+    </form>
+
+    <ul id="ErrorListCreatePost" class="error-list" hidden></ul>
+
+    <div class="mid-link">
+        <a href="/api/posts">Back to Community Pulse Feed</a>
+    </div>

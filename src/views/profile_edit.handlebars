@@ -33,15 +33,23 @@
 
 </fieldset>
     <label for="appSearchRadiusMeters">App Search Radius (meters):</label>
+    <div class="slider-container">
+    <span>50m</span>
     <input type="range" min="50" max="35000" value="{{appSearchRadiusMeters}}" class="slider" id="appSearchRadiusMeters" name="appSearchRadiusMeters">
+    <span>35000m</span>
+    </div>
 
-  <button type="submit" class="info_box">Update Profile</button> <br>
+
+  <button type="submit" class="secondary-btn">Update Profile</button> <br>
 
 
 </form>
 
-<a href="/api/users/profile" class="info_box"> 
-    <h2>Return To Profile (disregard changes)</h2>
-</a>
+<div class="home-bottom-actions">
+    <a href="/api/users/profile" class="secondary-btn"> 
+        Return To Profile (disregard changes)
+    </a>
+</div>
+
 
 

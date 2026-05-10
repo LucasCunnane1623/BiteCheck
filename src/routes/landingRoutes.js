@@ -37,7 +37,10 @@ async (req, res)=>{
     return res.render('home',{
         title: "BiteCheck: Home",
         body: "This is the body for the homepage",
-        showProfileButton: true
+        showProfileButton: true,
+        showFriendsButton: true,
+        showCommPulseButton : true,
+        user: req.session.member
     });
 });
 export default router;

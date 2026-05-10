@@ -103,7 +103,7 @@ router.route('/register')
         const age = today.getFullYear() - DOB.getFullYear();
         //data method call (in authService)
         try {
-            const userId = await registerUser(email, password, username,age);
+            const userId = await registerUser(email, password, username,age,firstName,lastName);
         } catch (error) {
             return res.status(409).render("error",{
                 statusCode :409,

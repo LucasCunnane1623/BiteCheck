@@ -267,8 +267,11 @@ ul {
   align-items: center;
   justify-content: space-between;
   width: 95%;
-  padding: 0.75rem 2rem;
+  padding: 0.75rem 4rem;
 }
+/* .header-actions{
+
+} */
 
 .profile-quick-link {
   background: var(--green-main);
@@ -511,7 +514,22 @@ highlight {
   padding: 1.5rem;
   box-shadow: var(--shadow-soft);
 }
-
+.friend-card{
+  background: var(--green-light);
+  border: 1px solid #d8e8d8;
+  border-radius: 22px;
+  padding: 1rem;
+  box-shadow: 0 10px 24px rgba(27, 27, 27, 0.08);
+  display: flex;
+  gap : 6rem;
+}
+.friend-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--black);
+}
 .landing-feature-card h2 {
   color: var(--green-dark);
   font-size: 1.35rem;
@@ -558,6 +576,7 @@ highlight {
 }
 
 .home-card {
+  margin-top: 2rem;
   display: block;
   text-decoration: none;
   color: var(--black);
@@ -662,6 +681,24 @@ highlight {
   background: #fbfffb;
 }
 
+.profile-photo{
+  width: 120px;
+  height: 120px;
+  max-width: 120px;
+  
+  border-radius: 50%;
+  border: 1.6px solid var(--green-main);
+  object-fit: cover;
+}
+.friend-profile-photo{
+  width: 40px;
+  height: 40px;
+  max-width: 40;
+  
+  border-radius: 50%;
+  border: 1.6px solid var(--green-main);
+  object-fit: cover;
+}
 .form-group input:focus {
   outline: 3px solid var(--green-light);
   border-color: var(--green-main);
@@ -740,6 +777,7 @@ highlight {
   }
 }
 
+
 @media (max-width: 700px) {
   main {
     width: 92%;
@@ -762,4 +800,50 @@ highlight {
   .med_pic {
     display: none;
   }
+}
+
+.text-area{
+  resize: none;
+    width: 500px;
+    height: 150px;
+}
+.slider-container{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.slider{
+    width: 300px;
+
+    /* Removes default browser styling */
+    appearance: none;
+    -webkit-appearance: none;
+
+    height: 8px;
+    border-radius: 999px;
+    background: #d4d4d4;
+    outline: none;
+}
+.slider::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    appearance: none;
+
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+
+    background: #4caf50;
+    cursor: pointer;
+    border: none;
+}
+
+.slider::-moz-range-thumb{
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+
+    background: #4caf50;
+    cursor: pointer;
+    border: none;
 }

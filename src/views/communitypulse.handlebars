@@ -1,5 +1,3 @@
-
-
 {{!-- this is the community pulse page, it will show recent reviews from users --}}
 {{!-- it will be accessible from the header when a user is logged in --}}
 
@@ -7,8 +5,24 @@
 
 
 <section class="community-pulse-page">
-    <h1>Community Pulse</h1>
-    <p>Welcome to the Community Pulse! Here you can find the latest reviews from fellow users!</p>
+    <section class="community-hero">
+        <p class="eyebrow">Community Pulse</p>
+        <h1>Community Pulse</h1>
+        <p>
+            Welcome to the Community Pulse! Here you can find the latest reviews,
+            restaurant experiences, and posts from fellow BiteCheck users.
+        </p>
+
+        <div class="community-actions">
+            <a href="/api/posts/createpost" class="primary-btn community-action-btn">
+                Create A Post!
+            </a>
+
+            <a href="/home" class="secondary-btn community-action-btn">
+                Return To Home
+            </a>
+        </div>
+    </section>
 
     <section class="buttons">
     <div class="home-bottom-actions">
@@ -24,60 +38,111 @@
     </section>
     <br>
     <section class="recent-posts">
-        <h2>Recent Posts from the Community</h2>
-        <ul>
-            {{#each posts}}
-                <li>
-                    <h3>{{this.title}}</h3>
-                    {{!-- {{#if this.content.img}}
-                        <img src="{{this.content.img}}" alt="Post Image">
-                    {{/if}} --}}
-                    <h3>{{this.businessName}}</h3>
-                    <p>{{this.content}}</p> 
-                    <p>Posted by {{this.author}} on {{this.date}}</p>
-                    {{!-- display the author details (profile picture and profile link) --}}
-                    <a href="{{this.authorDetails.profileLink}}" class="author-link">
-                        <img class="friend-profile-photo" src="{{this.authorDetails.profilePhoto}}" alt="{{this.author}}'s profile photo" class="author-profile-photo">
-                    </a>
-                </li>
-                <div>
-                    <button type="button" class="like-button" data-post-id="{{this._id}}"> Like {{likes.length}}</button>
-                    <button type="button" class="dislike-button" data-post-id="{{this._id}}"> Dislike {{dislikes.length}}</button>
-                    <button type="button" class="report-post-button-IC" data-post-id="{{this._id}}"> Report Post For Inappropriate Content</button>
+        <div class="community-section-header">
+            <h2>Recent Posts from the Community</h2>
+            <p>Browse the most recent posts shared by BiteCheck users.</p>
+        </div>
 
-                </div>
-                <div>
-                    <form method="POST" name="create-comment-form" action="/api/posts/{{this._id}}/comments" id="create-comment-form">
-                        <div class="form-group">
-                            <label for="comment">Enter Comment</label>
-                            <textarea maxlength="100" class="text-area" name="comment" id="comment" rows="5" placeholder="Comment up to 100 characters"></textarea>
+        {{#if posts}}
+            <ul class="community-post-list">
+                {{#each posts}}
+                    <li class="community-post-card">
+                        <div class="community-post-top">
+                            <a href="{{this.authorDetails.profileLink}}" class="community-author-link">
+                                <img
+                                    class="community-profile-photo"
+                                    src="{{this.authorDetails.profilePhoto}}"
+                                    alt="{{this.author}}'s profile photo"
+                                >
+                            </a>
+
+                            <div class="community-post-meta">
+                                <h3>{{this.title}}</h3>
+                                <p>
+                                    Posted by
+                                    <a href="{{this.authorDetails.profileLink}}" class="author-link">{{this.author}}</a>
+                                    on {{this.date}}
+                                </p>
+                            </div>
                         </div>
-                        <button name="commentButton" id="commentButton" class="secondary-btn">Post Comment</button>
-                    </form>
-                </div>
-            
-                <details>
-                    <summary>Click to see comments</summary>
-                    {{#if this.comments}}
-                        <ul class="comments-list">
-                            {{#each this.comments}}
-                                <li>
-                                    <div class="friend-card">
-                                <p><b>{{this.author}}</b> on <b>{{this.date}}</b></p>
-                                    <p>{{this.text}}</p>
 
-                                    </div>
+                        {{!-- {{#if this.content.img}}
+                            <img src="{{this.content.img}}" alt="Post Image">
+                        {{/if}} --}}
 
-                                </li>
-                            {{/each}}
-                        </ul>
-                    {{else}}
-                        <p>No comments yet.</p>
-                    {{/if}}
+                        <div class="community-post-body">
+                            <h4>{{this.businessName}}</h4>
+                            <p>{{this.content}}</p>
+                        </div>
 
-                </details>
-            {{/each}}
-        </ul>
+                        <div class="community-post-actions">
+                            <button type="button" class="like-button" data-post-id="{{this._id}}">
+                                Like {{this.likes.length}}
+                            </button>
+
+                            <button type="button" class="dislike-button" data-post-id="{{this._id}}">
+                                Dislike {{this.dislikes.length}}
+                            </button>
+
+                            <button type="button" class="report-post-button-IC" data-post-id="{{this._id}}"> 
+                                Report Post For Inappropriate Content
+                            </button>
+
+                        </div>
+
+                        <form
+                            method="POST"
+                            name="create-comment-form"
+                            action="/api/posts/{{this._id}}/comments"
+                            class="create-comment-form"
+                        >
+                            <div class="form-group">
+                                <label for="comment-{{this._id}}">Enter Comment</label>
+                                <textarea
+                                    maxlength="100"
+                                    class="text-area"
+                                    name="comment"
+                                    id="comment-{{this._id}}"
+                                    rows="4"
+                                    placeholder="Comment up to 100 characters"
+                                ></textarea>
+                            </div>
+
+                            <button name="commentButton" class="secondary-btn comment-btn">
+                                Post Comment
+                            </button>
+                        </form>
+
+                        <details class="community-comments">
+                            <summary>Click to see comments</summary>
+
+                            {{#if this.comments}}
+                                <ul class="comments-list">
+                                    {{#each this.comments}}
+                                        <li>
+                                            <div class="friend-card comment-card">
+                                                <p><b>{{this.author}}</b> on <b>{{this.date}}</b></p>
+                                                <p>{{this.text}}</p>
+                                            </div>
+                                        </li>
+                                    {{/each}}
+                                </ul>
+                            {{else}}
+                                <p>No comments yet.</p>
+                            {{/if}}
+                        </details>
+                    </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <section class="empty-community-card">
+                <h3>No community posts yet</h3>
+                <p>
+                    Once users start sharing restaurant reviews and safety experiences,
+                    they will show up here.
+                </p>
+            </section>
+        {{/if}}
     </section>
 
 </section>

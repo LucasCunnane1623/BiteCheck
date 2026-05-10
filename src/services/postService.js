@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb";
 import { getdb } from "../database/db.js"
 
-
 /**
  * 
  */
@@ -17,11 +16,12 @@ export const getPosts = async (page = 1, limit = 10) => {
         .toArray();
 };
 
-export const createPost = async (userId, content) => {
+export const createPost = async (userId, content,businessName) => {
     const db = getdb()
     return await db.collection('posts').insertOne({
         userId: new ObjectId(userId), 
         content, 
+        businessName,
         likes: [],   // this array will store the userid so no users can make multiple likes (broken system/feature)
         dislikes: [], // same as above
         // comments will be in the form {userId:"fwef0w8gw82j3", comment:"cool post!"}
@@ -39,13 +39,14 @@ export const addComment = async (postId, userId, username, text) => {
         text,
         createdOn: new Date()
     }
+
     return await db.collection('posts').updateOne(
         { _id: new ObjectId(postId) },
         {$push: {comments: comment}}
     );
 };
 
-
+//FOR likes and dislikes its imperative that we use the set mongo db query since we can't have duplicates and there must not be any overlap between the two sets (A n B =empty set phi)
 export const likePost = async (postId, userId) => {
     const db = getdb();
 
@@ -76,6 +77,41 @@ export const likePost = async (postId, userId) => {
             }
         );
     }  
+};
+
+export const dislikePost = async (postId, userId) => {
+    const db = getdb();
+
+    if (!ObjectId.isValid(postId)) {
+        throw new Error("thats not a valid ID!");
+    }
+    const postObjectId = new ObjectId(postId);
+    const post = await db.collection('posts').findOne({ _id: postObjectId });
+
+    if (!post) {
+        throw new Error("post not found");
+    }
+    const userIdString = userId.toString();
+    const hasDisliked = (post.dislikes || []).some(
+        id => id.toString() === userIdString
+    );
+
+    if (hasDisliked) {
+        // If they already disliked it, clicking again removes their dislike
+        return await db.collection('posts').updateOne(
+            { _id: postObjectId },
+            { $pull: { dislikes: userIdString } }
+        );
+    } else {
+        // Add dislike once, and remove like if it exists
+        return await db.collection('posts').updateOne(
+            { _id: postObjectId },
+            {
+                $addToSet: { dislikes: userIdString }, 
+                $pull: { likes: userIdString }
+            }
+        );
+    }
 };
 
 export const getMyPosts = async (userId, page = 1, limit = 10) => {

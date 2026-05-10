@@ -230,7 +230,11 @@ router.route('/friends/search').get(authenticate, async (req,res,next)=>{
     try{
         const usernameQuery = req.query.username.trim();
         if (!usernameQuery){
-            return res.status(400).json({ error: "username query parameter is required"});
+            return res.status(400).render("error",{
+                statusCode :400,
+                 error: "username query parameter is required",
+                lastPageRoute: "/api/users/friends"
+            });
         }
         if (usernameQuery === req.session.member.username){
             return res.status(400).render("error",{

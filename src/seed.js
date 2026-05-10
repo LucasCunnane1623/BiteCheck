@@ -6,11 +6,18 @@ import {ObjectId} from 'mongodb';
 import helpers from './helpers.js';
 import bcrypt from 'bcrypt';
 
+
 const NUM_USERS = 30;
+const NUM_POSTS = 10;
+
 const main = async () => {
   const db = await dbConnection();
   const userCollection = await db.collection('users');
+  const reviewCollection = await db.collection('reviews');
+  const postsCollection = await db.collection('posts');
   userCollection.drop();
+  reviewCollection.drop();
+  postsCollection.drop();
 
   let passwords = helpers.generateRandomPasswords(NUM_USERS); //generate 30 random passwords to use for the seeded users. 
   console.log("Generated passwords for seeded users:", passwords);
@@ -30,7 +37,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'john.doe@example.com',
-    username: 'john_doe',
+    username: 'john-doe',
     age: 30,
     password: passwords[0],
     isAdmin: false
@@ -46,7 +53,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'emma.smith@example.com',
-    username: 'emma_smith',
+    username: 'emma-smith',
     age: 24,
     password: passwords[1],
     isAdmin: false
@@ -62,7 +69,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'liam.johnson@example.com',
-    username: 'liam_johnson',
+    username: 'liam-johnson',
     age: 27,
     password: passwords[2],
     isAdmin: false
@@ -78,7 +85,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'olivia.brown@example.com',
-    username: 'olivia_brown',
+    username: 'olivia-brown',
     age: 22,
     password: passwords[3],
     isAdmin: false
@@ -94,7 +101,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'noah.davis@example.com',
-    username: 'noah_davis',
+    username: 'noah-davis',
     age: 35,
     password: passwords[4],
     isAdmin: false
@@ -110,7 +117,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'sophia.miller@example.com',
-    username: 'sophia_miller',
+    username: 'sophia-miller',
     age: 29,
     password: passwords[5],
     isAdmin: false
@@ -126,7 +133,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'james.wilson@example.com',
-    username: 'james_wilson',
+    username: 'james-wilson',
     age: 31,
     password: passwords[6],
     isAdmin: false
@@ -142,7 +149,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'ava.moore@example.com',
-    username: 'ava_moore',
+    username: 'ava-moore',
     age: 20,
     password: passwords[7],
     isAdmin: false
@@ -158,7 +165,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'william.taylor@example.com',
-    username: 'william_taylor',
+    username: 'william-taylor',
     age: 41,
     password: passwords[8],
     isAdmin: false
@@ -174,7 +181,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'isabella.anderson@example.com',
-    username: 'isabella_anderson',
+    username: 'isabella-anderson',
     age: 26,
     password: passwords[9],
     isAdmin: false
@@ -190,7 +197,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'benjamin.thomas@example.com',
-    username: 'benjamin_thomas',
+    username: 'benjamin-thomas',
     age: 33,
     password: passwords[10],
     isAdmin: false
@@ -206,7 +213,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'mia.jackson@example.com',
-    username: 'mia_jackson',
+    username: 'mia-jackson',
     age: 19,
     password: passwords[11],
     isAdmin: false
@@ -222,7 +229,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'lucas.white@example.com',
-    username: 'lucas_white',
+    username: 'lucas-white',
     age: 28,
     password: passwords[12],
     isAdmin: false
@@ -238,7 +245,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'charlotte.harris@example.com',
-    username: 'charlotte_harris',
+    username: 'charlotte-harris',
     age: 25,
     password: passwords[13],
     isAdmin: false
@@ -254,7 +261,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'henry.martin@example.com',
-    username: 'henry_martin',
+    username: 'henry-martin',
     age: 37,
     password: passwords[14],
     isAdmin: false
@@ -270,7 +277,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'amelia.thompson@example.com',
-    username: 'amelia_thompson',
+    username: 'amelia-thompson',
     age: 23,
     password: passwords[15],
     isAdmin: false
@@ -286,7 +293,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'alexander.garcia@example.com',
-    username: 'alexander_garcia',
+    username: 'alexander-garcia',
     age: 32,
     password: passwords[16],
     isAdmin: false
@@ -302,7 +309,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'evelyn.martinez@example.com',
-    username: 'evelyn_martinez',
+    username: 'evelyn-martinez',
     age: 21,
     password: passwords[17],
     isAdmin: false
@@ -318,7 +325,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'daniel.robinson@example.com',
-    username: 'daniel_robinson',
+    username: 'daniel-robinson',
     age: 40,
     password: passwords[18],
     isAdmin: false
@@ -334,7 +341,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'harper.clark@example.com',
-    username: 'harper_clark',
+    username: 'harper-clark',
     age: 18,
     password: passwords[19],
     isAdmin: false
@@ -350,7 +357,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'michael.rodriguez@example.com',
-    username: 'michael_rodriguez',
+    username: 'michael-rodriguez',
     age: 36,
     password: passwords[20],
     isAdmin: false
@@ -366,7 +373,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'ella.lewis@example.com',
-    username: 'ella_lewis',
+    username: 'ella-lewis',
     age: 17,
     password: passwords[21],
     isAdmin: false
@@ -382,7 +389,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'ethan.lee@example.com',
-    username: 'ethan_lee',
+    username: 'ethan-lee',
     age: 34,
     password: passwords[22],
     isAdmin: false
@@ -398,7 +405,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'grace.walker@example.com',
-    username: 'grace_walker',
+    username: 'grace-walker',
     age: 16,
     password: passwords[23],
     isAdmin: false
@@ -414,7 +421,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'jacob.hall@example.com',
-    username: 'jacob_hall',
+    username: 'jacob-hall',
     age: 39,
     password: passwords[24],
     isAdmin: false
@@ -430,7 +437,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'chloe.allen@example.com',
-    username: 'chloe_allen',
+    username: 'chloe-allen',
     age: 27,
     password: passwords[25],
     isAdmin: false
@@ -446,7 +453,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'logan.young@example.com',
-    username: 'logan_young',
+    username: 'logan-young',
     age: 42,
     password: passwords[26],
     isAdmin: false
@@ -462,7 +469,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'zoe.king@example.com',
-    username: 'zoe_king',
+    username: 'zoe-king',
     age: 15,
     password: passwords[27],
     isAdmin: false
@@ -478,7 +485,7 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'sebastian.scott@example.com',
-    username: 'sebastian_scott',
+    username: 'sebastian-scott',
     age: 38,
     password: passwords[28],
     isAdmin: false
@@ -494,30 +501,217 @@ const userData = [
     friends: [],
     blockedUsers: [],
     email: 'lily.green@example.com',
-    username: 'lily_green',
+    username: 'lily-green',
     age: 21,
     password: passwords[29],
     isAdmin: false
   }
 ];
-
+  console.log(`Seeded ${NUM_USERS} Users to users collection`);
   await userCollection.insertMany(userData);
 
-  console.log(`Seeded ${NUM_USERS} Users to users collection`);
+  //seed the test review 
+  const mockReviews = [
+      { comment: "The food here was amazing!", reports: 0, userId: "user_1", createdAt: new Date() },
+      { comment: "Terrible service, avoid this place.", reports: 3, userId: "user_2", createdAt: new Date() },
+      { comment: "SPAM CLICK THIS LINK FOR FREE PIZZA", reports: 12, userId: "hacker_99", createdAt: new Date() }
+  ];
+  await db.collection('reviews').insertMany(mockReviews);
 
+  console.log(`Seeded 3 reviews to reviews collection`);
+  
+
+const testPosts = [
+  {
+    userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b101'),
+    content: "Just tried the spicy ramen at Ichiran and it completely lived up to the hype.",
+    businessName: "Ichiran Ramen",
+    likes: [
+      '64b7c2f8f1d4c3b2f8e4b102',
+      '64b7c2f8f1d4c3b2f8e4b103'
+    ],
+    dislikes: [],
+    comments: [
+      {
+        commentId: new ObjectId(),
+        userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b104'),
+        username: 'olivia-brown',
+        text: "Need to try this place soon.",
+        createdOn: new Date()
+      }
+    ],
+    createdOn: new Date()
+  },
+
+  {
+    userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b105'),
+    content: "Coffee quality was amazing but the wait time was brutal.",
+    businessName: "Bean & Brew Cafe",
+    likes: [
+      '64b7c2f8f1d4c3b2f8e4b106'
+    ],
+    dislikes: [
+      '64b7c2f8f1d4c3b2f8e4b107'
+    ],
+    comments: [],
+    createdOn: new Date()
+  },
+
+  {
+    userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b108'),
+    content: "Best tacos I've had in months.",
+    businessName: "Taco Fiesta",
+    likes: [
+      '64b7c2f8f1d4c3b2f8e4b109',
+      '64b7c2f8f1d4c3b2f8e4b110',
+      '64b7c2f8f1d4c3b2f8e4b111'
+    ],
+    dislikes: [],
+    comments: [
+      {
+        commentId: new ObjectId(),
+        userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b112'),
+        username: 'mia-jackson',
+        text: "Their birria tacos are elite.",
+        createdOn: new Date()
+      },
+      {
+        commentId: new ObjectId(),
+        userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b113'),
+        username: 'lucas-white',
+        text: "Facts.",
+        createdOn: new Date()
+      }
+    ],
+    createdOn: new Date()
+  },
+
+  {
+    userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b114'),
+    content: "Not worth the price honestly.",
+    businessName: "Golden Steakhouse",
+    likes: [],
+    dislikes: [
+      '64b7c2f8f1d4c3b2f8e4b115'
+    ],
+    comments: [],
+    createdOn: new Date()
+  },
+
+  {
+    userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b116'),
+    content: "Their sushi platter presentation was beautiful.",
+    businessName: "Sakura Sushi",
+    likes: [
+      '64b7c2f8f1d4c3b2f8e4b117',
+      '64b7c2f8f1d4c3b2f8e4b118'
+    ],
+    dislikes: [],
+    comments: [
+      {
+        commentId: new ObjectId(),
+        userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b119'),
+        username: 'daniel-robinson',
+        text: "Their salmon rolls are great too.",
+        createdOn: new Date()
+      }
+    ],
+    createdOn: new Date()
+  },
+
+  {
+    userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b120'),
+    content: "Cute atmosphere and friendly staff.",
+    businessName: "Moonlight Bakery",
+    likes: [
+      '64b7c2f8f1d4c3b2f8e4b121'
+    ],
+    dislikes: [],
+    comments: [],
+    createdOn: new Date()
+  },
+
+  {
+    userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b122'),
+    content: "The burger was dry but the fries saved the meal.",
+    businessName: "Burger Barn",
+    likes: [],
+    dislikes: [
+      '64b7c2f8f1d4c3b2f8e4b123'
+    ],
+    comments: [
+      {
+        commentId: new ObjectId(),
+        userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b124'),
+        username: 'grace-walker',
+        text: "I had the opposite experience lol.",
+        createdOn: new Date()
+      }
+    ],
+    createdOn: new Date()
+  },
+
+  {
+    userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b125'),
+    content: "Late night pizza hits different here.",
+    businessName: "Tony's Pizza",
+    likes: [
+      '64b7c2f8f1d4c3b2f8e4b126',
+      '64b7c2f8f1d4c3b2f8e4b127'
+    ],
+    dislikes: [],
+    comments: [],
+    createdOn: new Date()
+  },
+
+  {
+    userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b128'),
+    content: "Really good vegan options and affordable prices.",
+    businessName: "Green Garden",
+    likes: [
+      '64b7c2f8f1d4c3b2f8e4b129'
+    ],
+    dislikes: [],
+    comments: [
+      {
+        commentId: new ObjectId(),
+        userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b130'),
+        username: 'lily-green',
+        text: "Their tofu bowl is my favorite.",
+        createdOn: new Date()
+      }
+    ],
+    createdOn: new Date()
+  },
+
+  {
+    userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b103'),
+    content: "The desserts here are dangerously good.",
+    businessName: "Sugar Rush Cafe",
+    likes: [
+      '64b7c2f8f1d4c3b2f8e4b101',
+      '64b7c2f8f1d4c3b2f8e4b105',
+      '64b7c2f8f1d4c3b2f8e4b110'
+    ],
+    dislikes: [],
+    comments: [
+      {
+        commentId: new ObjectId(),
+        userId: new ObjectId('64b7c2f8f1d4c3b2f8e4b102'),
+        username: 'emma-smith',
+        text: "Their cheesecake is insane.",
+        createdOn: new Date()
+      }
+    ],
+    createdOn: new Date()
+  }
+];
+  await db.collection('posts').insertMany(testPosts);
+  
+  console.log(`Seeded ${NUM_POSTS} posts to posts collection`);
   await closeConnection();
 };
 
 main();
-// A temporary "Seeder" function to test your God View
-import { getdb } from "./database/db.js";
 
-export const seedTestReviews = async () => {
-    const db = getdb();
-    const mockReviews = [
-        { comment: "The food here was amazing!", reports: 0, userId: "user_1", createdAt: new Date() },
-        { comment: "Terrible service, avoid this place.", reports: 3, userId: "user_2", createdAt: new Date() },
-        { comment: "SPAM CLICK THIS LINK FOR FREE PIZZA", reports: 12, userId: "hacker_99", createdAt: new Date() }
-    ];
-    await db.collection('reviews').insertMany(mockReviews);
-};
+

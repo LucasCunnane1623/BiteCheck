@@ -1,16 +1,12 @@
 <div class="header-inner">
   <p class="eyebrow-large">BiteCheck</p>
-  {{#if showProfileButton}}
+  {{!-- {{#if showProfileButton}}
     <a class="profile-quick-link" href="/api/users/profile">
       Visit Profile
     </a>
-  {{/if}}
+  {{/if}} --}}
 
-  {{#if showFriendsButton}}
-    <a class="profile-quick-link" href="/api/users/friends">
-        Friends
-    </a>
-  {{/if}}
+
   
   <div class="header-actions">
     {{#if user}}
@@ -27,9 +23,22 @@
         </a>
       {{/if}}
 
-      <a class="logout-link" href="/api/auth/logout">Logout</a>
+      {{#if showFriendsButton}}
+        <a class="profile-quick-link" href="/api/users/friends">
+            Friends
+        </a>
+      {{/if}}
+
+
+      {{#if showCommPulseButton}}
+        <a class="profile-quick-link" href="/api/posts">
+            Community Pulse Feed
+        </a>
+      {{/if}}
+{{!-- 
+      <a class="logout-link" href="/api/auth/logout">Logout</a> --}}
     {{else}}
-      <a class="login-link" href="/api/auth/login">Login</a>
+      {{!-- <a class="login-link" href="/api/auth/login">Login</a> --}}
     {{/if}}
   </div>
 </div>

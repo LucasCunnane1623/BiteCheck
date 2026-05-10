@@ -49,13 +49,13 @@ function CheckHandle(handle){// make sure that first name is a string first
     } catch (error) {
         throw(error);
     }
-    //check that the length is between 2-20 chars
-    if(handle.length <5 || handle.length >12){throw "name length must be between 5-12 chars!";}
+    //check that the length is between 5-25 chars
+    if(handle.length <5 || handle.length >25){throw "Username length must be between 5-25 chars!";}
     for(let i = 0;i<handle.length; i++){
         let asciiVal = handle.charCodeAt(i); //https://www.geeksforgeeks.org/javascript/how-to-convert-character-to-ascii-code-using-javascript/
         if(!((asciiVal <= 122 && asciiVal >= 97 )|| (asciiVal <= 90 && asciiVal >= 65 )||
-        (asciiVal <= 57 && asciiVal >= 48))){
-            throw "handle must contain only valid characters! (A-Z,a-z,1-9)";
+        (asciiVal <= 57 && asciiVal >= 48)) && asciiVal !== 45 && asciiVal !== 95){ //allow - and _ in the handle, but no other special chars
+            throw "Username must contain only valid characters! (A-Z,a-z,1-9,-,_)";
         }
     }
     return handle;

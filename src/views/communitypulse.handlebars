@@ -1,8 +1,77 @@
 
-<p>
-    this is the community pulse page, its currently under construction.
-</p>
 
-<a href="/home" class="info_box"> 
-    <h2>Return To Home</h2>
-</a>
+{{!-- this is the community pulse page, it will show recent reviews from users --}}
+{{!-- it will be accessible from the header when a user is logged in --}}
+
+{{!-- since we have no review algorithm implementation, we just load the entire posts collection and display the most recent 10 posts --}}
+
+<section class="community-pulse-page">
+    <h1>Community Pulse</h1>
+    <p>Welcome to the Community Pulse! Here you can find the latest reviews from fellow users!</p>
+
+    <section class="recent-posts">
+        <h2>Recent Posts from the Community</h2>
+        <ul>
+            {{#each posts}}
+                <li>
+                    <h3>{{this.title}}</h3>
+                    {{!-- {{#if this.content.img}}
+                        <img src="{{this.content.img}}" alt="Post Image">
+                    {{/if}} --}}
+                    <h3>{{this.businessName}}</h3>
+                    <p>{{this.content}}</p> 
+                    <p>Posted by {{this.author}} on {{this.date}}</p>
+                    {{!-- display the author details (profile picture and profile link) --}}
+                    <a href="{{this.authorDetails.profileLink}}" class="author-link">
+                        <img class="friend-profile-photo" src="{{this.authorDetails.profilePhoto}}" alt="{{this.author}}'s profile photo" class="author-profile-photo">
+                    </a>
+                </li>
+                <div>
+                    <button type="button" class="like-button" data-post-id="{{_id}}"> Like {{likes.length}}</button>
+                    <button type="button" class="dislike-button" data-post-id="{{_id}}"> Dislike {{dislikes.length}}</button>
+                </div>
+                <div>
+                    <form method="POST" name="create-comment-form" action="/api/posts/{{this._id}}/comments" id="create-comment-form">
+                        <div class="form-group">
+                            <label for="comment">Enter Comment</label>
+                            <textarea maxlength="100" class="text-area" name="comment" id="comment" rows="5" placeholder="Comment up to 100 characters"></textarea>
+                        </div>
+                        <button name="commentButton" id="commentButton" class="secondary-btn">Post Comment</button>
+                    </form>
+                </div>
+            
+                <details>
+                    <summary>Click to see comments</summary>
+                    {{#if this.comments}}
+                        <ul class="comments-list">
+                            {{#each this.comments}}
+                                <li>
+                                    <div class="friend-card">
+                                <p><b>{{this.author}}</b> on <b>{{this.date}}</b></p>
+                                    <p>{{this.text}}</p>
+
+                                    </div>
+
+                                </li>
+                            {{/each}}
+                        </ul>
+                    {{else}}
+                        <p>No comments yet.</p>
+                    {{/if}}
+
+                </details>
+            {{/each}}
+        </ul>
+    </section>
+    <div class="home-bottom-actions">
+        <a href="/api/posts/createpost" class="primary-btn"> 
+            Create A Post!
+        </a>
+    </div>
+    <div class="home-bottom-actions">
+            <a href="/home" class="secondary-btn"> 
+            Return To Home
+        </a>
+    </div>
+</section>
+    

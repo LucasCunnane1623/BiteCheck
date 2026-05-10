@@ -269,6 +269,9 @@ ul {
   width: 95%;
   padding: 0.75rem 4rem;
 }
+/* .header-actions{
+
+} */
 
 .profile-quick-link {
   background: var(--green-main);
@@ -797,4 +800,50 @@ highlight {
   .med_pic {
     display: none;
   }
+}
+
+.text-area{
+  resize: none;
+    width: 500px;
+    height: 150px;
+}
+.slider-container{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.slider{
+    width: 300px;
+
+    /* Removes default browser styling */
+    appearance: none;
+    -webkit-appearance: none;
+
+    height: 8px;
+    border-radius: 999px;
+    background: #d4d4d4;
+    outline: none;
+}
+.slider::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    appearance: none;
+
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+
+    background: #4caf50;
+    cursor: pointer;
+    border: none;
+}
+
+.slider::-moz-range-thumb{
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+
+    background: #4caf50;
+    cursor: pointer;
+    border: none;
 }

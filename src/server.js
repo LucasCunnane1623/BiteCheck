@@ -7,7 +7,7 @@ import exphbs from 'express-handlebars';
 import session from 'express-session';
 import path from 'path';
 
-import { seedTestReviews } from './seed.js';
+// import { seedTestReviews } from './seed.js';
 import settings from './config/settings.js';
 import { connect } from './database/db.js';
 import { syncRestaurants } from './services/dataSync.js';
@@ -82,7 +82,7 @@ app.use('/api/admin', adminroutes);
 const startDataSync = async () => {
     try{
         console.log("Background Sync Started....")
-        await seedTestReviews();
+        // await seedTestReviews();
         await syncRestaurants();
         console.log("Background Sync Completed.")
     } catch (err){

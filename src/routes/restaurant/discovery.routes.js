@@ -96,6 +96,31 @@ router.get('/suggest', async (req, res, next) => {
 });
 
 
+/**
+ * @route GET /api/restaurants
+ * @desc Returns all restaurants with coords, score, and color for the map
+ * @access Public
+ */
+router.get('/', async (req, res, next) => {
+    try {
+        const db = getdb();
+        const restaurants = await db.collection(settings.mongo.collections.restaurants)
+            .find({}, { 
+                projection: { 
+                    name: 1, 
+                    coords: 1, 
+                    score: 1, 
+                    color: 1 
+                } 
+            })
+            .toArray();
+
+        res.status(200).json(restaurants);
+    } catch (e) {
+        next(e);
+    }
+});
+
 
 /**
  * @router GET /api/restaurants/search

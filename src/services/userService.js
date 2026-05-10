@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import { getdb } from "../database/db.js"
 import validation from "../helpers.js";
 
+import {getMyPosts } from "./postService.js";
 
 //use the validation.checkId method in try catch blocks to replace the object ID is valid calls 
 export const getUserProfile = async (userId) => {
@@ -27,11 +28,19 @@ export const getUserProfile = async (userId) => {
     const postCount = await db.collection('posts').countDocuments({
         userId: userObjectId
     });
+    let posts;
+    try {
+        posts = await getMyPosts(userId); //gets 10 most recent posts
+    } catch (error) {
+        throw new Error(`${error}`);
+    }
+    
 
     return {
         ...user, 
         stats: {
-            postCount
+            postCount,
+            posts
         }
     };
 };

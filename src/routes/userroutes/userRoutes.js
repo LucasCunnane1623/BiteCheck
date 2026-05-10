@@ -65,8 +65,9 @@ router.get('/profile', authenticate, async (req, res, next) => {
             status : profile.status,
             appSearchRadiusMeters : profile.appSearchRadiusMeters,
             age : profile.age,
-            recentPosts : profile.recentPosts,
-            recentReviews : profile.recentReviews
+            recentPosts : profile.stats.posts,
+            hasRestaurants : profile.stats.posts.length >0,
+            recentReviews : profile.stats.recentReviews
         });
     } catch (e){
         next(e);
@@ -265,8 +266,8 @@ router.route('/friends/search').get(authenticate, async (req,res,next)=>{
                 };
             })
         );
-        const filteredSearchResults = searchResults.filter(user => user !== null); //filter once all of the promises resolve
-        
+        const filteredSearchResults = searchResults.filter(user => user !== null && user.username !== req.session.member.username
+        );        
         
         res.status(200).render("friends",{
             title: `BiteCheck: Search Results for "${usernameQuery}"`,

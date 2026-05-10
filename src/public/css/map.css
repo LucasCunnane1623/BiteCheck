@@ -286,21 +286,22 @@
 
 .btn-home {
     display: block;
-    width: 100%;
+    width: fit-content;
+    margin: 1rem auto 0 auto;
     text-align: center;
     cursor: pointer;
-    background: #ECECEC;
+    background: #91e291;
     color: #1B1B1B;
     border: 2px solid #1B1B1B;
     border-radius: 15pt;
-    padding: 10px;
+    padding: 10px 40px;
     font-family: 'Red Hat Display', Georgia, serif;
-    font-size: 0.85rem;
+    font-size: 1rem;
     box-shadow: 4px 4px 6px #474747;
-    margin-top: 1rem;
     text-decoration: none;
 }
 
 .btn-home:hover {
-    background: #d4d4d4;
+    background: #50A350;
+    color: #fff;
 }

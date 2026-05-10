@@ -800,6 +800,28 @@ highlight {
   .med_pic {
     display: none;
   }
+  
+  /* Community Pulse Update */
+
+  .community-hero {
+    padding: 2rem;
+  }
+  
+  .community-actions,
+  .community-post-actions {
+    flex-direction: column;
+  }
+  
+  .community-action-btn,
+  .comment-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .community-post-top {
+    align-items: flex-start;
+  }
+
 }
 
 .text-area{
@@ -846,4 +868,211 @@ highlight {
     background: #4caf50;
     cursor: pointer;
     border: none;
+}
+
+/* 
+    Community Pulse Page
+*/
+
+.community-pulse-page {
+  padding: 2rem 0 4rem;
+}
+
+.community-hero {
+  background: linear-gradient(135deg, var(--green-light), var(--white));
+  border: 1px solid var(--soft-border);
+  border-radius: 28px;
+  padding: 3rem;
+  box-shadow: var(--shadow-medium);
+  margin-top: 2rem;
+}
+
+.community-hero h1 {
+  color: var(--green-dark);
+  margin-bottom: 1rem;
+}
+
+.community-hero p {
+  max-width: 760px;
+}
+
+.community-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.community-action-btn {
+  width: auto;
+  min-width: 160px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.recent-posts {
+  margin-top: 2rem;
+}
+
+.community-section-header {
+  background: var(--white);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 1rem;
+}
+
+.community-section-header h2 {
+  color: var(--green-dark);
+  font-size: 1.5rem;
+}
+
+.community-post-list,
+.comments-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.community-post-list {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.community-post-card {
+  background: var(--white);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.community-post-top {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.community-profile-photo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--green-soft);
+}
+
+.community-author-link {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.community-post-meta h3 {
+  color: var(--green-dark);
+  font-size: 1.35rem;
+  margin-bottom: 0.25rem;
+}
+
+.community-post-meta p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.community-post-body {
+  background: var(--green-light);
+  border: 1px solid var(--soft-border);
+  border-radius: 18px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.community-post-body h4 {
+  color: var(--green-dark);
+  margin-bottom: 0.5rem;
+}
+
+.community-post-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.like-button,
+.dislike-button {
+  background: var(--white);
+  color: var(--green-dark);
+  border: 2px solid var(--green-main);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.like-button:hover,
+.dislike-button:hover {
+  background: var(--green-light);
+}
+
+.create-comment-form {
+  margin-top: 1rem;
+}
+
+.text-area {
+  width: 100%;
+  border: 1px solid #bfcabf;
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #fbfffb;
+  resize: vertical;
+}
+
+.text-area:focus {
+  outline: 3px solid var(--green-light);
+  border-color: var(--green-main);
+}
+
+.comment-btn {
+  width: auto;
+  margin-top: 0.5rem;
+}
+
+.community-comments {
+  margin-top: 1rem;
+  background: #fbfffb;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.community-comments summary {
+  color: var(--green-dark);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.comment-card {
+  margin-top: 0.75rem;
+  padding: 0.85rem;
+  border-radius: 14px;
+  background: var(--green-light);
+}
+
+.empty-community-card {
+  background: var(--green-light);
+  border: 1px solid var(--soft-border);
+  border-radius: 22px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.empty-community-card h3 {
+  color: var(--green-dark);
 }

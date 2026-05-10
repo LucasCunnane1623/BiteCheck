@@ -42,3 +42,22 @@ async (req, res)=>{
     });
 });
 export default router;
+
+
+/**
+ * @route GET /map
+ * @desc Displays the interactive map page showing restaurant locations and health data
+ * @access Private (authenticated users only)
+ * @body none 
+ * @returns none (renders map.hbs)
+ * @example
+ * GET /map
+ */
+router.route('/map')
+.get(authenticate, async (req, res) => {
+    return res.render('map', {
+        title: 'BiteCheck: Map',
+        isMapPage: true,
+        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+    });
+});

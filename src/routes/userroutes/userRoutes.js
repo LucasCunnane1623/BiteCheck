@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { getUserProfile, updateUserInfo } from '../../services/userService.js';
 import { authenticate,redirectToLanding } from '../../middleware/auth.js';
+import validation from '../../helpers.js';
+import multer from 'multer';
 import { ObjectId } from 'mongodb';
 import { getdb } from '../../database/db.js';
 

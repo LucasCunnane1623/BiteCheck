@@ -21,11 +21,19 @@ searchInput.addEventListener('input', () => {
     } else {
       let resultsHTML = '';
       data.forEach(r => {
+        let display = '?';
+        let colorClass = 'score-grey';
+
+        if (r.color) {
+            display = r.score;
+            colorClass = 'score-' + r.color;
+        }
+
         resultsHTML += `
-          <div class="search-result-item" data-id="${r._id}">
-            <span>${r.name}</span>
-            <span class="score-badge score-${r.color}">${r.score}</span>
-          </div>
+            <div class="search-result-item" data-id="${r._id}">
+                <span>${r.name}</span>
+                <span class="score-badge ${colorClass}">${display}</span>
+            </div>
         `;
       });
       searchResults.innerHTML = resultsHTML;

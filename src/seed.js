@@ -13,6 +13,13 @@ export const seedTestReviews = async () => {
 
 export const seedTestRestaurants = async () => {
     const db = getdb();
+
+    const existing = await db.collection('restaurants').findOne({ camis: '00000001' });
+    if (existing) {
+        console.log('Test restaurants already exist, skipping.');
+        return;
+    }
+
     await db.collection('restaurants').insertMany([
         {
             camis: '00000001',
@@ -82,6 +89,8 @@ export const seedTestRestaurants = async () => {
             ]
         }
     ]);
+
+    console.log('Test restaurants seeded.');
 };
 
 // Run both seeders
@@ -93,4 +102,6 @@ const run = async () => {
     await close();
 };
 
-run();
+if (process.argv[1].includes('seed')) {
+    run();
+}

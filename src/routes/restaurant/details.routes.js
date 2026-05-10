@@ -12,15 +12,15 @@ const router = express.Router();
 
 
 /**
- * @route GET /api/restaurants/:camis
+ * @route GET /api/restaurants/:id
  * @desc Returns restaurant details + 3 most recent comments for the details modal
  * @access Public
  */
-router.get('/:camis', async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
     try {
         const db = getdb();
         const restaurant = await db.collection('restaurants').findOne(
-            { camis: req.params.camis },
+            { _id: new ObjectId(req.params.id) },
             { projection: { name: 1, cuisine: 1, priceRange: 1, address: 1, waitTime: 1, score: 1, color: 1, comments: 1 } }
         );
 
@@ -106,15 +106,15 @@ router.get('/:id/risk-profile', async (req, res, next) => {
 
 
 /**
- * @route GET /api/restaurants/:camis/logs
+ * @route GET /api/restaurants/:id/logs
  * @desc Returns all inspection logs for a restaurant
  * @access Public
  */
-router.get('/:camis/logs', async (req, res, next) => {
+router.get('/:id/logs', async (req, res, next) => {
     try {
         const db = getdb();
         const restaurant = await db.collection('restaurants').findOne(
-            { camis: req.params.camis },
+            { _id: new ObjectId(req.params.id) },
             { projection: { name: 1, inspections: 1 } }
         );
 

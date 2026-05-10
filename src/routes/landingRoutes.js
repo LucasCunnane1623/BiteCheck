@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {redirectToLanding, authenticate} from "../middleware/auth.js"
+import settings from "../config/settings.js";
 const router = Router();
 
 /**
@@ -57,6 +58,7 @@ router.route('/map')
     return res.render('map', {
         title: 'BiteCheck: Map',
         isMapPage: true,
-        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+        googleMapsApiKey: settings.googleMapsApiKey,
+        user: req.session.member
     });
 });

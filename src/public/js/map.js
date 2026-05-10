@@ -19,23 +19,34 @@ async function loadMarkers() {
   const restaurants = await res.json();
 
   restaurants.forEach(r => {
+    let lat, lng;
+
+    if (r.location && r.location.coordinates) {
+        lat = r.location.coordinates[1];
+        lng = r.location.coordinates[0];
+    } else if (r.coords) {
+        lat = r.coords.lat;
+        lng = r.coords.lng;
+    } else {
+        return;
+    }
+
+    const color = r.color || 'green';
+
     const marker = new google.maps.Marker({
-      position: { 
-        lat: r.coords.lat, 
-        lng: r.coords.lng 
-      },
-      map,
-      label: {
-        text: String(r.score),
-        color: '#fff',
-        fontWeight: 'bold',
-      },
-      title: r.name,
-      icon: buildMarkerIcon(r.color),
+        position: { lat, lng },
+        map,
+        label: {
+            text: String(r.score || '?'),
+            color: '#fff',
+            fontWeight: 'bold',
+        },
+        title: r.name,
+        icon: buildMarkerIcon(color),
     });
 
     marker.addListener('click', () => openDetailsModal(r._id));
-    allMarkers.push({ marker, color: r.color });
+    allMarkers.push({ marker, color });
   });
 }
 

@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
-import { getdb } from "../database/db.js"
+import { getdb } from "../database/db.js";
+import validation from "../helpers.js";
 
 /**
  * 
@@ -150,7 +151,33 @@ export const reportPost = async (postId, userId, reason) => {
     if (!ObjectId.isValid(postId)){
         throw new Error("thats not a valid ID!")
     };
+    try {
+        userId = validation.checkId(userId,"userID");
+        postId = validation.checkId(postId,"userID");
+    } catch (error) {
+        throw new Error(`${error}`);
+    }
+    const postObjectId = new ObjectId(postId);
+    const userObjectId = new ObjectId(userId);
+    let post;
+    try {
+        post = await db.collection('posts').findOne({ _id: postObjectId });
+        if (!post) {
+            throw new Error("post not found");
+        }
+    } catch (error) {
+        throw new Error(`${error}`);
+    }
+    //check if the post has been already reported by this user
+    const alreadyReported = (post.reports || []).some(report => {
+        //check fi the user id string matches our 
+        return report.userId && report.userId.toString() === userId;
+    });
+    if (alreadyReported) {
+        throw new Error("You already reported this post");
+    }
 
+    //if we want to query all reported posts  in the future we just iterate through posts and check if the object has a reports attr
     return await db.collection('posts').updateOne(
         {_id: new ObjectId(postId)},
         {   // prevents duplicate reports from the same user and also adds the report reason and timestamp

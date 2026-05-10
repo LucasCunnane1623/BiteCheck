@@ -276,8 +276,17 @@ router.patch('/:id/report', authenticate, async (req, res, next)=>{
         if (!reason || reason.trim().length === 0){
             return res.status(400).json({error: "Report reason cannot be empty"});
         }
-
-        await reportPost(req.params.id, req.user.userId, reason);
+        try {
+            await reportPost(req.params.id, req.session.member.userId, reason);
+        } catch (error) {
+            return res.status(500).render("error",{
+                statusCode :500,
+                error: `Unable to report post! ${error}`,
+                lastPageRoute: "/api/posts"
+            });
+        }
+        
+        req.session.message = "Post has been reported and awaits admin review"
         res.status(200).json({
             success: true,
             message: "Post reported successfully"

@@ -46,3 +46,31 @@ button.addEventListener('click', async () => {
     }
 });
 });
+
+
+document.querySelectorAll('.report-post-button-IC').forEach((button) => { //gather ALL report post buttons and add event listeners to all  
+button.addEventListener('click', async () => {
+    //https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset 
+    const postId = button.dataset.postId; //grabbed the data- value i passed in via handlebars
+
+    try {
+    const response = await fetch(`/api/posts/${postId}/report`, {
+        method: 'PATCH',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({ //in this version we will only have one type of report 
+                    reason: "Post contains NSFW or inappropriate content"
+                })
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to report post');
+    }
+
+    window.location.reload();
+    } catch (error) {
+        throw new Error(`${error}: Could not report the post`);
+    }
+});
+});

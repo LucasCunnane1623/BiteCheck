@@ -5,10 +5,24 @@
 
 {{!-- since we have no review algorithm implementation, we just load the entire posts collection and display the most recent 10 posts --}}
 
+
 <section class="community-pulse-page">
     <h1>Community Pulse</h1>
     <p>Welcome to the Community Pulse! Here you can find the latest reviews from fellow users!</p>
 
+    <section class="buttons">
+    <div class="home-bottom-actions">
+        <a href="/api/posts/createpost" class="primary-btn"> 
+            Create A Post!
+        </a>
+    </div>
+    <div class="home-bottom-actions">
+            <a href="/home" class="secondary-btn"> 
+            Return To Home
+        </a>
+    </div>
+    </section>
+    <br>
     <section class="recent-posts">
         <h2>Recent Posts from the Community</h2>
         <ul>
@@ -27,8 +41,10 @@
                     </a>
                 </li>
                 <div>
-                    <button type="button" class="like-button" data-post-id="{{_id}}"> Like {{likes.length}}</button>
-                    <button type="button" class="dislike-button" data-post-id="{{_id}}"> Dislike {{dislikes.length}}</button>
+                    <button type="button" class="like-button" data-post-id="{{this._id}}"> Like {{likes.length}}</button>
+                    <button type="button" class="dislike-button" data-post-id="{{this._id}}"> Dislike {{dislikes.length}}</button>
+                    <button type="button" class="report-post-button-IC" data-post-id="{{this._id}}"> Report Post For Inappropriate Content</button>
+
                 </div>
                 <div>
                     <form method="POST" name="create-comment-form" action="/api/posts/{{this._id}}/comments" id="create-comment-form">
@@ -63,15 +79,6 @@
             {{/each}}
         </ul>
     </section>
-    <div class="home-bottom-actions">
-        <a href="/api/posts/createpost" class="primary-btn"> 
-            Create A Post!
-        </a>
-    </div>
-    <div class="home-bottom-actions">
-            <a href="/home" class="secondary-btn"> 
-            Return To Home
-        </a>
-    </div>
+
 </section>
     

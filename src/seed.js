@@ -540,6 +540,8 @@ const testPosts = [
         createdOn: new Date()
       }
     ],
+    isFlagged: false,
+    reports: [],
     createdOn: new Date()
   },
 
@@ -554,6 +556,8 @@ const testPosts = [
       '64b7c2f8f1d4c3b2f8e4b107'
     ],
     comments: [],
+    isFlagged: false,
+    reports: [],
     createdOn: new Date()
   },
 
@@ -583,6 +587,8 @@ const testPosts = [
         createdOn: new Date()
       }
     ],
+    isFlagged: false,
+    reports: [],
     createdOn: new Date()
   },
 
@@ -595,6 +601,8 @@ const testPosts = [
       '64b7c2f8f1d4c3b2f8e4b115'
     ],
     comments: [],
+    isFlagged: false,
+    reports: [],
     createdOn: new Date()
   },
 
@@ -616,6 +624,8 @@ const testPosts = [
         createdOn: new Date()
       }
     ],
+    isFlagged: false,
+    reports: [],
     createdOn: new Date()
   },
 
@@ -628,6 +638,8 @@ const testPosts = [
     ],
     dislikes: [],
     comments: [],
+    isFlagged: false,
+    reports: [],
     createdOn: new Date()
   },
 
@@ -648,6 +660,8 @@ const testPosts = [
         createdOn: new Date()
       }
     ],
+    isFlagged: false,
+    reports: [],
     createdOn: new Date()
   },
 
@@ -661,6 +675,8 @@ const testPosts = [
     ],
     dislikes: [],
     comments: [],
+    isFlagged: false,
+    reports: [],
     createdOn: new Date()
   },
 
@@ -681,6 +697,8 @@ const testPosts = [
         createdOn: new Date()
       }
     ],
+    isFlagged: false,
+    reports: [],
     createdOn: new Date()
   },
 
@@ -703,6 +721,8 @@ const testPosts = [
         createdOn: new Date()
       }
     ],
+    isFlagged: false,
+    reports: [],
     createdOn: new Date()
   }
 ];

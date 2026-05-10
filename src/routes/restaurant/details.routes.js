@@ -77,6 +77,33 @@ router.get('/:id/risk-profile', async (req, res, next) => {
 
 
 /**
+ * @route GET /api/restaurants/:camis/logs
+ * @desc Returns all inspection logs for a restaurant
+ * @access Public
+ */
+router.get('/:camis/logs', async (req, res, next) => {
+    try {
+        const db = getdb();
+        const restaurant = await db.collection('restaurants').findOne(
+            { camis: req.params.camis },
+            { projection: { name: 1, inspections: 1 } }
+        );
+
+        if (!restaurant) {
+            return res.status(404).json({ error: 'Restaurant not found' });
+        }
+
+        res.status(200).json({
+            name: restaurant.name,
+            inspections: restaurant.inspections || []
+        });
+    } catch (e) {
+        next(e);
+    }
+});
+
+
+/**
  * @route GET /api/restaurants/:camis/reviews
  * @desc Get all reviews for a specific restaurant, sorted by most recent.
  * @access Public

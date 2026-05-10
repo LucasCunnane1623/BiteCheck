@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import settings from '../config/settings.js';
 import { getdb } from '../database/db.js';
 
-export const registerUser = async (email, password, username, age) => {
+export const registerUser = async (email, password, username, age,firstName,lastName) => {
     const db = getdb();
     const collection = db.collection('users');
     const existingUser = await collection.findOne({
@@ -21,12 +21,14 @@ export const registerUser = async (email, password, username, age) => {
     }
     const result = await collection.insertOne({
         profilePhoto : "/uploads/profilePhotos/defaultProfile.jpg",
-        firstName : "",
-        lastName : "",
+        firstName : firstName,
+        lastName : lastName,
         status : "Public", //default status is private, but user can change it to public if they want to share their profile with other users.
         appSearchRadiusMeters: 500, //default search radius is 500 meters 
         favRestaurants : [], //array of restaurant ids that the user has favorited
-        email,
+        friends : [], //array of user ids that the user is friends with
+        blockedUsers : [], //array of user ids that the user has blocked, 
+        email: email.toLowerCase(), //store email in lowercase to make it easier to do case insensitive search
         username,
         age: parseInt(age),
         password: hashedPassword,
@@ -39,7 +41,9 @@ export const registerUser = async (email, password, username, age) => {
 
 export const loginUser = async (email, password) => {
     const db = getdb();
-    const user = await db.collection('users').findOne({email});
+    const user = await db.collection('users').findOne({email
+        : {$regex : new RegExp(`^${email}$`,"i")}//case insensitive email
+    });
 
     if (!user){
         throw new Error("Invalid credentials");

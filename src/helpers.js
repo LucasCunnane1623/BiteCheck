@@ -1,10 +1,46 @@
 import { time } from "node:console";
 import { spec } from "node:test/reporters";
+import { ObjectId } from "mongodb";
 
 // This would be a good place for reusable validation or date/time formatting helpers.
 const exportedMethods = {
 
-  valiDate(ao){
+generateRandomPasswords(numPasswords, length = 10) {
+  if (length < 8 || length > 12) {
+    throw "Password length must be between 8-12 chars";
+  }
+  const passwords = [];
+  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercase = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const specials = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+  const allChars = uppercase + lowercase + numbers + specials;
+
+  function getRandomChar(str) {
+    return str[Math.floor(Math.random() * str.length)];// converts an index from 0 to the length of the string into a random character from that string
+  }
+
+  for (let i = 0; i < numPasswords; i++) {
+    let passwordChars = [];
+
+    // guarantee required character types
+    passwordChars.push(getRandomChar(uppercase));
+    passwordChars.push(getRandomChar(numbers));
+    passwordChars.push(getRandomChar(specials));
+
+    // fill remaining length with randoms from all character sets
+    while (passwordChars.length < length) {
+      passwordChars.push(getRandomChar(allChars));
+    }
+    // shuffle password characters
+    passwordChars.sort(() => Math.random() - 0.5);
+    passwords.push(passwordChars.join(''));
+  }
+
+  return passwords;
+},
+
+  validateDate(ao){
   //accquired on 
     let monthsToDays = {
       '01': 31,

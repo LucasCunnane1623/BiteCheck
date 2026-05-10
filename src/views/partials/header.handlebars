@@ -1,14 +1,14 @@
 <div class="header-inner">
   <p class="eyebrow-large">BiteCheck</p>
-  
+
   <div class="header-actions">
     {{#if user}}
       {{!-- ONLY show this if the isAdmin flag is true --}}
-      {{#if user.isAdmin}}
+      {{!-- {{#if user.isAdmin}}
         <a class="admin-quick-link" href="/api/admin/dashboard">
           God View 
         </a>
-      {{/if}}
+      {{/if}} --}}
 
       {{#if showProfileButton}}
         <a class="profile-quick-link" href="/api/users/profile">
@@ -16,9 +16,22 @@
         </a>
       {{/if}}
 
-      <a class="logout-link" href="/api/auth/logout">Logout</a>
+      {{#if showFriendsButton}}
+        <a class="profile-quick-link" href="/api/users/friends">
+            Friends
+        </a>
+      {{/if}}
+
+
+      {{#if showCommPulseButton}}
+        <a class="profile-quick-link" href="/api/posts">
+            Community Pulse Feed
+        </a>
+      {{/if}}
+{{!-- 
+      <a class="logout-link" href="/api/auth/logout">Logout</a> --}}
     {{else}}
-      <a class="login-link" href="/api/auth/login">Login</a>
+      {{!-- <a class="login-link" href="/api/auth/login">Login</a> --}}
     {{/if}}
   </div>
 </div>

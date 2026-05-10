@@ -179,6 +179,7 @@ router.route('/profile/:id').get(authenticate, async (req,res,next)=>{
             req.session.message = "User profile is private. You cannot view this profile's information.";
             return res.status(403).redirect('/api/users/friends'); //if the user has set their profile to private, we don't want to show any of their information to other users, so we just redirect to the home page (could also render an error page that says "This profile is private" or something like that)
         } 
+        const fromCommunityPulse = req.query.from === "communitypulse";
         return res.status(200).render("profile_other",{
             title : `BiteCheck: ${profile.username}'s Profile`,
             username : profile.username,
@@ -189,7 +190,8 @@ router.route('/profile/:id').get(authenticate, async (req,res,next)=>{
             favRestaurants : profile.favRestaurants,
             status : profile.status,
             appSearchRadiusMeters : profile.appSearchRadiusMeters,
-            age : profile.age
+            age : profile.age,
+            fromCommunityPulse : fromCommunityPulse
         });
     } catch (e){
         next(e);

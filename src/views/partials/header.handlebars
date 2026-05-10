@@ -1,21 +1,14 @@
 <div class="header-inner">
   <p class="eyebrow-large">BiteCheck</p>
-  {{!-- {{#if showProfileButton}}
-    <a class="profile-quick-link" href="/api/users/profile">
-      Visit Profile
-    </a>
-  {{/if}} --}}
 
-
-  
   <div class="header-actions">
     {{#if user}}
       {{!-- ONLY show this if the isAdmin flag is true --}}
-      {{#if user.isAdmin}}
+      {{!-- {{#if user.isAdmin}}
         <a class="admin-quick-link" href="/api/admin/dashboard">
           God View 
         </a>
-      {{/if}}
+      {{/if}} --}}
 
       {{#if showProfileButton}}
         <a class="profile-quick-link" href="/api/users/profile">

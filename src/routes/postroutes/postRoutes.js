@@ -149,7 +149,7 @@ router.get('/', async (req, res, next) => {
                 author: authorProfile ? authorProfile.username : "Unknown User",
                 authorDetails: {
                     profilePhoto: authorProfile ? authorProfile.profilePhoto : "/uploads/profilePhotos/defaultProfile.jpg",
-                    profileLink: authorProfile ? `/api/users/profile/${authorProfile._id.toString()}` : "#"
+                    profileLink: authorProfile ? `/api/users/profile/${authorProfile._id.toString()}?from=communitypulse` : "#"
                 },
                 businessName: post.businessName || "No business name provided",
                 content: post.content || "No post content provided",

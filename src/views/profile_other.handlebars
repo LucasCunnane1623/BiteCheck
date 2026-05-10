@@ -45,8 +45,14 @@
 
 <div class="button-grid">
     <div class="home-bottom-actions">
-        <a href="/api/users/friends" class="secondary-btn"> 
-            Back To Friends List
-        </a>
+        {{#if fromCommunityPulse}}
+            <a href="/api/posts" class="secondary-btn"> 
+                Back To Community Pulse
+            </a>
+        {{else}}
+            <a href="/api/users/friends" class="secondary-btn"> 
+                Back To Friends List
+            </a>
+        {{/if}}
     </div>
 </div>

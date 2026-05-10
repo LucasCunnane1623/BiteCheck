@@ -7,15 +7,16 @@ import exphbs from 'express-handlebars';
 import session from 'express-session';
 import path from 'path';
 
-
+import { seedTestReviews } from './seed.js';
 import settings from './config/settings.js';
 import { connect } from './database/db.js';
 import { syncRestaurants } from './services/dataSync.js';
 import { errorHandler } from './middleware/errorhandler.js';
 import { fileURLToPath } from 'url';
-import { serverdebug } from './middleware/auth.js';
+import { serverdebug,setupMessaging} from './middleware/auth.js';
 import landingRoutes from "./routes/landingRoutes.js";
-
+import methodOverride from 'method-override';
+import adminroutes from './routes/adminroutes/adminRoutes.js';
 
 // Import routes//import restaurantRoutes from './routes/restaurantRoutes.js';
 // import authRoutes from './routes/authroutes/authRoutes.js';
@@ -41,7 +42,7 @@ app.use(
     secret: "This is a secret.. shhh don't tell anyone",
     saveUninitialized: false,
     resave: false,
-    cookie: {maxAge: 60000}
+    cookie: {maxAge: 1000 * 60 * 60}
   })
 );
 
@@ -67,17 +68,21 @@ app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true }));
 //we can also use this server debugger method to track exactly what routes cause issues 
 app.use(serverdebug);
+//we can use this messaging middleware to set a global message that we can flash upon hitting a route correctly
+app.use(setupMessaging);
 //public routes '/'  '/home'   
-app.use("/",landingRoutes);
+app.use("/",landingRoutes);      
 // api routes   
 app.use('/api', apirouter);
 
-
+app.use(methodOverride('_method'));
+app.use('/api/admin', adminroutes);
 
 // background Sync function.
 const startDataSync = async () => {
     try{
         console.log("Background Sync Started....")
+        await seedTestReviews();
         await syncRestaurants();
         console.log("Background Sync Completed.")
     } catch (err){
@@ -119,6 +124,19 @@ const handlebarsInstance = exphbs.create({
 app.engine('handlebars',handlebarsInstance.engine);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, './views'));
+
+
+app.use((req, res, next) => {
+    
+    res.locals.user = req.session.member || null; 
+    
+    // Map your message correctly
+    res.locals.message = req.session.message || null;
+    delete req.session.message;
+    
+    next();
+});
+
 //------------------------------------------------------------------------------
 
 const init = async () => {
@@ -126,7 +144,6 @@ const init = async () => {
         // connect to the database
         await connect();
         console.log("Connected to database successfully.");
-        
         // start the server
         app.listen(settings.server.port, () => {
             console.log(`BiteCheck running: http://localhost:${settings.server.port}`);

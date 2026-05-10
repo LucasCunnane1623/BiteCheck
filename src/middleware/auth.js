@@ -3,6 +3,14 @@ import { getdb } from '../database/db.js';
 import jwt from 'jsonwebtoken';
 
 
+export const setupMessaging = (req,res,next) => {
+    res.locals.message = req.session.message; //this makes session.message available to all handlebars without having to pass it into a render call
+    if(req.session.member){
+        res.locals.member = req.session.member;
+    }
+    req.session.message = null; // clear after reading 
+    next();
+}
 
 export const redirectToLanding = (req, res, next) => {
      if (!req.session.member){//if the user does not have a cookie yet and tries to access /home , redirect to landing 
@@ -19,23 +27,6 @@ export const redirectToLogin = (req, res, next) => {
      next();
 }
 
-
-
-// // #3.) GET /register middleware 
-// app.use('/register', (req, res, next) => {
-//      if(req.method !== "GET"){ //must be a GET method for this check to run
-//           next();
-//           return;
-//      }
-//      if (req.session.member){
-//           if(req.session.member.membershipLevel === "manager"){
-//                 return res.redirect('/manager');
-//           }else if(req.session.member.membershipLevel === "member"){
-//                return res.redirect('/member');
-//           }
-//      }   
-//      next();
-// });
 //This method just outputs all actions to track users pages (could send to PostHog in the future?)
 export const serverdebug = (req,res,next)=>{
     const dateString = new Date().toUTCString();
@@ -49,26 +40,29 @@ export const serverdebug = (req,res,next)=>{
 
 
 export const authenticate = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    //const authHeader = req.headers.authorization;
 
     if (!req.session.member){//if the user tries to access any routes that they must be signed in to use, use this as middleware 
         return res.redirect('/signin');
     }   
+    // if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    //     return res.status(401).json({ error: "Access Denied, no token provided"})
+    // }
+
+    // const token = authHeader.split(" ")[1];
+
+    // try{
+    //     const decoded = jwt.verify(token, process.env.JWT_SECRET || "syFzeOTlrfAiLN3g6OpxmH1fGFBM7PlmF2b87L7TMX7");
+    //     req.user = decoded;
+    //     next();
+    // } catch (err) {
+    //     res.status(401).json({ error: "Invalid or expired token" });           
+    // };
+
+    //alternate auth approach using sessions instead of tokens, may be more secure but less scalable
+    req.user = req.session.member;
+    next();
     
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: "Access Denied, no token provided"})
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    try{
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "syFzeOTlrfAiLN3g6OpxmH1fGFBM7PlmF2b87L7TMX7");
-        req.user = decoded;
-        next();
-    } catch (err) {
-        res.status(401).json({ error: "Invalid or expired token" });           
-    };
 };
 
 

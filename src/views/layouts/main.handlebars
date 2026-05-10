@@ -17,12 +17,17 @@
 
 <body>
     <header>
-        {{header}}
+        {{> header}}
     </header>
     <main>
         {{{body}}}
     </main>
     <script type="module" src="/js/form_validate.js"></script>
+
+    {{!-- show any response messages here --}}
+    {{#if message}}
+    <p class="response-message">{{message}}</p>
+    {{/if}}
 
     {{#if isMapPage}}
         <script src="https://maps.googleapis.com/maps/api/js?key={{googleMapsApiKey}}&callback=initMap" async defer></script> {{!-- Google Maps API key needed in env --}}

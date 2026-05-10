@@ -1,0 +1,144 @@
+<div class="home-page">
+  {{!-- 1. Admin Hero Section: High-Level Stats --}}
+  <div class="home-hero">
+    <div class="eyebrow">Administrative Access</div>
+    <h1>God View Control Center</h1>
+    <p>Monitor system health, moderate community content, and view accountability logs.</p>
+    
+    <div class="home-actions">
+      <div class="home-card">
+        <h2>{{stats.users}}</h2>
+        <p>Total Members</p>
+      </div>
+      <div class="home-card">
+        <h2>{{stats.reviews}}</h2>
+        <p>Community Reviews</p>
+      </div>
+      <div class="home-card">
+        <h2>{{stats.lastSync}}</h2>
+        <p>Last NYC Data Sync</p>
+      </div>
+    </div>
+  </div>
+
+  {{!-- 2. Quick Action: Add Restaurant Form --}}
+  <section class="home-info-panel" style="margin-top: 2rem;">
+    <div class="eyebrow">Database Injection</div>
+    <h2>Quick Add Restaurant</h2>
+    <form action="/api/admin/restaurants" method="POST" style="margin-top: 1.5rem;">
+      <div class="form-row" style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem;">
+        <div class="form-group" style="flex: 1;">
+          <label for="name">Restaurant Name</label>
+          <input type="text" id="name" name="name" placeholder="e.g. Joe's Pizza" required 
+                 style="width: 100%; border: 1px solid #bfcabf; border-radius: 12px; padding: 0.75rem;">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label for="camis">CAMIS ID (8 digits)</label>
+          <input type="text" id="camis" name="camis" placeholder="12345678" required 
+                 style="width: 100%; border: 1px solid #bfcabf; border-radius: 12px; padding: 0.75rem;">
+        </div>
+      </div>
+      <div class="form-row" style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem;">
+        <div class="form-group" style="flex: 1;">
+          <label for="boro">Borough</label>
+          <input type="text" id="boro" name="boro" placeholder="Manhattan" 
+                 style="width: 100%; border: 1px solid #bfcabf; border-radius: 12px; padding: 0.75rem;">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label for="cuisine">Cuisine Type</label>
+          <input type="text" id="cuisine" name="cuisine" placeholder="Italian" 
+                 style="width: 100%; border: 1px solid #bfcabf; border-radius: 12px; padding: 0.75rem;">
+        </div>
+      </div>
+      <button type="submit" class="primary-btn" style="width: auto; padding: 0.85rem 3rem;">➕ Add to Database</button>
+    </form>
+  </section>
+
+  {{!-- 3. NEW: Global Search & Management --}}
+  <section class="home-info-panel" style="margin-top: 2rem; background: var(--white); border: 2px solid var(--green-soft);">
+    <div class="eyebrow">Advanced Management</div>
+    <h2>Search & Manage All Records</h2>
+    <div class="home-actions" style="margin-top: 1.5rem; grid-template-columns: 1fr 1fr;">
+      
+      {{!-- Global Restaurant Search --}}
+      <div class="home-card" style="text-align: left;">
+          <h3>Manage Restaurants</h3>
+          <p style="font-size: 0.85rem; margin-bottom: 1rem;">Find and remove any restaurant by CAMIS or Name.</p>
+          <form action="/api/admin/search/restaurants" method="GET" style="display: flex; gap: 0.5rem;">
+              <input type="text" name="query" placeholder="Enter Name or ID..." required 
+                     style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid #bfcabf;">
+              <button type="submit" class="secondary-btn" style="padding: 0.6rem 1rem; font-size: 0.8rem;">Search</button>
+          </form>
+      </div>
+
+      {{!-- Global Review Search --}}
+      <div class="home-card" style="text-align: left;">
+          <h3>Manage All Reviews</h3>
+          <p style="font-size: 0.85rem; margin-bottom: 1rem;">Search all community reviews to moderate specific text.</p>
+          <form action="/api/admin/search/reviews" method="GET" style="display: flex; gap: 0.5rem;">
+              <input type="text" name="query" placeholder="Enter keywords..." required 
+                     style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid #bfcabf;">
+              <button type="submit" class="secondary-btn" style="padding: 0.6rem 1rem; font-size: 0.8rem; ">Search</button>
+          </form>
+      </div>
+    </div>
+  </section>
+
+  {{!-- 4. Moderation Queue & System Logs Grid --}}
+  <div class="landing-about" style="margin-top: 2rem;">
+    
+    {{!-- Left Column: Moderation Queue (Reported items only) --}}
+    <section class="about-side">
+      <div class="about-badge">
+        <span>Urgent Actions</span>
+        <strong>Moderation</strong>
+      </div>
+      <div class="admin-queue" style="max-height: 500px; overflow-y: auto; margin-top: 1rem;">
+        {{#if moderationQueue.length}}
+          {{#each moderationQueue}}
+          <div class="home-card" style="margin-bottom: 1rem; width: 100%;">
+            <h3>Reported Content</h3>
+            <p style="line-height: 1.4;">"{{this.comment}}"</p>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;"><strong>Reports: {{this.reports}}</strong></p>
+            <form action="/api/admin/reviews/{{this._id}}?_method=DELETE" method="POST" style="margin-top: 1rem;">
+              <button type="submit" class="primary-btn" style="background: #e74c3c; font-size: 0.8rem; padding: 0.5rem 1rem;">Force Remove</button>
+            </form>
+          </div>
+          {{/each}}
+        {{else}}
+          <div class="home-card">
+            <p>The moderation queue is currently empty.</p>
+          </div>
+        {{/if}}
+      </div>
+    </section>
+
+    {{!-- Right Column: Accountability Trail (Audit Logs) --}}
+    <section class="about-text">
+      <div class="about-text-content">
+        <h2>System Logs</h2>
+        <p>Accountability record of all administrative actions.</p>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; text-align: left; border-collapse: collapse; margin-top: 1rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--green-main);">
+                <th style="padding: 12px;">Action</th>
+                <th style="padding: 12px;">Target</th>
+                <th style="padding: 12px;">Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each systemLogs}}
+              <tr style="border-bottom: 1px solid #d8e8d8;">
+                <td style="padding: 12px; font-weight: bold; color: var(--green-dark);">{{this.action}}</td>
+                <td style="padding: 12px;"><code>{{this.targetId}}</code></td>
+                <td style="padding: 12px; font-size: 0.8rem; color: #666;">{{this.timestamp}}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

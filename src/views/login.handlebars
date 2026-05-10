@@ -1,31 +1,35 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <h1 id="appTitle">Log In</h1>
+    <p class="auth-subtitle">Welcome back to BiteCheck.</p>
 
-<h1 id="appTitle"> Log In </h1>
+    {{!-- Server Errors Show up here --}}
+    {{#if error}}
+      <p class="errorP">{{error}}</p>
+    {{/if}}
 
-<form method="POST" action="/api/auth/login" id="signin-form">
-<label for="handle"> Enter an Email </label>
-<input type="text" name="handle" id="handle" />
-<br>
-<label for="password"> Enter a Password </label>
-<input type="password" name="password" id="password" />
-<br>
-<button name="submit_button" id="submit_button">Submit</button>
-</form>
+    <form method="POST" action="/api/auth/login" id="signin-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" />
+      </div>
 
-<ul id="ErrorListSignIn" hidden>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" />
+      </div>
 
-</ul>
+      <button name="submit_button" id="submit_button" class="primary-btn">Submit</button>
+    </form>
 
-<div class="mid-link">
-  <a href="/api/auth/register">Dont have an account? Click here to signup!</a>
-</div>
+    <ul id="ErrorListSignIn" class="error-list" hidden></ul>
 
-<div class="mid-link">
-  <a href="/">Back to Home</a>
-</div>
+    <div class="mid-link">
+      <a href="/api/auth/register">Don’t have an account? Click here to sign up!</a>
+    </div>
 
-
-
-{{!-- Server Errors Show up here --}}
-{{#if error}}
-<p class="errorP">{{error}}</p>
-{{/if}}
+    <div class="mid-link">
+      <a href="/">Back to Home</a>
+    </div>
+  </div>
+</section>

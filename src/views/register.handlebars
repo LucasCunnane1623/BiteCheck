@@ -1,42 +1,61 @@
-<h1 id="h1_big"> Sign Up </h1>
+<section class="auth-page">
+  <div class="auth-card auth-card-wide">
+    <h1 id="h1_big">Sign Up</h1>
+    <p class="auth-subtitle">Create your BiteCheck account.</p>
 
-<form method="POST" name="signup-form" action="/api/auth/register" id="signup-form">
+    {{!-- Server Errors Show up here --}}
+    {{#if error}}
+      <p class="errorP">{{error}}</p>
+    {{/if}}
 
-<label for="firstName">Enter First Name </label>
-<input type="text" name="firstName" id="firstName" /> <br>
+    <form method="POST" name="signup-form" action="/api/auth/register" id="signup-form">
 
-<label for="lastName">Enter Last Name </label>
-<input type="text" name="lastName" id="lastName" /> <br>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" name="firstName" id="firstName" />
+        </div>
 
-<label for="email">Enter Email </label>
-<input type="text" name="email" id="email" /> <br>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" name="lastName" id="lastName" />
+        </div>
+      </div>
 
-<label for="username"> Enter a Username </label>
-<input type="text" name="username" id="username" /> <br>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" />
+      </div>
 
-<label for="DOB"> Select Your Date of Birth </label>
-<input type="date" name="DOB" id="DOB" /> <br>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" />
+      </div>
 
+      <div class="form-group">
+        <label for="dateOfBirth">Date of Birth</label>
+        <input type="date" name="dateOfBirth" id="dateOfBirth" />
+      </div>
 
-<label for="password"> Enter a Password </label>
-<input type="password" name="password" id="password" /> <br>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" />
+        </div>
 
-<label for="confirmPassword"> Confirm Password </label>
-<input type="password" name="confirmPassword" id="confirmPassword" /> <br>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" name="confirmPassword" id="confirmPassword" />
+        </div>
+      </div>
 
-<br>
-<button name="submitButton" id="submitButton">Create</button> <br>
-</form>
+      <button name="submitButton" id="submitButton" class="primary-btn">Create Account</button>
+    </form>
 
-<ul id="ErrorListSignUp" hidden></ul>
+    <ul id="ErrorListSignUp" class="error-list" hidden></ul>
 
-{{!-- Server Errors Show up here --}}
-{{#if error}}
-<p class="errorP">{{error}}</p>
-{{/if}}
-
-<div class="mid-link">
-  <a href="/api/auth/login">Already have an account? Click here to log in</a> 
-</div>
-<br>
-
+    <div class="mid-link">
+      <a href="/api/auth/login">Already have an account? Click here to log in</a>
+    </div>
+  </div>
+</section>

@@ -218,8 +218,6 @@ if(signupForm){
         }
     });
 }
-
-
 //################ SIGN-IN FORM CHECKING ####################
 
 //input validation for sign in form 

@@ -269,9 +269,12 @@ ul {
   width: 95%;
   padding: 0.75rem 4rem;
 }
-/* .header-actions{
-
-} */
+.header-actions{
+  gap: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 
 .profile-quick-link {
   background: var(--green-main);

@@ -3,7 +3,6 @@ import {redirectToLanding, authenticate} from "../middleware/auth.js";
 import { searchRestaurants, getUniversalSuggestions } from "../services/restaurantService.js";
 import { getStatusColor } from "../services/hygiene.js";
 import { getUserProfile } from "../services/userService.js";
-import {redirectToLanding, authenticate} from "../middleware/auth.js"
 import settings from "../config/settings.js";
 const router = Router();
 
@@ -48,7 +47,7 @@ async (req, res)=>{
         user: req.session.member
     });
 });
-<<<<<<< HEAD
+
 
 
 /**
@@ -175,9 +174,7 @@ router.route('/restaurants/suggestions', authenticate)
     }
 });
 
-export default router;
-=======
-export default router;
+
 
 
 /**
@@ -198,4 +195,5 @@ router.route('/map')
         user: req.session.member
     });
 });
->>>>>>> origin/main
+
+export default router;

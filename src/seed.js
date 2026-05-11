@@ -729,6 +729,8 @@ const main = async () => {
     }
   ];
 
+  await postsCollection.insertMany(testPosts);
+  console.log('Seeded 10 posts into the posts collection');
   const restaurantData = [
     {
       _id: new ObjectId('74b7c2f8f1d4c3b2f8e4c201'),

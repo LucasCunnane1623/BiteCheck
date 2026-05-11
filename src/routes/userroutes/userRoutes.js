@@ -149,18 +149,16 @@ router
 router.get("/me", authenticate, async (req, res, next) => {
   try {
     const db = getdb();
-    const user = await db
-      .collection("users")
-      .findOne(
-        { _id: new ObjectId(req.session.member.userId) },
-        {
-          projection: {
-            filterPref: 1,
-            favRestaurants: 1,
-            appSearchRadiusMeters: 1,
-          },
+    const user = await db.collection("users").findOne(
+      { _id: new ObjectId(req.session.member.userId) },
+      {
+        projection: {
+          filterPref: 1,
+          favRestaurants: 1,
+          appSearchRadiusMeters: 1,
         },
-      );
+      },
+    );
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });

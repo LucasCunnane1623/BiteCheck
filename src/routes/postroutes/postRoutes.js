@@ -47,7 +47,7 @@ router.post('/', authenticate, async(req, res, next) =>{
             throw error
         }
 
-        const result = await createPost(req.user.userId, content,businessName);
+        const result = await createPost(req.session.member.userId, content, businessName);
         res.status(201).redirect('/api/posts');
         //json({success: true, postId: result.insertedId, message: "Post created successfully"})
     } catch (e) {
@@ -65,7 +65,7 @@ router.post('/', authenticate, async(req, res, next) =>{
 router.patch('/:id/like', authenticate, async(req, res, next) =>{
     try{
         const postId = req.params.id;
-        const userId = req.user.userId;
+        const userId = req.session.member.userId;
 
         const result = await likePost(postId, userId);
         res.status(200).json({
@@ -88,7 +88,7 @@ router.patch('/:id/like', authenticate, async(req, res, next) =>{
 router.patch('/:id/dislike', authenticate, async (req, res, next) => {
     try {
         const postId = req.params.id;
-        const userId = req.user.userId;
+        const userId = req.session.member.userId;
 
         const result = await dislikePost(postId, userId);
 
@@ -188,7 +188,7 @@ router.get('/me', authenticate, async (req, res, next)=>{
     try{
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit);
-        const userId = req.user.userId;
+        const userId = req.session.member.userId;
 
         const posts = await getMyPosts(userId, page, limit);
         res.status(200).json({

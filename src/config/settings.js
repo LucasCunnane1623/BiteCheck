@@ -30,7 +30,9 @@ const settings = {
         inspectionHistoryMonths: 12,
     },
 
-    secret: process.env.JWT_SECRET || "syFzeOTlrfAiLN3g6OpxmH1fGFBM7PlmF2b87L7TMX7"
+    secret: process.env.JWT_SECRET || "syFzeOTlrfAiLN3g6OpxmH1fGFBM7PlmF2b87L7TMX7",
+
+    googleMapsApiKey: process.env.googleMapsApiKey || '',
 };
 
 export default settings;

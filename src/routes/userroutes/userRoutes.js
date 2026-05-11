@@ -3,6 +3,8 @@ import { getUserProfile, updateUserInfo,getUserByUsername,} from '../../services
 import { authenticate,redirectToLanding } from '../../middleware/auth.js';
 import validation from '../../helpers.js';
 import multer from 'multer';
+import { ObjectId } from 'mongodb';
+import { getdb } from '../../database/db.js';
 import { getFriends,removeUserFromFriendsList,addUserToFriendsList,addUserToBlockedList,isUserBlocked} from '../../services/friendsService.js';
 
 
@@ -108,61 +110,138 @@ router.route('/profile/edit')
     try{
 
         const userId = req.session.member.userId;
-        const existingProfile = await getUserProfile(userId);
-        let photoPath = existingProfile.profilePhoto;
-        let { firstName, lastName, status, appSearchRadiusMeters} = req.body;
-        if (appSearchRadiusMeters){
-            appSearchRadiusMeters = parseInt(appSearchRadiusMeters);
-            if (!appSearchRadiusMeters || isNaN(appSearchRadiusMeters) || appSearchRadiusMeters < 50 || appSearchRadiusMeters > 35000){
-                return res.status(400).json({ error: "Invalid search radius. Must be a number between 50 and 35000 meters." });
-            }
-        }else{
-            appSearchRadiusMeters = existingProfile.appSearchRadiusMeters; //if the user didn't provide a new search radius, keep the existing one
-        }
+        if (!userId) return res.status(400).json({ error: "invalid User Id" });
 
-        
-        try {
-            if(firstName){
-                firstName = validation.checkString(firstName,"first name");
-            }else{
-                firstName = existingProfile.firstName; //if the user didn't provide a new first name, keep the existing one
-            }
-            if(lastName){ 
-                lastName= validation.checkString(lastName,"last name");
-             }else{
-                lastName = existingProfile.lastName; //if the user didn't provide a new last name, keep the existing one
-             }
-            if(status){
-                status = validation.checkString(status,"status");
-            } else{
-                status = existingProfile.status; //if the user didn't provide a new status, keep the existing one
-            }
-        } catch (error) {
-            return res.status(400).json({ error: error.message });
-        }
+        const profile = await getUserProfile(userId);
+        if (!profile) return res.status(404).json({ error: "user not found" });
 
-        //update the user profile photo if a new one was uploaded
-        if (req.file){//filename send in the request (seperate from the body) if a new photo was uploaded, if not we just keep the existing photo path
-            photoPath = `/uploads/profilePhotos/${req.file.filename}`;
-        }
-    //technically this is a PATCH operation but since we're only updating one resource (the user profile) and not partially updating multiple resources, using POST is acceptable here.
-        const updatedProfile = await updateUserInfo(userId, { 
-            firstName,
-            lastName,
-            status,
-            appSearchRadiusMeters,
-            profilePhoto : photoPath  //only update the photoPath if a new photo was uploaded, otherwise keep the existing path
+        const db = getdb();
+        const favIds = (profile.favRestaurants || []).map(id => new ObjectId(id));
+        const favRestaurants = favIds.length > 0
+            ? await db.collection('restaurants')
+                .find({ _id: { $in: favIds } }, { projection: { name: 1 } })
+                .toArray()
+            : [];
+
+        res.status(200).render("profile", {
+            title: "BiteCheck: Profile",
+            username: profile.username,
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            email: profile.email,
+            profilePhoto: profile.profilePhoto,
+            favRestaurants,
+            status: profile.status,
+            appSearchRadiusMeters: profile.appSearchRadiusMeters,
+            age: profile.age,
+            recentPosts: profile.recentPosts,
+            recentReviews: profile.recentReviews
         });
-
-        if (!updatedProfile){
-            return res.status(404).json({ error: "user not found" });
-        }
-
-        res.status(200).redirect("/api/users/profile");
-    } catch (e){
+    } catch (e) {
         next(e);
     }
 });
+
+
+/**
+ * @route GET /api/users/me
+ * @desc Returns current user including saved filter preference
+ * @access Private
+ */
+router.get('/me', authenticate, async (req, res, next) => {
+    try {
+        const db = getdb();
+        const user = await db.collection('users').findOne(
+            { _id: new ObjectId(req.session.member.userId) },
+            { projection: { filterPref: 1, favRestaurants: 1, appSearchRadiusMeters: 1 } }
+        );
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json({ 
+            filterPref: user.filterPref || 'all',
+            favRestaurants: user.favRestaurants || [],
+            appSearchRadiusMeters: user.appSearchRadiusMeters || 1500
+        });
+        
+    } catch (e) {
+        next(e);
+    }
+});
+
+
+/**
+ * @route PATCH /api/users/filter-pref
+ * @desc Save the user's traffic light filter preference
+ * @access Private
+ */
+router.patch('/filter-pref', authenticate, async (req, res, next) => {
+    try {
+        const db = getdb();
+        const { filterPref } = req.body;
+        const allowed = ['all', 'green', 'yellow', 'red'];
+
+        if (!allowed.includes(filterPref)) {
+            return res.status(400).json({ error: 'Invalid filter preference' });
+        }
+
+        await db.collection('users').updateOne(
+            { _id: new ObjectId(req.session.member.userId) },
+            { $set: { filterPref } }
+        );
+
+        res.status(200).json({ success: true });
+    } catch (e) {
+        next(e);
+    }
+});
+
+
+// GET /api/users/profile/edit — render the edit form
+router.get('/profile/edit', authenticate, async (req, res, next) => {
+    try {
+        const userId = req.session.member.userId;
+        const profile = await getUserProfile(userId);
+
+        if (!profile) return res.status(404).json({ error: 'User not found' });
+
+        res.status(200).render('profile_edit', {
+            title: 'BiteCheck: Edit Profile',
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            status: profile.status,
+            appSearchRadiusMeters: profile.appSearchRadiusMeters,
+        });
+    } catch (e) {
+        next(e);
+    }
+});
+
+
+// POST /api/users/profile/edit — handle the form submission
+router.post('/profile/edit', authenticate, upload.single('profilePhoto'), async (req, res, next) => {
+    try {
+        const userId = req.session.member.userId;
+        let { firstName, lastName, status, appSearchRadiusMeters } = req.body;
+
+        const updateData = {};
+        if (firstName) updateData.firstName = firstName.trim();
+        if (lastName)  updateData.lastName  = lastName.trim();
+        if (status && ['Public', 'Private'].includes(status)) updateData.status = status;
+        if (appSearchRadiusMeters) updateData.appSearchRadiusMeters = parseInt(appSearchRadiusMeters);
+        if (req.file) updateData.profilePhoto = `/uploads/profilePhotos/${req.file.filename}`;
+
+        await updateUserInfo(userId, updateData);
+
+        req.session.message = 'Profile updated successfully!';
+        res.status(200).redirect('/api/users/profile');
+    } catch (e) {
+        next(e);
+    }
+});
+
 
 router.route('/profile/:id').get(authenticate, async (req,res,next)=>{
     //this renders other users profiles, which is the same as the authenticated user's profile but without the option to edit the profile or see recent posts and reviews (for privacy reasons)
@@ -188,11 +267,14 @@ router.route('/profile/:id').get(authenticate, async (req,res,next)=>{
             lastName : profile.lastName, //user starts without a first or last name, but can update it 
             email : profile.email,
             profilePhoto : profile.profilePhoto,
-            favRestaurants : profile.favRestaurants,
+            favRestaurants,
             status : profile.status,
             appSearchRadiusMeters : profile.appSearchRadiusMeters,
             age : profile.age,
-            fromCommunityPulse : fromCommunityPulse
+            fromCommunityPulse : fromCommunityPulse,
+            recentPosts : profile.stats.posts,
+            hasRestaurants : profile.stats.posts.length >0,
+            recentReviews : profile.stats.recentReviews
         });
     } catch (e){
         next(e);
@@ -434,4 +516,34 @@ router.route('/block/:id').get(authenticate, async (req,res,next)=>{
         next(e);
     }
 });
+
+// POST /api/users/favorites/:restaurantId
+router.post('/favorites/:restaurantId', authenticate, async (req, res, next) => {
+  try {
+    const db = getdb();
+    await db.collection('users').updateOne(
+      { _id: new ObjectId(req.session.member.userId) },  // ← fix
+      { $addToSet: { favRestaurants: req.params.restaurantId } }
+    );
+    res.json({ message: 'Added to favorites' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// DELETE /api/users/favorites/:restaurantId
+router.delete('/favorites/:restaurantId', authenticate, async (req, res, next) => {
+  try {
+    const db = getdb();
+    await db.collection('users').updateOne(
+      { _id: new ObjectId(req.session.member.userId) },  // ← fix
+      { $pull: { favRestaurants: req.params.restaurantId } }
+    );
+    res.json({ message: 'Removed from favorites' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 export default router;

@@ -3,7 +3,8 @@ import {redirectToLanding, authenticate} from "../middleware/auth.js";
 import { searchRestaurants, getUniversalSuggestions } from "../services/restaurantService.js";
 import { getStatusColor } from "../services/hygiene.js";
 import { getUserProfile } from "../services/userService.js";
-
+import {redirectToLanding, authenticate} from "../middleware/auth.js"
+import settings from "../config/settings.js";
 const router = Router();
 
 /**
@@ -47,6 +48,7 @@ async (req, res)=>{
         user: req.session.member
     });
 });
+<<<<<<< HEAD
 
 
 /**
@@ -174,3 +176,26 @@ router.route('/restaurants/suggestions', authenticate)
 });
 
 export default router;
+=======
+export default router;
+
+
+/**
+ * @route GET /map
+ * @desc Displays the interactive map page showing restaurant locations and health data
+ * @access Private (authenticated users only)
+ * @body none 
+ * @returns none (renders map.hbs)
+ * @example
+ * GET /map
+ */
+router.route('/map')
+.get(authenticate, async (req, res) => {
+    return res.render('map', {
+        title: 'BiteCheck: Map',
+        isMapPage: true,
+        googleMapsApiKey: settings.googleMapsApiKey,
+        user: req.session.member
+    });
+});
+>>>>>>> origin/main

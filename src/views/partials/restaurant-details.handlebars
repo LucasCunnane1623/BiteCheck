@@ -4,6 +4,9 @@
     <div class="modal-header">
         <h2>{{name}}</h2>
         <span class="score-badge score-{{color}}">{{score}}</span>
+        <button class="btn-fav" id="fav-btn" data-id="{{_id}}" data-fav="{{isFav}}">
+            {{#if isFav}}★ Favorited{{else}}☆ Add to Favorites{{/if}}
+        </button>
     </div>
 
     <div class="modal-body">

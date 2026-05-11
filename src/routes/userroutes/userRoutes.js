@@ -192,7 +192,10 @@ router.route('/profile/:id').get(authenticate, async (req,res,next)=>{
             status : profile.status,
             appSearchRadiusMeters : profile.appSearchRadiusMeters,
             age : profile.age,
-            fromCommunityPulse : fromCommunityPulse
+            fromCommunityPulse : fromCommunityPulse,
+            recentPosts : profile.stats.posts,
+            hasRestaurants : profile.stats.posts.length >0,
+            recentReviews : profile.stats.recentReviews
         });
     } catch (e){
         next(e);

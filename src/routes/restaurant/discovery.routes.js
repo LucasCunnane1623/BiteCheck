@@ -1,6 +1,10 @@
 import express from "express";
 import { validateLocation } from '../../middleware/validator.js';
-import { getUniversalSuggestions, searchRestaurants } from '../../services/restaurantService.js';
+import { 
+    getUniversalSuggestions, 
+    searchRestaurants, 
+    synthesizeRestaurantData 
+} from '../../services/restaurantService.js';
 import { getStatusColor } from '../../services/hygiene.js';
 import { getdb } from '../../database/db.js';
 import settings from '../../config/settings.js';
@@ -36,10 +40,20 @@ router.get('/near', validateLocation, async (req, res, next) => {
             }
         }).limit(50).toArray();
         
-        const detailedRestaurants = restaurants.map(r => ({
-            ...r,
-            safetyStatus: getStatusColor(r.inspections || []),
-            topRisk: r.inspections?.find(i => i.isCritical)?.potentialIllness || "No major risks"
+        const detailedRestaurants = await Promise.all(restaurants.map(async (r) => {
+            const reviews = await db.collection('reviews').find({ camis: r.camis }).toArray();
+            const reports = await db.collection('posts').find({ 
+                businessName: r.name, 
+                isFlagged: true 
+            }).toArray();
+
+            const synthesized = synthesizeRestaurantData(r, reviews, reports);
+
+            return {
+                ...synthesized,
+                safetyStatus: synthesized.safetyStatus || getStatusColor(r.inspections || []),
+                topRisk: r.inspections?.find(i => i.isCritical)?.potentialIllness || "No major risks"
+            };
         }));
         
         res.json(detailedRestaurants);
@@ -58,22 +72,16 @@ router.get('/near', validateLocation, async (req, res, next) => {
  * @example:- 
  * GET /api/restaurants/suggest?q=chi
  * response : {"success": true, "data": [{text: "chinese", type: category}, {text: "chipotle", type: restaurant}.....]}
- * 
- */
+ * */
 
 router.get('/suggest', async (req, res, next) => {
     try{
         const {q} = req.query;
-        // prevents single character queries from hitting the db 
-        // can be changed hit the db as well
         if (!q || q.length < 2 || q.trim().length === 0){
             return res.json({success: true, data: []})
         }
-        // call the function
         const rawResults = await getUniversalSuggestions(q)
-        // extract the suggestions from the aggregate facet
         const suggestions = rawResults[0]?.suggestions || [];
-        // compute the bitecheck health color for each restaurant
         const detailedSuggestions = suggestions.map(item => {
             if (item.type === 'restaurant'){
                 return {
@@ -81,17 +89,14 @@ router.get('/suggest', async (req, res, next) => {
                     safetyStatus: getStatusColor(item.inspections||[])
                 };
             }
-            // categories(cuisines) return as it is without a health check
             return item;
         });
 
-        // send the finalized list back to the client
         res.status(200).json({
             success: true, 
             data: detailedSuggestions
         });
     } catch (e){
-        // centralized middleware which handles errors
         next(e);
     }
 });
@@ -137,27 +142,50 @@ router.get('/', async (req, res, next) => {
 /**
  * @router GET /api/restaurants/search
  * @desc  TEXT-based search using MongoDB's text index. Searches across name, address, and cuisine fields.
+ * Renders the restaurant_search view with synthesized safety data.
  * @access Public
  * @query {string} q - Search query (required)
- * @returns {Array} List of matching restaurants sorted by relevance.
+ * @returns {View} Renders restaurant_search.handlebars with search results.
  * @example
  * GET /api/restaurants/search?q=pizza
  */
 
 router.get('/search', async(req, res, next)=>{
     try{
-        const query  = req.query.q;  // eg. query = pizza or burger or anything.. 
+        const query  = req.query.q; 
         
         if (!query || query.trim().length === 0){
-            return res.status(400).json({ error: "Search query must be at least 2 characters long"})
+            // Instead of JSON, we render the page with an error state
+            return res.render('restaurant_search', { 
+                error: "Search query must be at least 2 characters long",
+                user: req.session.member 
+            });
         };
 
+        const db = getdb();
         const results = await searchRestaurants(query);
-        res.status(200).json({
-            success: true,
-            count: results.length,
-            data: results
-        })
+
+        // Map raw results through the synthesizer to get violation tags and trend data
+        const processedData = await Promise.all(results.map(async (item) => {
+            const reviews = await db.collection('reviews').find({ camis: item.camis }).toArray();
+            const reports = await db.collection('posts').find({ 
+                businessName: item.name, 
+                isFlagged: true 
+            }).toArray();
+
+            return synthesizeRestaurantData(item, reviews, reports);
+        }));
+
+        // Render the Handlebars view instead of sending JSON
+        res.render('restaurant_search', {
+            title: `BiteCheck | Search: ${query}`,
+            results: processedData,
+            query: query,
+            hasQuery: true,
+            resultCount: processedData.length,
+            user: req.session.member // Pass the user session for the header
+        });
+
     } catch (e) {
         next(e)
     };

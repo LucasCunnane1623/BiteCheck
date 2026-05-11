@@ -141,3 +141,50 @@ export const getUniversalSuggestions = async (query) => {
         }
     ]).toArray()
 };
+
+/**
+ * Synthesizes raw NYC data into proactive metadata.
+ * Maps borough and camis explicitly to handle naming inconsistencies.
+ */
+export const synthesizeRestaurantData = (restaurant, reviews = [], reports = []) => {
+    // 1. Explicitly map core fields to ensure they exist for the template
+    const name = restaurant.name || "Unknown Restaurant";
+    const boro = restaurant.boro  || "N/A";
+    const camis = restaurant.camis  || "N/A";
+    const cuisine = restaurant.cuisine  || "N/A";
+
+    // 2. Keyword Extraction for Violation Tags
+    const violationMap = {
+        "🌡️ Temp": ["temperature", "hot holding", "cold holding", "thermometer"],
+        "🪳 Pests": ["mice", "rats", "roaches", "vermin", "insects", "flies"],
+        "🧼 Hygiene": ["handwashing", "soap", "sanitizer", "hair restraint", "gloves"],
+        "🍲 Cross-Contam": ["cross-contamination", "raw", "cooked", "separation"],
+    };
+
+    const tags = new Set();
+    const rawViolations = (restaurant.violations || "").toLowerCase();
+
+    Object.entries(violationMap).forEach(([tag, keywords]) => {
+        if (keywords.some(k => rawViolations.includes(k))) {
+            tags.add(tag);
+        }
+    });
+
+    // 3. Trend & Risk Logic
+    const reportCount = reports.length || 0;
+    const isAtRisk = reportCount > 3 && restaurant.safetyStatus !== "RED";
+    const trend = reportCount > 2 ? "↘️ Declining" : "↗️ Improving";
+
+    return {
+        ...restaurant, // Spread existing data
+        name,          // Overwrite with mapped safe-string
+        boro,          // Overwrite with mapped safe-string
+        camis,         // Overwrite with mapped safe-string
+        cuisine,       // Overwrite with mapped safe-string
+        violationTags: Array.from(tags).slice(0, 3), 
+        trend,
+        reviewCount: reviews.length,
+        reportCount: reportCount,
+        isAtRisk: isAtRisk
+    };
+};

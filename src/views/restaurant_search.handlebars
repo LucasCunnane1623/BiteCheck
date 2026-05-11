@@ -1,75 +1,56 @@
 <section class="restaurant-page">
     <section class="restaurant-hero">
-        <p class="eyebrow">Restaurant Search</p>
-        <h1>Search Restaurants</h1>
-        <p>
-            Search for restaurants by name, cuisine, or keyword and review inspection-related
-            information in a cleaner format.
-        </p>
+        <div class="eyebrow">Safety Intelligence</div>
+        <h1>Restaurant Search</h1>
+        <p>Proactive community safety markers and official NYC health status.</p>
     </section>
 
-    <section class="restaurant-tool-card">
-        <form method="GET" action="/restaurants/search" class="restaurant-search-form">
-            <div class="form-group">
-                <label for="restaurant-query">Search Keyword</label>
-                <input
-                    type="text"
-                    name="q"
-                    id="restaurant-query"
-                    value="{{query}}"
-                    placeholder="Try pizza, chicken, cafe, or sushi"
-                >
-            </div>
-
-            <button type="submit" class="primary-btn restaurant-submit-btn">
-                Search Restaurants
-            </button>
-        </form>
-    </section>
-
-    {{#if error}}
-        <p class="errorP">{{error}}</p>
-    {{/if}}
-
-    {{#if hasQuery}}
-        <section class="restaurant-results-header">
-            <h2>Results for "{{query}}"</h2>
-            <p>{{resultCount}} result(s) found.</p>
-        </section>
-
-        {{#if results}}
-            <section class="restaurant-results-grid">
-                {{#each results}}
-                    <article class="restaurant-result-card">
-                        <div class="restaurant-card-top">
+    <div class="restaurant-results-scroll-container">
+        {{#if results.length}}
+            {{#each results}}
+                <article class="restaurant-result-list-item {{#if this.isAtRisk}}at-risk-border{{/if}}">
+                    <div class="result-main-info">
+                        <div class="result-header">
                             <h3>{{this.name}}</h3>
-                            <span class="safety-pill">{{this.safetyStatus}}</span>
+                            <span class="safety-pill {{this.safetyStatus}}">{{this.safetyStatus}}</span>
+                            <span class="trend-badge">{{this.trend}}</span>
+                        </div>
+                        
+                        <div class="result-meta">
+                            <span><b>Borough:</b> {{this.boro}}</span>
+                            <span class="meta-sep">|</span>
+                            <span><b>CAMIS:</b> <code>{{this.camis}}</code></span>
+                            <span class="meta-sep">|</span>
+                            <span><b>Cuisine:</b> {{this.cuisine}}</span>
                         </div>
 
-                        <p><b>Cuisine:</b> {{this.cuisine}}</p>
-                        <p><b>Borough:</b> {{this.boro}}</p>
-                        <p><b>CAMIS:</b> {{this.camis}}</p>
+                        <div class="violation-tag-list">
+                            {{#each this.violationTags}}
+                                <span class="v-tag">{{this}}</span>
+                            {{/each}}
+                        </div>
+                    </div>
 
-                        <a href="/api/restaurants/view/{{this.camis}}" class="secondary-btn restaurant-small-btn">
-                            View Raw Details
-                        </a>
-                    </article>
-                {{/each}}
-            </section>
+                    <div class="result-pulse-actions">
+                        <div class="community-pulse-mini">
+                            {{#if this.reviewCount}}
+                                <span title="Has Community Reviews">💬</span>
+                            {{/if}}
+                            
+                            {{#if this.reportCount}}
+                                <span title="Safety Reports Present" class="has-reports">🚩</span>
+                            {{/if}}
+                        </div>
+                    </div>
+                </article>
+            {{/each}}
         {{else}}
-            <section class="empty-community-card">
-                <h3>No restaurants found</h3>
-                <p>Try searching with a different restaurant name or cuisine.</p>
-            </section>
+            <div class="empty-community-card" style="text-align: center; padding: 4rem;">
+                <h3>No establishments found for "{{query}}"</h3>
+                <p>Try searching for a different borough or cuisine.</p>
+            </div>
         {{/if}}
-    {{else}}
-        <section class="empty-community-card">
-            <h3>Start a restaurant search</h3>
-            <p>Enter a keyword above to search for restaurant inspection information.</p>
-        </section>
-    {{/if}}
-
-    <div class="home-bottom-actions">
-        <a href="/home" class="secondary-btn">Return To Home</a>
     </div>
 </section>
+
+

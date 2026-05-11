@@ -11,12 +11,16 @@
         <p>Total Members</p>
       </div>
       <div class="home-card">
+        <h2>{{stats.posts}}</h2>
+        <p>Community Posts</p>
+      </div>
+      <div class="home-card">
         <h2>{{stats.reviews}}</h2>
         <p>Community Reviews</p>
       </div>
       <div class="home-card">
         <h2>{{stats.lastSync}}</h2>
-        <p>Last NYC Data Sync</p>
+        <p>Last Activity Sync</p>
       </div>
     </div>
   </div>
@@ -50,20 +54,20 @@
                  style="width: 100%; border: 1px solid #bfcabf; border-radius: 12px; padding: 0.75rem;">
         </div>
       </div>
-      <button type="submit" class="primary-btn" style="width: auto; padding: 0.85rem 3rem;">➕ Add to Database</button>
+      <button type="submit" class="primary-btn" style="width: auto; padding: 0.85rem 3rem;"> Add to Database</button>
     </form>
   </section>
 
-  {{!-- 3. NEW: Global Search & Management --}}
+  {{!-- 3. Advanced Management: Global Search --}}
   <section class="home-info-panel" style="margin-top: 2rem; background: var(--white); border: 2px solid var(--green-soft);">
     <div class="eyebrow">Advanced Management</div>
-    <h2>Search & Manage All Records</h2>
-    <div class="home-actions" style="margin-top: 1.5rem; grid-template-columns: 1fr 1fr;">
+    <h2>Manual Records Search</h2>
+    <div class="home-actions" style="margin-top: 1.5rem; grid-template-columns: 1fr 1fr 1fr;">
       
-      {{!-- Global Restaurant Search --}}
+      {{!-- Restaurant Search --}}
       <div class="home-card" style="text-align: left;">
           <h3>Manage Restaurants</h3>
-          <p style="font-size: 0.85rem; margin-bottom: 1rem;">Find and remove any restaurant by CAMIS or Name.</p>
+          <p style="font-size: 0.85rem; margin-bottom: 1rem;"> Find and remove by CAMIS or Name. </p>
           <form action="/api/admin/search/restaurants" method="GET" style="display: flex; gap: 0.5rem;">
               <input type="text" name="query" placeholder="Enter Name or ID..." required 
                      style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid #bfcabf;">
@@ -71,60 +75,104 @@
           </form>
       </div>
 
-      {{!-- Global Review Search --}}
+      {{!-- Review Search --}}
       <div class="home-card" style="text-align: left;">
           <h3>Manage All Reviews</h3>
-          <p style="font-size: 0.85rem; margin-bottom: 1rem;">Search all community reviews to moderate specific text.</p>
+          <p style="font-size: 0.85rem; margin-bottom: 1rem;"> Search and moderate specific review text. </p>
           <form action="/api/admin/search/reviews" method="GET" style="display: flex; gap: 0.5rem;">
               <input type="text" name="query" placeholder="Enter keywords..." required 
                      style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid #bfcabf;">
-              <button type="submit" class="secondary-btn" style="padding: 0.6rem 1rem; font-size: 0.8rem; ">Search</button>
+              <button type="submit" class="secondary-btn" style="padding: 0.6rem 1rem; font-size: 0.8rem;">Search</button>
+          </form>
+      </div>
+
+      {{!-- Post Search --}}
+      <div class="home-card" style="text-align: left;">
+          <h3>Manage Pulse Posts</h3>
+          <p style="font-size: 0.85rem; margin-bottom: 1rem;">Search and moderate Community Pulse content.</p>
+          <form action="/api/admin/search/posts" method="GET" style="display: flex; gap: 0.5rem;">
+              <input type="text" name="query" placeholder="Enter keywords..." required 
+                     style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid #bfcabf;">
+              <button type="submit" class="secondary-btn" style="padding: 0.6rem 1rem; font-size: 0.8rem;">Search</button>
           </form>
       </div>
     </div>
   </section>
 
-  {{!-- 4. Moderation Queue & System Logs Grid --}}
-  <div class="landing-about" style="margin-top: 2rem;">
-    
-    {{!-- Left Column: Moderation Queue (Reported items only) --}}
-    <section class="about-side">
-      <div class="about-badge">
-        <span>Urgent Actions</span>
-        <strong>Moderation</strong>
-      </div>
-      <div class="admin-queue" style="max-height: 500px; overflow-y: auto; margin-top: 1rem;">
-        {{#if moderationQueue.length}}
-          {{#each moderationQueue}}
-          <div class="home-card" style="margin-bottom: 1rem; width: 100%;">
-            <h3>Reported Content</h3>
-            <p style="line-height: 1.4;">"{{this.comment}}"</p>
-            <p style="font-size: 0.85rem; margin-top: 0.5rem;"><strong>Reports: {{this.reports}}</strong></p>
-            <form action="/api/admin/reviews/{{this._id}}?_method=DELETE" method="POST" style="margin-top: 1rem;">
-              <button type="submit" class="primary-btn" style="background: #e74c3c; font-size: 0.8rem; padding: 0.5rem 1rem;">Force Remove</button>
-            </form>
-          </div>
-          {{/each}}
-        {{else}}
-          <div class="home-card">
-            <p>The moderation queue is currently empty.</p>
-          </div>
-        {{/if}}
-      </div>
-    </section>
+  {{!-- 4. NEW: Moderation Hub (Top 20 Priority Items) --}}
+  <section class="home-info-panel" style="margin-top: 2rem;">
+    <div class="eyebrow">Moderation Hub</div>
+    <h2>Priority Flagged Content</h2>
+    <p>The following items have received the highest volume of community reports.</p>
 
-    {{!-- Right Column: Accountability Trail (Audit Logs) --}}
-    <section class="about-text">
-      <div class="about-text-content">
-        <h2>System Logs</h2>
-        <p>Accountability record of all administrative actions.</p>
+    <div class="landing-about" style="margin-top: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        
+        {{!-- Top Reported Reviews --}}
+        <div class="home-card" style="background: #fffafa; border: 1px solid #ffcccc; width: 100%;">
+            <h3 style="color: #c0392b; margin-bottom: 1rem;"> Priority Reviews (Top 20)</h3>
+            <div style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
+                {{#if topReviews.length}}
+                    {{#each topReviews}}
+                    <div style="padding: 1rem; border-bottom: 1px solid #eee; text-align: left; margin-bottom: 0.5rem; background: white; border-radius: 8px;">
+                        <p style="font-size: 0.9rem; line-height: 1.4;">"{{this.comment}}"</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                            <span style="background: #e74c3c; color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;">
+                                {{this.reportCount}} Reports
+                            </span>
+                            <form action="/api/admin/reviews/{{this._id}}?_method=DELETE" method="POST">
+                                <input type="hidden" name="returnUrl" value="/api/admin/dashboard">
+                                <button type="submit" class="primary-btn" style="background: #e74c3c; font-size: 0.7rem; padding: 0.4rem 0.8rem;">Force Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                    {{/each}}
+                {{else}}
+                    <p style="opacity: 0.5; padding: 3rem; text-align: center;">No flagged reviews found.</p>
+                {{/if}}
+            </div>
+        </div>
+
+        {{!-- Top Reported Posts --}}
+        <div class="home-card" style="background: #fffafa; border: 1px solid #ffcccc; width: 100%;">
+            <h3 style="color: #c0392b; margin-bottom: 1rem;"> Priority Posts (Top 20)</h3>
+            <div style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
+                {{#if topPosts.length}}
+                    {{#each topPosts}}
+                    <div style="padding: 1rem; border-bottom: 1px solid #eee; text-align: left; margin-bottom: 0.5rem; background: white; border-radius: 8px;">
+                        <h5 style="margin: 0; color: var(--green-dark);">{{this.businessName}}</h5>
+                        <p style="font-size: 0.85rem; margin: 0.5rem 0; line-height: 1.4;">{{this.content}}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                            <span style="background: #e74c3c; color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;">
+                                {{this.reportCount}} Reports
+                            </span>
+                            <form action="/api/admin/posts/{{this._id}}?_method=DELETE" method="POST">
+                                <input type="hidden" name="returnUrl" value="/api/admin/dashboard">
+                                <button type="submit" class="primary-btn" style="background: #e74c3c; font-size: 0.7rem; padding: 0.4rem 0.8rem;">Delete Post</button>
+                            </form>
+                        </div>
+                    </div>
+                    {{/each}}
+                {{else}}
+                    <p style="opacity: 0.5; padding: 3rem; text-align: center;">No flagged posts found.</p>
+                {{/if}}
+            </div>
+        </div>
+
+    </div>
+  </section>
+
+  {{!-- 5. Accountability Trail: System Logs --}}
+  <section class="home-info-panel" style="margin-top: 2rem;">
+      <div class="about-text-content" style="width: 100%;">
+        <h2>System Activity Logs</h2>
+        <p>Permanent record of all administrative moderations and injections.</p>
         <div style="overflow-x: auto;">
           <table style="width: 100%; text-align: left; border-collapse: collapse; margin-top: 1rem;">
             <thead>
               <tr style="border-bottom: 2px solid var(--green-main);">
-                <th style="padding: 12px;">Action</th>
-                <th style="padding: 12px;">Target</th>
-                <th style="padding: 12px;">Time</th>
+                <th style="padding: 12px;">Admin Action</th>
+                <th style="padding: 12px;">Target Resource</th>
+                <th style="padding: 12px;">Timestamp</th>
               </tr>
             </thead>
             <tbody>
@@ -137,8 +185,10 @@
               {{/each}}
             </tbody>
           </table>
+          {{#unless systemLogs.length}}
+            <p style="margin-top: 2rem; opacity: 0.5; text-align: center;">No logs available.</p>
+          {{/unless}}
         </div>
       </div>
-    </section>
-  </div>
+  </section>
 </div>

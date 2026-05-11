@@ -1,66 +1,69 @@
 <h1 id="h1_big"> {{username}}'s Profile </h1>
 <div class="profile_info">
-    <p><b>Profile Photo:</b> {{profilePhoto}}</p>
+  <p><b>Profile Photo:</b> {{profilePhoto}}</p>
 
-    {{#if profilePhoto}}
-    <img src="{{profilePhoto}}" alt="{{username}}'s profile photo" class="profile-photo">
-    {{else}}
+  {{#if profilePhoto}}
+    <img
+      src="{{profilePhoto}}"
+      alt="{{username}}'s profile photo"
+      class="profile-photo"
+    />
+  {{else}}
     <p>No profile photo uploaded.</p>
-    {{/if}}
+  {{/if}}
 
-    <p><b>First Name:</b> {{firstName}}</p>
-    
-    <p><b>Last Name:</b> {{lastName}}</p>
+  <p><b>First Name:</b> {{firstName}}</p>
 
-    <p><b>Status:</b> {{status}}</p>
+  <p><b>Last Name:</b> {{lastName}}</p>
 
-    <p><b>App Search Radius:</b> {{appSearchRadiusMeters}} meters</p>
+  <p><b>Status:</b> {{status}}</p>
 
-    <p><b>Favorite Restaurants:</b></p>
+  <p><b>App Search Radius:</b> {{appSearchRadiusMeters}} meters</p>
 
-    {{#if hasRestaurants}}
-        <ul>
-            {{#each favRestaurants}}
-                <li>{{this.name}}</li>
-            {{/each}}
-        </ul>
-    {{else}}
-        <p>No favorite restaurants yet.</p>
-    {{/if}}
-{{!-- these are the NON editable fields of the users profile (ie. they can't be changed from a form submission) --}}
-    <p><b>Age Upon Registration:</b> {{age}}</p>
+  <p><b>Favorite Restaurants:</b></p>
 
-    <p><b>Email:</b> {{email}}</p>
-
-    <h2>Recent Posts</h2>
+  {{#if favRestaurants}}
     <ul>
-        {{#each recentPosts}}
-            <li>
-                <p>Posted on {{this.createdOn}}</p>
-                <div class="community-post-body">
-                    <h4>{{this.businessName}}</h4>
-                    <p>{{this.content}}</p>
-                </div>
-            </li>
-        {{/each}}
+      {{#each favRestaurants}}
+        <li>{{this.name}}</li>
+      {{/each}}
     </ul>
+  {{else}}
+    <p>No favorite restaurants yet.</p>
+  {{/if}}
+  {{! these are the NON editable fields of the users profile (ie. they can't be changed from a form submission) }}
+  <p><b>Age Upon Registration:</b> {{age}}</p>
+
+  <p><b>Email:</b> {{email}}</p>
+
+  <h2>Recent Posts</h2>
+  <ul>
+    {{#each recentPosts}}
+      <li>
+        <p>Posted on {{this.createdOn}}</p>
+        <div class="community-post-body">
+          <h4>{{this.businessName}}</h4>
+          <p>{{this.content}}</p>
+        </div>
+      </li>
+    {{/each}}
+  </ul>
 </div>
 
-
 <div class="button-grid">
-    <div class="home-bottom-actions">
-        <a href="/home" class="secondary-btn"> 
-            Return To Home
-        </a>
-    </div>
-    <div class="home-bottom-actions">
-        <a href="/api/users/profile/edit" class="secondary-btn"> 
-            Edit Profile
-        </a>
-    </div>
-    <div class="home-bottom-actions">
-        <a href="/api/auth/logout" class="secondary-btn"> 
-        Sign Out
-        </a>
-    </div>
+  <div class="home-bottom-actions">
+    <a href="/home" class="secondary-btn">
+      Return To Home
+    </a>
+  </div>
+  <div class="home-bottom-actions">
+    <a href="/api/users/profile/edit" class="secondary-btn">
+      Edit Profile
+    </a>
+  </div>
+  <div class="home-bottom-actions">
+    <a href="/api/auth/logout" class="secondary-btn">
+      Sign Out
+    </a>
+  </div>
 </div>

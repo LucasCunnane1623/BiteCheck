@@ -55,24 +55,29 @@ const upload = multer({
 router.get("/profile", authenticate, async (req, res, next) => {
   try {
     const userId = req.session.member.userId;
-
-    if (!userId) {
-      return res.status(400).json({ error: "invalid User Id" });
-    }
+    if (!userId) return res.status(400).json({ error: "invalid User Id" });
 
     const profile = await getUserProfile(userId);
+    if (!profile) return res.status(404).json({ error: "user not found" });
 
-    if (!profile) {
-      return res.status(404).json({ error: "user not found" });
-    }
+    const db = getdb();
+    const favIds = (profile.favRestaurants || []).map((id) => new ObjectId(id));
+    const favRestaurants =
+      favIds.length > 0
+        ? await db
+            .collection("restaurants")
+            .find({ _id: { $in: favIds } }, { projection: { name: 1 } })
+            .toArray()
+        : [];
+
     res.status(200).render("profile", {
       title: "BiteCheck: Profile",
       username: profile.username,
-      firstName: profile.firstName, //user starts without a first or last name, but can update it
-      lastName: profile.lastName, //user starts without a first or last name, but can update it
+      firstName: profile.firstName,
+      lastName: profile.lastName,
       email: profile.email,
       profilePhoto: profile.profilePhoto,
-      favRestaurants: profile.favRestaurants,
+      favRestaurants,
       status: profile.status,
       appSearchRadiusMeters: profile.appSearchRadiusMeters,
       age: profile.age,

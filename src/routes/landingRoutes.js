@@ -1,5 +1,8 @@
 import { Router } from "express";
-import {redirectToLanding, authenticate} from "../middleware/auth.js"
+import {redirectToLanding, authenticate} from "../middleware/auth.js";
+import { searchRestaurants, getUniversalSuggestions } from "../services/restaurantService.js";
+import { getStatusColor } from "../services/hygiene.js";
+import { getUserProfile } from "../services/userService.js";
 import settings from "../config/settings.js";
 const router = Router();
 
@@ -44,7 +47,134 @@ async (req, res)=>{
         user: req.session.member
     });
 });
-export default router;
+
+
+
+/**
+ * @route GET /restaurants/search
+ * @desc Renders a restaurant search page using the existing restaurant search service
+ * @access Private (signed-in users)
+ * @query {string} q - Search query entered by the user
+ */
+router.route('/restaurants/search', authenticate)
+.get(async (req, res, next) => {
+    try {
+        const query = req.query.q ? req.query.q.trim() : "";
+        let results = [];
+        let error = null;
+
+        if (query.length > 0) {
+            try {
+                const rawResults = await searchRestaurants(query);
+
+                results = rawResults.map((restaurant) => ({
+                    ...restaurant,
+                    safetyStatus: getStatusColor(restaurant.inspections || [])
+                }));
+            } catch (e) {
+                error = "Restaurant search is currently unavailable. The backend may still need the MongoDB text index configured.";
+            }
+        }
+
+        return res.status(200).render("restaurant_search", {
+            title: "BiteCheck: Restaurant Search",
+            query,
+            hasQuery: query.length > 0,
+            results,
+            resultCount: results.length,
+            error,
+            showProfileButton: true,
+            showFriendsButton: true,
+            showCommPulseButton: true,
+            user: req.session.member
+        });
+    } catch (e) {
+        next(e);
+    }
+});
+
+/**
+ * @route GET /restaurants/suggestions
+ * @desc Renders a restaurant suggestions page using the existing suggestion service
+ * @access Private (signed-in users)
+ * @query {string} q - Suggestion query entered by the user
+ */
+router.route('/restaurants/suggestions', authenticate)
+.get(async (req, res, next) => {
+    try {
+        const query = req.query.q ? req.query.q.trim() : "";
+        let suggestions = [];
+        let favoriteSuggestions = [];
+        let favoriteRestaurants = [];
+        let error = null;
+
+        if (req.session.member && req.session.member.userId) {
+            try {
+                const profile = await getUserProfile(req.session.member.userId);
+                favoriteRestaurants = profile?.favRestaurants || [];
+
+                if (favoriteRestaurants.length > 0) {
+                    const favoriteQuery = favoriteRestaurants[0];
+                    const rawFavoriteResults = await getUniversalSuggestions(favoriteQuery);
+                    const rawFavoriteSuggestions = rawFavoriteResults[0]?.suggestions || [];
+
+                    favoriteSuggestions = rawFavoriteSuggestions.map((item) => {
+                        if (item.type === "restaurant") {
+                            return {
+                                ...item,
+                                safetyStatus: getStatusColor(item.inspections || [])
+                            };
+                        }
+
+                        return item;
+                    });
+                }
+            } catch (e) {
+                favoriteSuggestions = [];
+            }
+        }
+
+        if (query.length > 0) {
+            try {
+                const rawResults = await getUniversalSuggestions(query);
+                const rawSuggestions = rawResults[0]?.suggestions || [];
+
+                suggestions = rawSuggestions.map((item) => {
+                    if (item.type === "restaurant") {
+                        return {
+                            ...item,
+                            safetyStatus: getStatusColor(item.inspections || [])
+                        };
+                    }
+
+                    return item;
+                });
+            } catch (e) {
+                error = "Restaurant suggestions are currently unavailable.";
+            }
+        }
+
+        return res.status(200).render("restaurant_suggestions", {
+            title: "BiteCheck: Restaurant Suggestions",
+            query,
+            hasQuery: query.length > 0,
+            suggestions,
+            suggestionCount: suggestions.length,
+            favoriteRestaurants,
+            favoriteSuggestions,
+            hasFavorites: favoriteRestaurants.length > 0,
+            error,
+            showProfileButton: true,
+            showFriendsButton: true,
+            showCommPulseButton: true,
+            user: req.session.member
+        });
+    } catch (e) {
+        next(e);
+    }
+});
+
+
 
 
 /**
@@ -65,3 +195,5 @@ router.route('/map')
         user: req.session.member
     });
 });
+
+export default router;

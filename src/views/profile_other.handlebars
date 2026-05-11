@@ -16,13 +16,17 @@
 
     <p><b>App Search Radius:</b> {{appSearchRadiusMeters}} meters</p>
 
-    <p><b>Favorite Restaurants:</b> 
+    <p><b>Favorite Restaurants:</b></p>
+
     {{#if hasRestaurants}}
-        {{#each favRestaurants}}
-            <li>{{this.name}}</li>  
-        {{/each}}
-    {{else}}No favorite restaurants yet.
-    {{/if}}</p>
+        <ul>
+            {{#each favRestaurants}}
+                <li>{{this.name}}</li>
+            {{/each}}
+        </ul>
+    {{else}}
+        <p>No favorite restaurants yet.</p>
+    {{/if}}
 {{!-- these are the NON editable fields of the users profile (ie. they can't be changed from a form submission) --}}
     <p><b>Age Upon Registration:</b> {{age}}</p>
 

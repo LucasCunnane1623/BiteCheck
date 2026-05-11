@@ -46,32 +46,50 @@ const upload = multer(
  */
 
 router.get('/profile', authenticate, async (req, res, next) => {
-    try{
-        const userId = req.session.member.userId; // Extract userId from the authenticated token
-        if (!userId){
-            return res.status(400).json({ error: "invalid User Id"})
+    try {
+        const userId = req.session.member.userId;
+
+        if (!userId) {
+            return res.status(400).json({ error: "invalid User Id" });
         }
+
         const profile = await getUserProfile(userId);
 
-        if (!profile){
-            return res.status(404).json({ error: "user not found"})
+        if (!profile) {
+            return res.status(404).json({ error: "user not found" });
         }
-        res.status(200).render("profile",{
-            title : "BiteCheck: Profile",
-            username : profile.username,
-            firstName : profile.firstName, //user starts without a first or last name, but can update it 
-            lastName : profile.lastName, //user starts without a first or last name, but can update it 
-            email : profile.email,
-            profilePhoto : profile.profilePhoto,
-            favRestaurants : profile.favRestaurants,
-            status : profile.status,
-            appSearchRadiusMeters : profile.appSearchRadiusMeters,
-            age : profile.age,
-            recentPosts : profile.stats.posts,
-            hasRestaurants : profile.stats.posts.length >0,
-            recentReviews : profile.stats.recentReviews
+
+        const db = getdb();
+
+        const favIds = (profile.favRestaurants || [])
+            .filter(id => ObjectId.isValid(id))
+            .map(id => new ObjectId(id));
+
+        const favRestaurants = favIds.length > 0
+            ? await db.collection('restaurants')
+                .find(
+                    { _id: { $in: favIds } },
+                    { projection: { name: 1, address: 1, cuisine: 1 } }
+                )
+                .toArray()
+            : [];
+
+        res.status(200).render("profile", {
+            title: "BiteCheck: Profile",
+            username: profile.username,
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            email: profile.email,
+            profilePhoto: profile.profilePhoto,
+            favRestaurants,
+            hasRestaurants: favRestaurants.length > 0,
+            status: profile.status,
+            appSearchRadiusMeters: profile.appSearchRadiusMeters,
+            age: profile.age,
+            recentPosts: profile.stats.posts,
+            recentReviews: profile.stats.recentReviews
         });
-    } catch (e){
+    } catch (e) {
         next(e);
     }
 });
@@ -281,7 +299,7 @@ router.route('/profile/:id').get(authenticate, async (req,res,next)=>{
             age : profile.age,
             fromCommunityPulse : fromCommunityPulse,
             recentPosts : profile.stats.posts,
-            hasRestaurants : profile.stats.posts.length >0,
+            hasRestaurants: favRestaurants.length > 0,
             recentReviews : profile.stats.recentReviews
         });
     } catch (e){

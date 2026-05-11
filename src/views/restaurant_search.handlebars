@@ -1,0 +1,75 @@
+<section class="restaurant-page">
+    <section class="restaurant-hero">
+        <p class="eyebrow">Restaurant Search</p>
+        <h1>Search Restaurants</h1>
+        <p>
+            Search for restaurants by name, cuisine, or keyword and review inspection-related
+            information in a cleaner format.
+        </p>
+    </section>
+
+    <section class="restaurant-tool-card">
+        <form method="GET" action="/restaurants/search" class="restaurant-search-form">
+            <div class="form-group">
+                <label for="restaurant-query">Search Keyword</label>
+                <input
+                    type="text"
+                    name="q"
+                    id="restaurant-query"
+                    value="{{query}}"
+                    placeholder="Try pizza, chicken, cafe, or sushi"
+                >
+            </div>
+
+            <button type="submit" class="primary-btn restaurant-submit-btn">
+                Search Restaurants
+            </button>
+        </form>
+    </section>
+
+    {{#if error}}
+        <p class="errorP">{{error}}</p>
+    {{/if}}
+
+    {{#if hasQuery}}
+        <section class="restaurant-results-header">
+            <h2>Results for "{{query}}"</h2>
+            <p>{{resultCount}} result(s) found.</p>
+        </section>
+
+        {{#if results}}
+            <section class="restaurant-results-grid">
+                {{#each results}}
+                    <article class="restaurant-result-card">
+                        <div class="restaurant-card-top">
+                            <h3>{{this.name}}</h3>
+                            <span class="safety-pill">{{this.safetyStatus}}</span>
+                        </div>
+
+                        <p><b>Cuisine:</b> {{this.cuisine}}</p>
+                        <p><b>Borough:</b> {{this.boro}}</p>
+                        <p><b>CAMIS:</b> {{this.camis}}</p>
+
+                        <a href="/api/restaurants/view/{{this.camis}}" class="secondary-btn restaurant-small-btn">
+                            View Raw Details
+                        </a>
+                    </article>
+                {{/each}}
+            </section>
+        {{else}}
+            <section class="empty-community-card">
+                <h3>No restaurants found</h3>
+                <p>Try searching with a different restaurant name or cuisine.</p>
+            </section>
+        {{/if}}
+    {{else}}
+        <section class="empty-community-card">
+            <h3>Start a restaurant search</h3>
+            <p>Enter a keyword above to search for restaurant inspection information.</p>
+        </section>
+    {{/if}}
+
+    <div class="home-bottom-actions">
+        <a href="/home" class="secondary-btn">Return To Home</a>
+    </div>
+</section>

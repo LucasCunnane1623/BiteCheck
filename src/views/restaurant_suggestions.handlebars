@@ -1,0 +1,131 @@
+<section class="restaurant-page">
+    <section class="restaurant-hero">
+        <p class="eyebrow">Restaurant Suggestions</p>
+        <h1>Restaurant Suggestions</h1>
+        <p>
+            Find restaurant and cuisine suggestions using a keyword. This page also supports
+            suggestions based on the favorite restaurants saved to your profile.
+        </p>
+    </section>
+
+    <section class="restaurant-tool-card">
+        <form method="GET" action="/restaurants/suggestions" class="restaurant-search-form">
+            <div class="form-group">
+                <label for="suggestion-query">Suggestion Keyword</label>
+                <input
+                    type="text"
+                    name="q"
+                    id="suggestion-query"
+                    value="{{query}}"
+                    placeholder="Try chicken, pizza, Chinese, or cafe"
+                >
+            </div>
+
+            <button type="submit" class="primary-btn restaurant-submit-btn">
+                Get Suggestions
+            </button>
+        </form>
+    </section>
+
+    {{#if error}}
+        <p class="errorP">{{error}}</p>
+    {{/if}}
+
+    <section class="restaurant-results-header">
+        <h2>Favorite-Based Suggestions</h2>
+
+        {{#if hasFavorites}}
+            <p>
+                These suggestions are based on the favorite restaurants saved to your profile.
+            </p>
+
+            <div class="favorite-list">
+                {{#each favoriteRestaurants}}
+                    <span class="favorite-pill">{{this}}</span>
+                {{/each}}
+            </div>
+
+            {{#if favoriteSuggestions}}
+                <section class="restaurant-results-grid">
+                    {{#each favoriteSuggestions}}
+                        <article class="restaurant-result-card">
+                            <div class="restaurant-card-top">
+                                <h3>{{this.text}}</h3>
+                                {{#if this.safetyStatus}}
+                                    <span class="safety-pill">{{this.safetyStatus}}</span>
+                                {{/if}}
+                            </div>
+
+                            <p><b>Type:</b> {{this.type}}</p>
+
+                            {{#if this.subtext}}
+                                <p><b>Location:</b> {{this.subtext}}</p>
+                            {{/if}}
+
+                            {{#if this.camis}}
+                                <a href="/api/restaurants/view/{{this.camis}}" class="secondary-btn restaurant-small-btn">
+                                    View Raw Details
+                                </a>
+                            {{/if}}
+                        </article>
+                    {{/each}}
+                </section>
+            {{else}}
+                <p>No favorite-based suggestions are available yet.</p>
+            {{/if}}
+        {{else}}
+            <p>
+                No favorite restaurants have been added yet. Once favorites are saved,
+                this page can show suggestions based on them.
+            </p>
+        {{/if}}
+    </section>
+
+    {{#if hasQuery}}
+        <section class="restaurant-results-header">
+            <h2>Suggestions for "{{query}}"</h2>
+            <p>{{suggestionCount}} suggestion(s) found.</p>
+        </section>
+
+        {{#if suggestions}}
+            <section class="restaurant-results-grid">
+                {{#each suggestions}}
+                    <article class="restaurant-result-card">
+                        <div class="restaurant-card-top">
+                            <h3>{{this.text}}</h3>
+                            {{#if this.safetyStatus}}
+                                <span class="safety-pill">{{this.safetyStatus}}</span>
+                            {{/if}}
+                        </div>
+
+                        <p><b>Type:</b> {{this.type}}</p>
+
+                        {{#if this.subtext}}
+                            <p><b>Location:</b> {{this.subtext}}</p>
+                        {{/if}}
+
+                        {{#if this.camis}}
+                            <a href="/api/restaurants/view/{{this.camis}}" class="secondary-btn restaurant-small-btn">
+                                View Raw Details
+                            </a>
+                        {{/if}}
+                    </article>
+                {{/each}}
+            </section>
+        {{else}}
+            <section class="empty-community-card">
+                <h3>No suggestions found</h3>
+                <p>Try a different keyword.</p>
+            </section>
+        {{/if}}
+    {{else}}
+        <section class="empty-community-card">
+            <h3>Search for suggestions</h3>
+            <p>Enter a keyword above to see matching restaurant and category suggestions.</p>
+        </section>
+    {{/if}}
+
+    <div class="home-bottom-actions">
+        <a href="/home" class="secondary-btn">Return To Home</a>
+    </div>
+</section>

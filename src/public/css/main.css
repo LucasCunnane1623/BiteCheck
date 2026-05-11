@@ -778,6 +778,18 @@ highlight {
   .about-text-image {
     max-width: 120px;
   }
+
+  .restaurant-results-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .restaurant-search-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .restaurant-submit-btn {
+    width: 100%;
+  }
 }
 
 
@@ -1078,4 +1090,120 @@ highlight {
 
 .empty-community-card h3 {
   color: var(--green-dark);
+}
+
+/* 
+   Restaurant Search and Suggestions Pages 
+*/
+
+.restaurant-page {
+  padding: 2rem 0 4rem;
+}
+
+.restaurant-hero {
+  background: linear-gradient(135deg, var(--green-light), var(--white));
+  border: 1px solid var(--soft-border);
+  border-radius: 28px;
+  padding: 3rem;
+  box-shadow: var(--shadow-medium);
+  margin-top: 2rem;
+}
+
+.restaurant-hero h1 {
+  color: var(--green-dark);
+  margin-bottom: 1rem;
+}
+
+.restaurant-hero p {
+  max-width: 780px;
+}
+
+.restaurant-tool-card,
+.restaurant-results-header {
+  background: var(--white);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  margin-top: 1.5rem;
+}
+
+.restaurant-search-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.restaurant-submit-btn {
+  width: auto;
+  min-width: 180px;
+}
+
+.restaurant-results-header h2 {
+  color: var(--green-dark);
+  font-size: 1.5rem;
+}
+
+.restaurant-results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.restaurant-result-card {
+  background: var(--white);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.restaurant-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.restaurant-card-top h3 {
+  color: var(--green-dark);
+  font-size: 1.3rem;
+}
+
+.safety-pill,
+.favorite-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.safety-pill {
+  background: var(--green-light);
+  color: var(--green-dark);
+  border: 1px solid var(--green-soft);
+}
+
+.favorite-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.favorite-pill {
+  background: var(--green-main);
+  color: var(--white);
+}
+
+.restaurant-small-btn {
+  display: inline-flex;
+  width: auto;
+  margin-top: 1rem;
 }

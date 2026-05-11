@@ -54,10 +54,12 @@ const upload = multer({
 
 router.get("/profile", authenticate, async (req, res, next) => {
   try {
-    const userId = req.session.member.userId; // Extract userId from the authenticated token
+    const userId = req.session.member.userId;
+
     if (!userId) {
       return res.status(400).json({ error: "invalid User Id" });
     }
+
     const profile = await getUserProfile(userId);
 
     if (!profile) {
@@ -269,6 +271,15 @@ router.route("/profile/:id").get(authenticate, async (req, res, next) => {
         "User profile is private. You cannot view this profile's information.";
       return res.status(403).redirect("/api/users/friends"); //if the user has set their profile to private, we don't want to show any of their information to other users, so we just redirect to the home page (could also render an error page that says "This profile is private" or something like that)
     }
+    const db = getdb();
+    const favIds = (profile.favRestaurants || []).map((id) => new ObjectId(id));
+    const favRestaurants =
+      favIds.length > 0
+        ? await db
+            .collection("restaurants")
+            .find({ _id: { $in: favIds } }, { projection: { name: 1 } })
+            .toArray()
+        : [];
     const fromCommunityPulse = req.query.from === "communitypulse";
     return res.status(200).render("profile_other", {
       title: `BiteCheck: ${profile.username}'s Profile`,

@@ -165,6 +165,10 @@
 .score-red { 
     background: #ef4444; 
 }
+.score-grey {
+    background: #888;
+    color: #fff;
+}
 
 /* Modal sections */
 .modal-header {
@@ -282,4 +286,26 @@
 
 .btn-logs:hover { 
     background: #3d7d3d; 
+}
+
+.btn-home {
+    display: block;
+    width: fit-content;
+    margin: 1rem auto 0 auto;
+    text-align: center;
+    cursor: pointer;
+    background: #91e291;
+    color: #1B1B1B;
+    border: 2px solid #1B1B1B;
+    border-radius: 15pt;
+    padding: 10px 40px;
+    font-family: 'Red Hat Display', Georgia, serif;
+    font-size: 1rem;
+    box-shadow: 4px 4px 6px #474747;
+    text-decoration: none;
+}
+
+.btn-home:hover {
+    background: #50A350;
+    color: #fff;
 }

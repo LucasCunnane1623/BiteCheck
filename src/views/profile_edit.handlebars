@@ -34,10 +34,11 @@
 </fieldset>
     <label for="appSearchRadiusMeters">App Search Radius (meters):</label>
     <div class="slider-container">
-    <span>50m</span>
-    <input type="range" min="50" max="35000" value="{{appSearchRadiusMeters}}" class="slider" id="appSearchRadiusMeters" name="appSearchRadiusMeters">
-    <span>35000m</span>
+        <span>50m</span>
+        <input type="range" min="50" max="35000" value="{{appSearchRadiusMeters}}" class="slider" id="appSearchRadiusMeters" name="appSearchRadiusMeters">
+        <span>35000m</span>
     </div>
+    <p>Current radius: <strong id="radiusDisplay">{{appSearchRadiusMeters}}</strong> meters</p>
 
 
   <button type="submit" class="secondary-btn">Update Profile</button> <br>
@@ -51,5 +52,10 @@
     </a>
 </div>
 
-
-
+<script>
+    const slider = document.getElementById('appSearchRadiusMeters');
+    const display = document.getElementById('radiusDisplay');
+    slider.addEventListener('input', () => {
+        display.textContent = slider.value;
+    });
+</script>

@@ -19,7 +19,7 @@
     <p><b>Favorite Restaurants:</b> 
     {{#if hasRestaurants}}
         {{#each favRestaurants}}
-            <li>{{this}}</li>  
+            <li>{{this.name}}</li>  
         {{/each}}
     {{else}}No favorite restaurants yet.
     {{/if}}</p>

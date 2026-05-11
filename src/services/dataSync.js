@@ -74,6 +74,6 @@ export const syncRestaurants = async (limit = 3000000) => {
         
     } catch (err) {
         console.error("Sync error:", err.message);
-        throw err;
+        // throw err;
     }
 };

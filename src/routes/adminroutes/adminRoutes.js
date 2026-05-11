@@ -1,31 +1,45 @@
 import { Router } from 'express';
+import { ObjectId } from 'mongodb';
 import { authenticate } from '../../middleware/auth.js';
 import { authorizeAdmin } from '../../middleware/admin.js';
 import { getdb } from '../../database/db.js';
-import { getAdminDashboardData, createAuditLog, searchRestaurantsAdmin, searchReviewsAdmin, getAllPostsAdmin } from '../../services/adminService.js';
-import { ObjectId } from 'mongodb';
+import { 
+    getAdminDashboardData, 
+    createAuditLog, 
+    searchRestaurantsAdmin, 
+    searchReviewsAdmin, 
+    searchPostsAdmin,
+    getAllPostsAdmin,
+    getTopReportedPosts,
+    getTopReportedReviews 
+} from '../../services/adminService.js';
 
 const router = Router();
 
-
 /**
  * @route   GET /api/admin/dashboard
- * @desc    Renders the God View Dashboard
+ * @desc    Renders the God View Dashboard including stats, audit logs, 
+ * and the Top 20 most reported reviews and posts for proactive moderation.
  * @access  Private (Admin Only)
  */
 router.get('/dashboard', authenticate, authorizeAdmin, async (req, res, next) => {
     try {
+        // Fetch general stats and system logs
         const data = await getAdminDashboardData();
         
+        // Fetch the "Top 20" most reported items specifically for the Priority Hub
+        const topReviews = await getTopReportedReviews(20);
+        const topPosts = await getTopReportedPosts(20);
+
         res.render('admin/dashboard', {
             title: "BiteCheck | God View",
             layout: 'main',
-            // Use 'member' to match your auth logic
             user: req.session.member, 
             stats: data.stats,
+            topReviews, // High-priority flagged reviews
+            topPosts,   // High-priority flagged posts
             moderationQueue: data.moderationQueue,
             systemLogs: data.systemLogs,
-            // Capture success/error from query params for the flash message
             success: req.query.success,
             error: req.query.error 
         });
@@ -35,22 +49,13 @@ router.get('/dashboard', authenticate, authorizeAdmin, async (req, res, next) =>
 });
 
 /**
- * @route POST /api/admin/restaurants
- * @desc Add a new restaurant to the database (Admin only).
- * @access Private (Authenticated users with admin role)
- * @body {string} name - Name of the restaurant (required)
- * @body {string} camis - Unique CAMIS identifier (required)
- * @body {string} boro - Borough where the restaurant is located (optional)
- * @body {string} cuisine - Type of cuisine served (optional)
- * @returns {Object} Confirmation message with the ID of the newly created restaurant.
- * @example
- * POST /api/admin/restaurants
- * {
- *   "name": "New Restaurant",
- *   "camis": "12345678",
- *   "boro": "Manhattan",
- *   "cuisine": "Italian"
- * }
+ * @route   POST /api/admin/restaurants
+ * @desc    Add a new restaurant to the database manually.
+ * @access  Private (Admin Only)
+ * @body    {string} name - Name of the restaurant (required)
+ * @body    {string} camis - Unique CAMIS identifier (required)
+ * @body    {string} boro - Borough where the restaurant is located (optional)
+ * @body    {string} cuisine - Type of cuisine served (optional)
  */
 router.post('/restaurants', authenticate, authorizeAdmin, async (req, res, next) => {
     try {
@@ -67,7 +72,6 @@ router.post('/restaurants', authenticate, authorizeAdmin, async (req, res, next)
             return res.status(409).redirect('/api/admin/dashboard?error=duplicate_camis');
         }
         
-        // Security: Manually map fields to avoid mass-assignment vulnerabilities
         await db.collection('restaurants').insertOne({
             name: name.trim(),
             camis: camis.trim(),
@@ -77,7 +81,6 @@ router.post('/restaurants', authenticate, authorizeAdmin, async (req, res, next)
             manualEntry: true
         });
 
-        // Accountability Logging
         await createAuditLog(
             req.session.member.userId, 
             'ADD_RESTAURANT', 
@@ -92,60 +95,53 @@ router.post('/restaurants', authenticate, authorizeAdmin, async (req, res, next)
 });
 
 /**
- * @route DELETE /api/admin/restaurants/:camis
- * @desc Remove a restaurant from the database (Admin only).
- * @access Private (Authenticated users with admin role)
- * @param {string} camis - Unique CAMIS identifier of the restaurant to be deleted (required)
- * @returns {Object} Confirmation message of successful deletion or error if restaurant not found.
- * @example
- * DELETE /api/admin/restaurants/12345678
+ * @route   DELETE /api/admin/restaurants/:camis
+ * @desc    Remove a restaurant from the database.
+ * @access  Private (Admin Only)
+ * @param   {string} camis - Unique CAMIS identifier (required)
+ * @body    {string} returnUrl - URL to redirect to after deletion (optional)
  */
-
 router.delete('/restaurants/:camis', authenticate, authorizeAdmin, async (req, res, next) => {
     try {
         const db = getdb();
         const camis = req.params.camis;
+        const { returnUrl } = req.body;
         
         const restaurant = await db.collection('restaurants').findOne({ camis });
         if (!restaurant) return res.redirect('/api/admin/dashboard?error=notfound');
 
-        const result = await db.collection('restaurants').deleteOne({ camis });
+        await db.collection('restaurants').deleteOne({ camis });
 
-        if (result.deletedCount > 0) {
-            await createAuditLog(
-                req.session.member.userId, 
-                'DELETE_RESTAURANT', 
-                camis, 
-                `Removed restaurant: ${restaurant.name}`
-            );
-        }
+        await createAuditLog(
+            req.session.member.userId, 
+            'DELETE_RESTAURANT', 
+            camis, 
+            `Removed restaurant: ${restaurant.name}`
+        );
 
-        res.redirect('/api/admin/dashboard?success=removed');
+        return returnUrl ? res.redirect(returnUrl) : res.redirect('/api/admin/dashboard?success=removed');
     } catch (e) {
         next(e);
     }
 });
 
 /**
- * @route DELETE /api/admin/reviews/id
- * @desc Remove a review from the database (Admin only).
- * @access Private (Authenticated users with admin role)
- * @param {string} Id - Unique ObjectId for reviews to be deleted (required)
- * @returns {Object} Confirmation message of successful deletion or error if review not found.
- * @example
- * DELETE /api/admin/reviews/12345678
+ * @route   DELETE /api/admin/reviews/:id
+ * @desc    Force remove a review from the database. Supports redirecting back to source.
+ * @access  Private (Admin Only)
+ * @param   {string} id - Unique ObjectId for reviews to be deleted (required)
+ * @body    {string} returnUrl - URL to redirect to after deletion (optional)
  */
 router.delete('/reviews/:id', authenticate, authorizeAdmin, async (req, res, next) => {
     try {
         const db = getdb();
         const reviewId = req.params.id;
         const { returnUrl } = req.body;
-        // 1. Validation: Ensure the ID is a valid hex string for MongoDB
+
         if (!ObjectId.isValid(reviewId)) {
             return res.status(400).redirect('/api/admin/dashboard?error=invalid_id');
         }
 
-        // 2. Perform the deletion
         const result = await db.collection('reviews').deleteOne({ 
             _id: new ObjectId(reviewId) 
         });
@@ -154,7 +150,6 @@ router.delete('/reviews/:id', authenticate, authorizeAdmin, async (req, res, nex
             return res.status(404).redirect('/api/admin/dashboard?error=review_not_found');
         }
 
-        // 3. Accountability Log
         await createAuditLog(
             req.session.member.userId, 
             'DELETE_REVIEW', 
@@ -162,12 +157,7 @@ router.delete('/reviews/:id', authenticate, authorizeAdmin, async (req, res, nex
             "Admin force-removed reported content."
         );
         
-        if (returnUrl) {
-            return res.redirect(returnUrl);
-        }
-
-        //res.redirect('/api/admin/dashboard?success=review_deleted');
-        return res.redirect('/api/admin/dashboard?success=review_deleted'); 
+        return returnUrl ? res.redirect(returnUrl) : res.redirect('/api/admin/dashboard?success=review_deleted'); 
 
     } catch (e) {
         next(e);
@@ -175,17 +165,47 @@ router.delete('/reviews/:id', authenticate, authorizeAdmin, async (req, res, nex
 });
 
 /**
- * @route GET /api/admin/posts
- * @desc Get all posts in the system for moderation (Admin only).
- * @access Private (Authenticated users with admin role)
- * @query {string} lastId - ID of the last post from the previous page (for pagination, optional)
- * @query {number} limit - Number of posts to return per page (optional, default: 20)
- * @returns {Object} List of posts with pagination info for admin review.
- * @example
- * GET /api/admin/posts?lastId=60f5a3b2c9d1e8a1b2c3d4e&limit=20
+ * @route   DELETE /api/admin/posts/:id
+ * @desc    Force remove a community pulse post. Supports redirecting back to source.
+ * @access  Private (Admin Only)
+ * @param   {string} id - Unique ObjectId of the post to be deleted (required)
+ * @body    {string} returnUrl - URL to redirect to after deletion (optional)
+ */
+router.delete('/posts/:id', authenticate, authorizeAdmin, async (req, res, next) => {
+    try {
+        const db = getdb();
+        const postId = req.params.id;
+        const { returnUrl } = req.body;
+
+        if (!ObjectId.isValid(postId)) return res.redirect('/api/admin/dashboard?error=invalid_id');
+
+        const result = await db.collection('posts').deleteOne({ _id: new ObjectId(postId) });
+
+        if (result.deletedCount > 0) {
+            await createAuditLog(
+                req.session.member.userId, 
+                'DELETE_POST', 
+                postId, 
+                "Admin removed reported post."
+            );
+        }
+
+        return returnUrl ? res.redirect(returnUrl) : res.redirect('/api/admin/dashboard?success=post_deleted');
+    } catch (e) {
+        next(e);
+    }
+});
+
+/**
+ * @route   GET /api/admin/posts
+ * @desc    Get all posts in the system for moderation with pagination support.
+ * @access  Private (Admin Only)
+ * @query   {string} lastId - ID of the last post for cursor-based pagination (optional)
+ * @query   {number} limit - Number of posts to return (default: 20)
+ * @returns {JSON} List of posts with pagination info.
  */
 router.get('/posts', authenticate, authorizeAdmin, async (req, res, next) => {
-    try{
+    try {
         const lastId = req.query.lastId || null;
         const limit = parseInt(req.query.limit) || 20;
 
@@ -194,16 +214,18 @@ router.get('/posts', authenticate, authorizeAdmin, async (req, res, next) => {
         res.json({
             success: true, 
             count: posts.length,
-            data:posts
-        })
+            data: posts
+        });
     } catch (e) {
-        next(e)
+        next(e);
     }
 });
 
 /**
  * @route   GET /api/admin/search/restaurants
- * @desc    Find restaurants for management
+ * @desc    Manual search for restaurants by Name or CAMIS.
+ * @access  Private (Admin Only)
+ * @query   {string} query - Search keyword (required)
  */
 router.get('/search/restaurants', authenticate, authorizeAdmin, async (req, res, next) => {
     try {
@@ -227,7 +249,9 @@ router.get('/search/restaurants', authenticate, authorizeAdmin, async (req, res,
 
 /**
  * @route   GET /api/admin/search/reviews
- * @desc    Find reviews for moderation
+ * @desc    Manual search for reviews by keyword.
+ * @access  Private (Admin Only)
+ * @query   {string} query - Search keyword (required)
  */
 router.get('/search/reviews', authenticate, authorizeAdmin, async (req, res, next) => {
     try {
@@ -242,6 +266,32 @@ router.get('/search/reviews', authenticate, authorizeAdmin, async (req, res, nex
             query,
             results,
             isReviewSearch: true,
+            user: req.session.member
+        });
+    } catch (e) {
+        next(e);
+    }
+});
+
+/**
+ * @route   GET /api/admin/search/posts
+ * @desc    Manual search for community pulse posts for moderation.
+ * @access  Private (Admin Only)
+ * @query   {string} query - Search keyword (required)
+ */
+router.get('/search/posts', authenticate, authorizeAdmin, async (req, res, next) => {
+    try {
+        const { query } = req.query;
+        if (!query) return res.redirect('/api/admin/dashboard');
+
+        const results = await searchPostsAdmin(query);
+
+        res.render('admin/search-results', {
+            title: "BiteCheck | Post Search",
+            searchType: "Posts",
+            query,
+            results,
+            isPostSearch: true,
             user: req.session.member
         });
     } catch (e) {

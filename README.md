@@ -80,7 +80,7 @@ main
 ├── nodemon@3.1.14               # Restarts the server automatically during development
 └── xss@1.0.15                   # Sanitizes user input to reduce XSS risk
 ```
-
+You will also need a google Maps API Key https://developers.google.com/maps/documentation/embed/get-api-key 
 ## Contributors
 
 This project was created for CS-546 Web Programming.

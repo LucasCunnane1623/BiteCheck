@@ -76,71 +76,71 @@ router.get('/profile', authenticate, async (req, res, next) => {
     }
 });
 
-router.route('/profile/edit')
-.get(authenticate, async (req,res,next)=>{
-    //this renders the edit profile page which loads the form in the handlebars 
-    try{
-        const userId = req.session.member.userId; // Extract userId from the authenticated token
-        if (!userId){
-            return res.status(400).json({ error: "invalid User Id"})
-        }
-        const profile = await getUserProfile(userId);
+// router.route('/profile/edit')
+// .get(authenticate, async (req,res,next)=>{
+//     //this renders the edit profile page which loads the form in the handlebars 
+//     try{
+//         const userId = req.session.member.userId; // Extract userId from the authenticated token
+//         if (!userId){
+//             return res.status(400).json({ error: "invalid User Id"})
+//         }
+//         const profile = await getUserProfile(userId);
 
-        if (!profile){
-            return res.status(404).json({ error: "user not found"})
-        }
-        res.status(200).render("profile_edit",{
-            title : "BiteCheck: Edit Profile",
-            username : profile.username,
-            firstName : profile.firstName, //user starts without a first or last name, but can update it 
-            lastName : profile.lastName, //user starts without a first or last name, but can update it 
-            email : profile.email,
-            age : profile.age,
-            profilePhoto : profile.profilePhoto,
-            favRestaurants : profile.favRestaurants,
-            status : profile.status,
-            appSearchRadiusMeters : profile.appSearchRadiusMeters
-        });
-    } catch (e){    
-        next(e);
-    }
-}).post(authenticate,upload.single("profilePhoto"), async (req,res,next)=>{
-//funcitonality to update user profile info, not currently used but may be in the future.
+//         if (!profile){
+//             return res.status(404).json({ error: "user not found"})
+//         }
+//         res.status(200).render("profile_edit",{
+//             title : "BiteCheck: Edit Profile",
+//             username : profile.username,
+//             firstName : profile.firstName, //user starts without a first or last name, but can update it 
+//             lastName : profile.lastName, //user starts without a first or last name, but can update it 
+//             email : profile.email,
+//             age : profile.age,
+//             profilePhoto : profile.profilePhoto,
+//             favRestaurants : profile.favRestaurants,
+//             status : profile.status,
+//             appSearchRadiusMeters : profile.appSearchRadiusMeters
+//         });
+//     } catch (e){    
+//         next(e);
+//     }
+// }).post(authenticate,upload.single("profilePhoto"), async (req,res,next)=>{
+// //funcitonality to update user profile info, not currently used but may be in the future.
 
-    try{
+//     try{
 
-        const userId = req.session.member.userId;
-        if (!userId) return res.status(400).json({ error: "invalid User Id" });
+//         const userId = req.session.member.userId;
+//         if (!userId) return res.status(400).json({ error: "invalid User Id" });
 
-        const profile = await getUserProfile(userId);
-        if (!profile) return res.status(404).json({ error: "user not found" });
+//         const profile = await getUserProfile(userId);
+//         if (!profile) return res.status(404).json({ error: "user not found" });
 
-        const db = getdb();
-        const favIds = (profile.favRestaurants || []).map(id => new ObjectId(id));
-        const favRestaurants = favIds.length > 0
-            ? await db.collection('restaurants')
-                .find({ _id: { $in: favIds } }, { projection: { name: 1 } })
-                .toArray()
-            : [];
+//         const db = getdb();
+//         const favIds = (profile.favRestaurants || []).map(id => new ObjectId(id));
+//         const favRestaurants = favIds.length > 0
+//             ? await db.collection('restaurants')
+//                 .find({ _id: { $in: favIds } }, { projection: { name: 1 } })
+//                 .toArray()
+//             : [];
 
-        res.status(200).render("profile", {
-            title: "BiteCheck: Profile",
-            username: profile.username,
-            firstName: profile.firstName,
-            lastName: profile.lastName,
-            email: profile.email,
-            profilePhoto: profile.profilePhoto,
-            favRestaurants,
-            status: profile.status,
-            appSearchRadiusMeters: profile.appSearchRadiusMeters,
-            age: profile.age,
-            recentPosts: profile.recentPosts,
-            recentReviews: profile.recentReviews
-        });
-    } catch (e) {
-        next(e);
-    }
-});
+//         res.status(200).render("profile", {
+//             title: "BiteCheck: Profile",
+//             username: profile.username,
+//             firstName: profile.firstName,
+//             lastName: profile.lastName,
+//             email: profile.email,
+//             profilePhoto: profile.profilePhoto,
+//             favRestaurants,
+//             status: profile.status,
+//             appSearchRadiusMeters: profile.appSearchRadiusMeters,
+//             age: profile.age,
+//             recentPosts: profile.recentPosts,
+//             recentReviews: profile.recentReviews
+//         });
+//     } catch (e) {
+//         next(e);
+//     }
+// });
 
 
 /**
@@ -259,6 +259,14 @@ router.route('/profile/:id').get(authenticate, async (req,res,next)=>{
             req.session.message = "User profile is private. You cannot view this profile's information.";
             return res.status(403).redirect('/api/users/friends'); //if the user has set their profile to private, we don't want to show any of their information to other users, so we just redirect to the home page (could also render an error page that says "This profile is private" or something like that)
         } 
+        const db = getdb();
+        const favIds = (profile.favRestaurants || []).map(id => new ObjectId(id));
+        const favRestaurants = favIds.length > 0 ? await db.collection('restaurants')
+                .find(
+                    { _id: { $in: favIds } },
+                    { projection: { name: 1 } }
+                )
+                .toArray(): [];
         const fromCommunityPulse = req.query.from === "communitypulse";
         return res.status(200).render("profile_other",{
             title : `BiteCheck: ${profile.username}'s Profile`,

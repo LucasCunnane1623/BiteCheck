@@ -24,6 +24,7 @@ router.get('/near', validateLocation, async (req, res, next) => {
     try {
         const db = getdb();
         const restaurants = await db.collection(settings.mongo.collections.restaurants).find({
+            color: { $exists: true },
             location: {
                 $near: {
                     $geometry: {
@@ -95,6 +96,42 @@ router.get('/suggest', async (req, res, next) => {
     }
 });
 
+
+/**
+ * @route GET /api/restaurants
+ * @desc Returns all restaurants with coords, score, and color for the map
+ * @access Public
+ */
+router.get('/', async (req, res, next) => {
+    try {
+        const db = getdb();
+        const restaurants = await db.collection(settings.mongo.collections.restaurants)
+            .find(
+                { 
+                    color: { $exists: true },
+                    $or: [
+                        { 'location.coordinates': { $exists: true } },
+                        { 'coords.lat': { $exists: true } }
+                    ]
+                }, 
+                { 
+                    projection: { 
+                        name: 1, 
+                        location: 1,
+                        coords: 1,
+                        score: 1, 
+                        color: 1 
+                    } 
+                }
+            )
+            .limit(200)
+            .toArray();
+
+        res.status(200).json(restaurants);
+    } catch (e) {
+        next(e);
+    }
+});
 
 
 /**

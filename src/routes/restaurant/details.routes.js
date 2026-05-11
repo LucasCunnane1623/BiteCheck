@@ -12,6 +12,35 @@ const router = express.Router();
 
 
 /**
+ * @route GET /api/restaurants/:id
+ * @desc Returns restaurant details + 3 most recent comments for the details modal
+ * @access Public
+ */
+router.get('/:id', async (req, res, next) => {
+    try {
+        const db = getdb();
+        const restaurant = await db.collection('restaurants').findOne(
+            { _id: new ObjectId(req.params.id) },
+            { projection: { name: 1, cuisine: 1, priceRange: 1, address: 1, waitTime: 1, score: 1, color: 1, comments: 1 } }
+        );
+
+        if (!restaurant) {
+            return res.status(404).json({ error: 'Restaurant not found' });
+        }
+
+        const recentComments = (restaurant.comments || []).slice(-3).reverse();
+
+        res.status(200).json({
+            ...restaurant,
+            comments: recentComments
+        });
+    } catch (e) {
+        next(e);
+    }
+});
+
+
+/**
  * @router GET /api/restaurants/view/:camis
  * @desc  Get detailed information about a specific restaurant, including recent inspections and community reviews.
  * @access Public
@@ -72,6 +101,33 @@ router.get('/:id/risk-profile', async (req, res, next) => {
         });
     } catch (err) {
         next(err);
+    }
+});
+
+
+/**
+ * @route GET /api/restaurants/:id/logs
+ * @desc Returns all inspection logs for a restaurant
+ * @access Public
+ */
+router.get('/:id/logs', async (req, res, next) => {
+    try {
+        const db = getdb();
+        const restaurant = await db.collection('restaurants').findOne(
+            { _id: new ObjectId(req.params.id) },
+            { projection: { name: 1, inspections: 1 } }
+        );
+
+        if (!restaurant) {
+            return res.status(404).json({ error: 'Restaurant not found' });
+        }
+
+        res.status(200).json({
+            name: restaurant.name,
+            inspections: restaurant.inspections || []
+        });
+    } catch (e) {
+        next(e);
     }
 });
 

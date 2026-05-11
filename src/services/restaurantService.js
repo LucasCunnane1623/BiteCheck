@@ -14,12 +14,22 @@ import { getdb } from "../database/db.js";
  * 
  */
 
-export const searchRestaurants = async (query, limit=20) =>{
+export const searchRestaurants = async (query, limit=20) => {
     const db = getdb();
     return await db.collection('restaurants')
-        .find({ $text: {$search : query}})
-        .project({ score: {$meta: "textScore"}})
-        .sort({ score: {$meta: "textScore"}})
+        .find({ $text: { $search: query } })
+        .project({ 
+            textScore: { $meta: "textScore" },
+            name: 1,
+            cuisine: 1,
+            address: 1,
+            score: 1,
+            color: 1,
+            location: 1,
+            coords: 1,
+            inspections: 1
+        })
+        .sort({ textScore: { $meta: "textScore" } })
         .limit(limit)
         .toArray();
 }

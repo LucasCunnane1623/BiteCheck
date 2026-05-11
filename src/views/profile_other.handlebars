@@ -17,9 +17,9 @@
     <p><b>App Search Radius:</b> {{appSearchRadiusMeters}} meters</p>
 
     <p><b>Favorite Restaurants:</b> 
-    {{#if favRestaurants}}
+    {{#if hasRestaurants}}
         {{#each favRestaurants}}
-            <li>{{this}}</li>  
+            <li>{{this.name}}</li>  
         {{/each}}
     {{else}}No favorite restaurants yet.
     {{/if}}</p>
@@ -31,13 +31,13 @@
     <h2>Recent Posts</h2>
     <ul>
         {{#each recentPosts}}
-            <li>{{this}}</li>
-        {{/each}}
-    </ul>
-    <h2>Recent Reviews</h2>
-    <ul>
-        {{#each recentReviews}}
-            <li>{{this}}</li>
+            <li>
+                <p>Posted on {{this.createdOn}}</p>
+                <div class="community-post-body">
+                    <h4>{{this.businessName}}</h4>
+                    <p>{{this.content}}</p>
+                </div>
+            </li>
         {{/each}}
     </ul>
 </div>

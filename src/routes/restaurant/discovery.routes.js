@@ -24,6 +24,7 @@ router.get('/near', validateLocation, async (req, res, next) => {
     try {
         const db = getdb();
         const restaurants = await db.collection(settings.mongo.collections.restaurants).find({
+            color: { $exists: true },
             location: {
                 $near: {
                     $geometry: {

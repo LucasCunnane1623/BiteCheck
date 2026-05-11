@@ -1,14 +1,17 @@
 async function openDetailsModal(restaurantId) {
-  const [dataRes, templateRes] = await Promise.all([
+  const [dataRes, templateRes, meRes] = await Promise.all([
     fetch(`/api/restaurants/${restaurantId}`),
     fetch('/partials/restaurant-details.handlebars'),
+    fetch('/api/users/me'),
   ]);
 
   const data      = await dataRes.json();
   const template  = Handlebars.compile(await templateRes.text());
+  const me        = await meRes.json();
   const container = document.getElementById('details-modal-container');
 
-  container.innerHTML = template(data);
+  const isFav = (me.favRestaurants || []).includes(restaurantId);
+  container.innerHTML = template({ ...data, isFav });
   container.classList.remove('hidden');
 
   document.getElementById('close-details').addEventListener('click', () => {
@@ -18,6 +21,16 @@ async function openDetailsModal(restaurantId) {
   document.getElementById('open-logs').addEventListener('click', (e) => {
     container.classList.add('hidden');
     openLogsModal(e.target.dataset.id);
+  });
+
+  const favBtn = document.getElementById('fav-btn');
+  favBtn.addEventListener('click', async () => {
+    const adding = favBtn.dataset.fav === 'false';
+    await fetch(`/api/users/favorites/${restaurantId}`, {
+      method: adding ? 'POST' : 'DELETE',
+    });
+    favBtn.dataset.fav = String(adding);
+    favBtn.textContent = adding ? '★ Favorited' : '☆ Add to Favorites';
   });
 }
 

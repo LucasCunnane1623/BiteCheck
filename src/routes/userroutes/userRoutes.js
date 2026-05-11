@@ -46,34 +46,39 @@ const upload = multer(
  */
 
 router.get('/profile', authenticate, async (req, res, next) => {
-    try{
-        const userId = req.session.member.userId; // Extract userId from the authenticated token
-        if (!userId){
-            return res.status(400).json({ error: "invalid User Id"})
-        }
-        const profile = await getUserProfile(userId);
+    try {
+        const userId = req.session.member.userId;
+        if (!userId) return res.status(400).json({ error: "invalid User Id" });
 
-        if (!profile){
-            return res.status(404).json({ error: "user not found"})
-        }
-        res.status(200).render("profile",{
-            title : "BiteCheck: Profile",
-            username : profile.username,
-            firstName : profile.firstName, //user starts without a first or last name, but can update it 
-            lastName : profile.lastName, //user starts without a first or last name, but can update it 
-            email : profile.email,
-            profilePhoto : profile.profilePhoto,
-            favRestaurants : profile.favRestaurants,
-            status : profile.status,
-            appSearchRadiusMeters : profile.appSearchRadiusMeters,
-            age : profile.age,
-            recentPosts : profile.recentPosts,
-            recentReviews : profile.recentReviews
+        const profile = await getUserProfile(userId);
+        if (!profile) return res.status(404).json({ error: "user not found" });
+
+        const db = getdb();
+        const favIds = (profile.favRestaurants || []).map(id => new ObjectId(id));
+        const favRestaurants = favIds.length > 0
+            ? await db.collection('restaurants')
+                .find({ _id: { $in: favIds } }, { projection: { name: 1 } })
+                .toArray()
+            : [];
+
+        res.status(200).render("profile", {
+            title: "BiteCheck: Profile",
+            username: profile.username,
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            email: profile.email,
+            profilePhoto: profile.profilePhoto,
+            favRestaurants,
+            status: profile.status,
+            appSearchRadiusMeters: profile.appSearchRadiusMeters,
+            age: profile.age,
+            recentPosts: profile.recentPosts,
+            recentReviews: profile.recentReviews
         });
-    } catch (e){
+    } catch (e) {
         next(e);
     }
-})
+});
 
 
 /**
@@ -86,14 +91,19 @@ router.get('/me', authenticate, async (req, res, next) => {
         const db = getdb();
         const user = await db.collection('users').findOne(
             { _id: new ObjectId(req.session.member.userId) },
-            { projection: { filterPref: 1 } }
+            { projection: { filterPref: 1, favRestaurants: 1, appSearchRadiusMeters: 1 } }
         );
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.status(200).json({ filterPref: user.filterPref || 'all' });
+        res.status(200).json({ 
+            filterPref: user.filterPref || 'all',
+            favRestaurants: user.favRestaurants || [],
+            appSearchRadiusMeters: user.appSearchRadiusMeters || 1500
+        });
+        
     } catch (e) {
         next(e);
     }
@@ -126,6 +136,51 @@ router.patch('/filter-pref', authenticate, async (req, res, next) => {
     }
 });
 
+
+// GET /api/users/profile/edit — render the edit form
+router.get('/profile/edit', authenticate, async (req, res, next) => {
+    try {
+        const userId = req.session.member.userId;
+        const profile = await getUserProfile(userId);
+
+        if (!profile) return res.status(404).json({ error: 'User not found' });
+
+        res.status(200).render('profile_edit', {
+            title: 'BiteCheck: Edit Profile',
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            status: profile.status,
+            appSearchRadiusMeters: profile.appSearchRadiusMeters,
+        });
+    } catch (e) {
+        next(e);
+    }
+});
+
+
+// POST /api/users/profile/edit — handle the form submission
+router.post('/profile/edit', authenticate, upload.single('profilePhoto'), async (req, res, next) => {
+    try {
+        const userId = req.session.member.userId;
+        let { firstName, lastName, status, appSearchRadiusMeters } = req.body;
+
+        const updateData = {};
+        if (firstName) updateData.firstName = firstName.trim();
+        if (lastName)  updateData.lastName  = lastName.trim();
+        if (status && ['Public', 'Private'].includes(status)) updateData.status = status;
+        if (appSearchRadiusMeters) updateData.appSearchRadiusMeters = parseInt(appSearchRadiusMeters);
+        if (req.file) updateData.profilePhoto = `/uploads/profilePhotos/${req.file.filename}`;
+
+        await updateUserInfo(userId, updateData);
+
+        req.session.message = 'Profile updated successfully!';
+        res.status(200).redirect('/api/users/profile');
+    } catch (e) {
+        next(e);
+    }
+});
+
+
 router.route('/profile/:id').get(authenticate, async (req,res,next)=>{
     //this renders other users profiles, which is the same as the authenticated user's profile but without the option to edit the profile or see recent posts and reviews (for privacy reasons)
     try{
@@ -150,7 +205,7 @@ router.route('/profile/:id').get(authenticate, async (req,res,next)=>{
             lastName : profile.lastName, //user starts without a first or last name, but can update it 
             email : profile.email,
             profilePhoto : profile.profilePhoto,
-            favRestaurants : profile.favRestaurants,
+            favRestaurants,
             status : profile.status,
             appSearchRadiusMeters : profile.appSearchRadiusMeters,
             age : profile.age,
@@ -396,4 +451,34 @@ router.route('/block/:id').get(authenticate, async (req,res,next)=>{
         next(e);
     }
 });
+
+// POST /api/users/favorites/:restaurantId
+router.post('/favorites/:restaurantId', authenticate, async (req, res, next) => {
+  try {
+    const db = getdb();
+    await db.collection('users').updateOne(
+      { _id: new ObjectId(req.session.member.userId) },  // ← fix
+      { $addToSet: { favRestaurants: req.params.restaurantId } }
+    );
+    res.json({ message: 'Added to favorites' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// DELETE /api/users/favorites/:restaurantId
+router.delete('/favorites/:restaurantId', authenticate, async (req, res, next) => {
+  try {
+    const db = getdb();
+    await db.collection('users').updateOne(
+      { _id: new ObjectId(req.session.member.userId) },  // ← fix
+      { $pull: { favRestaurants: req.params.restaurantId } }
+    );
+    res.json({ message: 'Removed from favorites' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 export default router;

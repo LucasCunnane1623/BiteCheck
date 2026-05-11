@@ -51,8 +51,8 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-eval'", "https://maps.googleapis.com", "https://cdn.jsdelivr.net"],
-            scriptSrcElem: ["'self'", "'unsafe-eval'", "https://maps.googleapis.com", "https://cdn.jsdelivr.net"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://maps.googleapis.com", "https://cdn.jsdelivr.net"],
+            scriptSrcElem: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://maps.googleapis.com", "https://cdn.jsdelivr.net"],
             connectSrc: ["'self'", "https://maps.googleapis.com"],
             imgSrc: ["'self'", "https://maps.gstatic.com", "https://*.googleapis.com", "data:"],
             frameSrc: ["'self'", "https://www.google.com"],
@@ -81,25 +81,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(serverdebug);
 //we can use this messaging middleware to set a global message that we can flash upon hitting a route correctly
 app.use(setupMessaging);
-//public routes '/'  '/home'   
-app.use("/",landingRoutes);      
-// api routes   
-app.use('/api', apirouter);
 
-app.use(methodOverride('_method'));
-app.use('/api/admin', adminroutes);
-
-// background Sync function.
-const startDataSync = async () => {
-    try{
-        console.log("Background Sync Started....")
-        // await seedTestReviews();
-        await syncRestaurants();
-        console.log("Background Sync Completed.")
-    } catch (err){
-        console.error("Background Sync Failed:", err.message);
-    }
-}
 
 //--------------- This method allows for performing POST and PUT operations without using POSTMAN --------------------
 const rewriteUnsupportedBrowserMethods = (req, res, next) => {
@@ -116,10 +98,31 @@ const rewriteUnsupportedBrowserMethods = (req, res, next) => {
 //------------------------------------------------------------------------------
 
 
+//public routes '/'  '/home'
+app.use(methodOverride('_method'));
+app.use(rewriteUnsupportedBrowserMethods);   
+app.use("/",landingRoutes);      
+// api routes   
+app.use('/api', apirouter);
+
+app.use('/api/admin', adminroutes);
+
+// background Sync function.
+const startDataSync = async () => {
+    try{
+        console.log("Background Sync Started....")
+        // await seedTestReviews();
+        await syncRestaurants();
+        console.log("Background Sync Completed.")
+    } catch (err){
+        console.error("Background Sync Failed:", err.message);
+    }
+}
+
+
 //--------------- Added express handlebars support --------------------
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(rewriteUnsupportedBrowserMethods);
 
 const handlebarsInstance = exphbs.create({
   defaultLayout: 'main',
